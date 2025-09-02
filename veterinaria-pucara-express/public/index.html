@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Veterinaria Pucará | San Bernardo</title>
+    <meta
+      name="description"
+      content="Sitio web oficial de Veterinaria Pucará en San Bernardo. Atención veterinaria integral, urgencias, vacunación, desparasitación, cirugía, peluquería canina y más."
+    />
+    <meta name="theme-color" content="#0ea5a1" />
+    <meta property="og:title" content="Veterinaria Pucará" />
+    <meta
+      property="og:description"
+      content="Atención veterinaria integral en San Bernardo. Agenda por WhatsApp."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.veterinariapucara.cl/" />
+    <meta property="og:image" content="/assets/og-image.jpg" />
+    <link rel="icon" href="/assets/favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/styles.css" />
+
+    <!-- JSON-LD (esto sí conviene mantenerlo inline para SEO !! importante !!) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "VeterinaryCare",
+        "name": "Veterinaria Pucará",
+        "image": "https://www.veterinariapucara.cl/assets/og-image.jpg",
+        "url": "https://www.veterinariapucara.cl/",
+        "telephone": "+56 9 1234 5678",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Av. Pucará 123",
+          "addressLocality": "San Bernardo",
+          "addressRegion": "RM",
+          "postalCode": "8050000",
+          "addressCountry": "CL"
+        },
+        "openingHours": "Mo-Fr 09:00-19:00, Sa 10:00-14:00",
+        "priceRange": "$$"
+      }
+    </script>
+  </head>
+  <body>
+    <!-- Header -->
+    <header aria-label="Barra de navegación">
+      <div class="container nav" role="navigation">
+        <a class="logo" href="#inicio" aria-label="Inicio">
+          <img src="/assets/logo.png" alt="Logo Veterinaria Pucará" />
+          <span>Veterinaria Pucará</span>
+        </a>
+        <nav class="menu" aria-label="Menú principal">
+          <a href="#servicios">Servicios</a>
+          <a href="#equipo">Equipo</a>
+          <a href="#precios">Precios</a>
+          <a href="#faq">Preguntas</a>
+          <a href="#contacto">Contacto</a>
+          <a
+            class="btn"
+            href="#"
+            id="cta-whatsapp"
+            aria-label="Agendar por WhatsApp"
+            >Agendar</a
+          >
+        </nav>
+        <button
+          class="hamb btn outline"
+          id="btn-mobile"
+          aria-controls="mobile"
+          aria-expanded="false"
+        >
+          Menú
+        </button>
+      </div>
+      <div
+        id="mobile"
+        class="container"
+        role="navigation"
+        aria-label="Menú móvil"
+      >
+        <a href="#servicios" class="m-link">Servicios</a>
+        <a href="#equipo" class="m-link">Equipo</a>
+        <a href="#precios" class="m-link">Precios</a>
+        <a href="#faq" class="m-link">Preguntas</a>
+        <a href="#contacto" class="m-link">Contacto</a>
+        <a class="btn" href="#" id="cta-whatsapp-mobile"
+          >Agendar por WhatsApp</a
+        >
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <section id="inicio" class="hero" aria-label="Bienvenida">
+      <div class="bg" aria-hidden="true"></div>
+      <div class="container wrap">
+        <span class="tag">San Bernardo</span>
+        <h1>
+          Salud y bienestar para tus mascotas con
+          <span class="accent">cariño profesional</span>.
+        </h1>
+        <p class="muted">
+          Atención veterinaria integral: consultas, vacunación, desparasitación,
+          cirugía, laboratorio, imagenología, urgencias y peluquería. Agenda tu
+          hora en línea o por WhatsApp.
+        </p>
+        <div class="hero-cta">
+          <a class="btn" href="#servicios">Ver servicios</a>
+          <a class="btn outline" href="#contacto">Contacto</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Highlights -->
+    <section class="section" aria-label="Destacados">
+      <div class="container grid features">
+        <div class="feature card" role="article">
+          <h3>Atención Integral</h3>
+          <p class="muted">
+            Perros, gatos y animales menores. Protocolos actualizados y trato
+            amable para tutores y mascotas.
+          </p>
+        </div>
+        <div class="feature card" role="article">
+          <h3>Equipo Experto</h3>
+          <p class="muted">
+            Médicos veterinarios y técnicos con especialidades en cirugía,
+            medicina interna, dermatología y más.
+          </p>
+        </div>
+        <div class="feature card" role="article">
+          <h3>Ubicación &amp; Horarios</h3>
+          <p class="muted">
+            A pasos del centro de San Bernardo. Abierto de lunes a viernes
+            9:00–19:00; sábado 10:00–14:00.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Services -->
+    <section id="servicios" class="section" aria-labelledby="t-servicios">
+      <div class="container">
+        <h2 id="t-servicios">Servicios y Especialidades</h2>
+        <p class="muted">
+          Estos son servicios frecuentes. Se pueden agregar/editar sin base de
+          datos en este mismo archivo.
+        </p>
+        <div class="grid services" role="list">
+          <article class="service card" role="listitem">
+            <div class="title">🐾 Consulta General</div>
+            <p class="muted">
+              Examen clínico completo, plan sanitario y recomendaciones de
+              bienestar.
+            </p>
+          </article>
+          <article class="service card" role="listitem">
+            <div class="title">💉 Vacunación y Desparasitación</div>
+            <p class="muted">
+              Calendarios oficiales, certificados y recordatorios por WhatsApp
+              (manuales).
+            </p>
+          </article>
+          <article class="service card" role="listitem">
+            <div class="title">🩺 Cirugía y Esterilización</div>
+            <p class="muted">
+              Cirugías electivas y de tejidos blandos. Protocolos de anestesia
+              segura.
+            </p>
+          </article>
+          <article class="service card" role="listitem">
+            <div class="title">🧪 Laboratorio</div>
+            <p class="muted">
+              Hematología, bioquímica, copro y test rápidos para diagnóstico
+              oportuno.
+            </p>
+          </article>
+          <article class="service card" role="listitem">
+            <div class="title">🖼 Imagenología</div>
+            <p class="muted">
+              Ecografía y radiografía (derivación/alianza si aplica). Informes
+              por correo.
+            </p>
+          </article>
+          <article class="service card" role="listitem">
+            <div class="title">✂️ Peluquería &amp; Baño</div>
+            <p class="muted">
+              Baño sanitario, cortes por raza y tratamientos dermatológicos.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Professionals -->
+    <section id="equipo" class="section" aria-labelledby="t-equipo">
+      <div class="container">
+        <h2 id="t-equipo">Nuestro Equipo</h2>
+        <div class="grid pros" role="list">
+          <article class="pro card" role="listitem">
+            <img
+              src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=1200&auto=format&fit=crop"
+              alt="Dra. Paula atendiendo un perro"
+              loading="lazy"
+            />
+            <h4>Dra. Paula Fernández</h4>
+            <p class="muted">
+              Médica Veterinaria — Medicina interna y preventivos.
+            </p>
+          </article>
+          <article class="pro card" role="listitem">
+            <img
+              src="https://images.unsplash.com/photo-1561037404-61cd46aa615b?q=80&w=1200&auto=format&fit=crop"
+              alt="Dr. Ignacio examinando un gato"
+              loading="lazy"
+            />
+            <h4>Dr. Ignacio Rivas</h4>
+            <p class="muted">Cirugía de tejidos blandos y esterilización.</p>
+          </article>
+          <article class="pro card" role="listitem">
+            <img
+              src="https://images.unsplash.com/photo-1612531386530-97267c92a65b?q=80&w=1200&auto=format&fit=crop"
+              alt="Técnica veterinaria con mascota"
+              loading="lazy"
+            />
+            <h4>Camila Soto</h4>
+            <p class="muted">
+              Técnica Veterinaria — Apoyo clínico y peluquería.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="precios" class="section" aria-labelledby="t-precios">
+      <div class="container">
+        <h2 id="t-precios">Valores de Referencia</h2>
+        <div class="grid pricing" role="list">
+          <article
+            class="price card"
+            role="listitem"
+            aria-label="Consulta general"
+          >
+            <h3>Consulta General</h3>
+            <p class="amount">$15.000 – $25.000</p>
+            <ul>
+              <li>Examen clínico completo</li>
+              <li>Recomendaciones personalizadas</li>
+              <li>Derivación si aplica</li>
+            </ul>
+          </article>
+          <article class="price card" role="listitem" aria-label="Vacunación">
+            <h3>Vacunación</h3>
+            <p class="amount">$15.000 + vacuna</p>
+            <ul>
+              <li>Calendario según especie/edad</li>
+              <li>Certificado de vacunación</li>
+              <li>Observación post vacuna</li>
+            </ul>
+          </article>
+          <article
+            class="price card"
+            role="listitem"
+            aria-label="Esterilización"
+          >
+            <h3>Esterilización</h3>
+            <p class="amount">Desde $80.000</p>
+            <ul>
+              <li>Prequirúrgico y analíticas</li>
+              <li>Anestesia y recuperación</li>
+              <li>Controles postoperatorios</li>
+            </ul>
+          </article>
+        </div>
+        <p class="muted mt-8">
+          * Valores referenciales. Confirmar por WhatsApp según tamaño/especie.
+        </p>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section" aria-label="Agendar">
+      <div class="container card cta">
+        <div>
+          <h3>¿Listo para agendar?</h3>
+          <p class="muted no-mt">
+            Escríbenos por WhatsApp y coordinamos tu atención.
+          </p>
+        </div>
+        <div>
+          <a class="btn" href="#" id="cta-whatsapp-cta">Agendar por WhatsApp</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="section" aria-labelledby="t-faq">
+      <div class="container">
+        <h2 id="t-faq">Preguntas Frecuentes</h2>
+        <div class="grid grid-2">
+          <details>
+            <summary>¿Atienden urgencias?</summary>
+            <p>
+              Sí, según disponibilidad. Sugerimos llamar o escribir por WhatsApp
+              antes de venir.
+            </p>
+          </details>
+          <details>
+            <summary>¿Trabajan con convenios?</summary>
+            <p>
+              Contamos con convenios y derivaciones; consulta condiciones
+              vigentes.
+            </p>
+          </details>
+          <details>
+            <summary>¿Medios de pago?</summary>
+            <p>Efectivo, débito y crédito. Transferencia con comprobante.</p>
+          </details>
+          <details>
+            <summary>¿Puedo traer mi mascota sin hora?</summary>
+            <p>
+              Atendemos con preferencia de hora agendada para reducir tiempos de
+              espera.
+            </p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact & Map -->
+    <section id="contacto" class="section" aria-labelledby="t-contacto">
+      <div class="container grid grid-contact">
+        <div class="card">
+          <h2 id="t-contacto">Contáctanos</h2>
+          <p class="muted">
+            Completa el formulario y te escribiremos. (Funciona con
+            <code>mailto:</code> para no usar base de datos. Puedes cambiarlo
+            por un servicio como Formspree/Netlify Forms más adelante.)
+          </p>
+          <form
+            action="mailto:contacto@veterinariapucara.cl"
+            method="post"
+            enctype="text/plain"
+            aria-label="Formulario de contacto"
+          >
+            <div class="grid grid-2">
+              <label
+                >Nombre<input required name="nombre" aria-label="Nombre"
+              /></label>
+              <label
+                >Correo<input
+                  required
+                  type="email"
+                  name="correo"
+                  aria-label="Correo"
+              /></label>
+            </div>
+            <label>Asunto<input name="asunto" aria-label="Asunto" /></label>
+            <label
+              >Mensaje<textarea
+                required
+                name="mensaje"
+                rows="5"
+                aria-label="Mensaje"
+              ></textarea>
+            </label>
+            <div class="form-actions">
+              <button type="submit" class="btn">Enviar</button>
+              <a class="btn outline" href="#" id="cta-whatsapp-form"
+                >Escribir por WhatsApp</a
+              >
+            </div>
+          </form>
+        </div>
+        <aside class="card" aria-label="Información de contacto">
+          <h3>Información</h3>
+          <p><strong>Dirección:</strong> Av. Pucará 123, San Bernardo</p>
+          <p>
+            <strong>Teléfono:</strong>
+            <a href="tel:+56912345678">+56 9 1234 5678</a>
+          </p>
+          <p>
+            <strong>Correo:</strong>
+            <a href="mailto:contacto@veterinariapucara.cl"
+              >contacto@veterinariapucara.cl</a
+            >
+          </p>
+          <p><strong>Horario:</strong> Lun–Vie 09:00–19:00 · Sáb 10:00–14:00</p>
+          <button class="btn" id="btn-maps">Abrir en Google Maps</button>
+          <div class="map-wrap">
+            <iframe
+              title="Mapa de ubicación"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3329.336!2d-70.7!3d-33.6!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sSan%20Bernardo!5e0!3m2!1ses-419!2scl!4v1700000000000"
+              width="100%"
+              height="240"
+              style="border: 0; border-radius: 12px"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+            ></iframe>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <footer aria-label="Pie de página">
+      <div class="container">
+        <div class="grid grid-3">
+          <div>
+            <strong>Veterinaria Pucará</strong>
+            <p class="muted">Cuidamos a tu familia de cuatro patas.</p>
+          </div>
+          <div>
+            <p><a href="#servicios">Servicios</a></p>
+            <p><a href="#equipo">Equipo</a></p>
+            <p><a href="#precios">Precios</a></p>
+          </div>
+          <div>
+            <p><a href="#contacto">Contacto</a></p>
+            <p>
+              <a href="/privacy.html" aria-label="Política de privacidad"
+                >Política de privacidad</a
+              >
+            </p>
+            <p>
+              <a href="/terms.html" aria-label="Términos de uso">Términos</a>
+            </p>
+          </div>
+        </div>
+        <p class="muted mt-20">
+          © <span id="y"></span> Veterinaria Pucará. Todos los derechos
+          reservados.
+        </p>
+      </div>
+    </footer>
+
+    <script src="/js/main.js" defer></script>
+  </body>
+</html>
