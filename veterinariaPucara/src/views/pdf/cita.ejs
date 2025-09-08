@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title><%= title %></title>
+    <!-- Usa baseUrl para que Puppeteer resuelva los assets -->
+    <link rel="stylesheet" href="<%= baseUrl %>/css/pdf.css" />
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <p>Generado el <%= generadoEl %></p>
+
+    <table border="1" cellspacing="0" cellpadding="6" width="100%">
+      <tbody>
+        <tr>
+          <th>ID</th>
+          <td><%= cita.id %></td>
+        </tr>
+        <tr>
+          <th>Fecha</th>
+          <td><%= cita.fecha_fmt %></td>
+        </tr>
+        <tr>
+          <th>Tipo</th>
+          <td><%= cita.tipo || '-' %></td>
+        </tr>
+        <tr>
+          <th>Urgencia</th>
+          <td><%= cita.urgencia ? 'Sí' : 'No' %></td>
+        </tr>
+        <tr>
+          <th>Mascotas</th>
+          <td><%= cita.mascotas %></td>
+        </tr>
+        <tr>
+          <th>Observación</th>
+          <td><%= cita.observaciones || '-' %></td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

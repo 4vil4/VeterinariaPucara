@@ -1,0 +1,77 @@
+<%- include('../layouts/layout', { body: '' }) %>
+
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h2>Citas</h2>
+    <a class="btn" href="/citas/nueva">Nueva cita</a>
+    <% if (typeof ok !=='undefined' && ok) { %>
+      <div class="alert alert-success" style="margin-bottom: 16px">
+        Cita agregada exitosamente.
+      </div>
+      <% } %>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body p-0">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Propietario</th>
+            <th>Mascota</th>
+            <th>Tipo</th>
+            <th>Urgencia</th>
+            <th>Obs</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% citas.forEach(c=> { %>
+            <tr>
+              <td>
+                <%= new Date(c.fecha).toLocaleString('es-CL') %>
+              </td>
+              <td>
+                <%= c.propietario || '-' %>
+              </td>
+              <td>
+                <%= c.mascota || '-' %>
+              </td>
+              <td>
+                <%= c.tipo || '' %>
+              </td>
+              <td>
+                <%= c.urgencia ? 'Sí' : 'No' %>
+              </td>
+              <td>
+                <%= c.observaciones || '-' %>
+              </td>
+              <td>
+                <a
+                  class="btn btn-sm btn-outline-success"
+                  href="/citas/<%= c.id %>/whatsapp"
+                  target="_blank"
+                >WhatsApp</a>
+
+                <a href="/citas/<%= c.id %>/pdf" class="btn btn-sm btn-primary">PDF</a>
+
+                <% 
+                  const d = new Date(c.fecha);
+                  const now = new Date();
+                  const isToday =
+                    d.getFullYear() === now.getFullYear() &&
+                    d.getMonth() === now.getMonth() &&
+                    d.getDate() === now.getDate();
+                %>
+
+                <a
+                  href="/mascotas/<%= c.pet_id %>/consultas"
+                  class="btn btn-sm btn-secondary <%= isToday ? '' : 'disabled' %>"
+                  <%= isToday ? '' : 'tabindex=-1 aria-disabled=true' %>
+                >Ir</a>
+              </td>
+            </tr>
+            <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>

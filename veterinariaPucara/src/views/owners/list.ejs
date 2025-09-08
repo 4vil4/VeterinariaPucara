@@ -1,0 +1,32 @@
+<%- include('../layouts/layout', { body: `
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <h2>Propietarios</h2>
+  <a class="btn" href="/propietarios/nuevo">Nuevo propietario</a>
+</div>
+<div class="card shadow-sm">
+  <div class="card-body p-0">
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Fono</th>
+          <th>Email</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        ${owners.map(o => `
+        <tr>
+          <td>${o.name}</td>
+          <td>${o.fono || '-'}</td>
+          <td>${o.email || '-'}</td>
+          <td>
+            <a class="link" href="/propietarios/${o.id}/mascotas">Mascotas</a>
+          </td>
+        </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  </div>
+</div>
+` }) %>

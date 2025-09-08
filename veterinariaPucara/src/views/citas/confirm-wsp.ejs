@@ -1,0 +1,34 @@
+<%- include('../layouts/layout', { body: '' }) %>
+
+<div class="container" style="max-width: 640px; margin: 32px auto">
+  <div class="card shadow-sm">
+    <div class="card-body" style="padding: 24px">
+      <h2 style="margin: 0 0 12px 0">¿Enviar WhatsApp al cliente?</h2>
+      <p style="margin: 0 0 20px 0">
+        La cita fue creada exitosamente. ¿Quieres enviar un mensaje de confirmación por WhatsApp ahora?
+      </p>
+
+      <div style="display:flex; gap:12px; flex-wrap:wrap">
+        <a id="btn-si" class="btn btn-primary" href="#"
+           style="padding:10px 16px; border-radius:10px; font-weight:600; text-decoration:none;">
+          Sí, abrir WhatsApp
+        </a>
+
+        <a class="btn btn-outline" href="/citas?ok=1"
+           style="padding:10px 16px; border-radius:10px; font-weight:600; text-decoration:none; border:1px solid #ccc;">
+          No, volver a la lista
+        </a>
+      </div>
+
+      <p style="margin-top:16px; font-size:14px; color:#666">
+        Si eliges “Sí”, se abrirá WhatsApp en una pestaña nueva y esta página volverá automáticamente a la lista de citas.
+      </p>
+    </div>
+  </div>
+</div>
+
+<script type="application/json" id="wsp-data">
+<%- JSON.stringify({ to, msg }) %>
+</script>
+
+<script src="/js/confirm-wsp.js"></script>

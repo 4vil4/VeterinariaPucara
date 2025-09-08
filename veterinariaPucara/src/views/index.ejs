@@ -1,0 +1,61 @@
+<%- include('layouts/layout', { title: 'Inicio — Clínica Veterinaria Pucará',
+body: `
+<section class="hero gradient rounded-4 p-5 mb-4 shadow-sm">
+  <div class="row align-items-center">
+    <div class="col-lg-7">
+      <h1 class="display-5 fw-bold text-dark mb-2">
+        Clínica Veterinaria Pucará
+      </h1>
+      <p class="lead text-dark-70 mb-4">
+        Agenda en línea, ficha clínica por paciente y generación de documentos
+        en un solo lugar.
+      </p>
+      <div class="d-flex gap-2 flex-wrap">
+        <a href="/citas/nueva" class="btn btn-dark btn-lg">Agendar cita</a>
+        <a href="/propietarios" class="btn btn-outline-dark btn-lg"
+          >Ver propietarios</a
+        >
+      </div>
+    </div>
+    <div class="col-lg-5 d-none d-lg-block text-end">
+      <div class="pet-badge">🐶 🐱</div>
+    </div>
+  </div>
+</section>
+
+<section class="mb-4">
+  <div class="row g-3">
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm hover-card">
+        <div class="card-body">
+          <h5 class="card-title">Propietarios & Mascotas</h5>
+          <p class="text-muted">
+            Gestión de dueños, mascotas y su historial clínico.
+          </p>
+          <a href="/propietarios" class="btn btn-primary-soft">Abrir módulo</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm hover-card">
+        <div class="card-body">
+          <h5 class="card-title">Agenda</h5>
+          <p class="text-muted">
+            Configura horarios, agenda y marca urgencias.
+          </p>
+          <a href="/citas" class="btn btn-primary-soft">Ver agenda</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm hover-card">
+        <div class="card-body">
+          <h5 class="card-title">Documentos</h5>
+          <p class="text-muted">Recetas y presupuestos.</p>
+          <a href="/documentos" class="btn btn-primary-soft">Documentos</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+` }) %>

@@ -1,0 +1,164 @@
+<%- include('../layouts/layout', { body: '' }) %>
+
+<div id="owner-docs" data-owner-id="<%= owner.id %>">
+  <h2>Documentos de <%= owner.name %></h2>
+
+  <button class="btn" id="btnNuevoPresupuesto">Nuevo presupuesto</button>
+  <button class="btn btn--outline" id="btnNuevaReceta">Nueva receta</button>
+
+  <!-- RECETAS -->
+  <div class="card shadow-sm" style="margin-top: 16px">
+    <div class="card-body p-0">
+      <div class="p-2"><strong>Recetas</strong></div>
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Mascota</th>
+            <th>Datos</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% recetas.forEach(function(r){ %>
+          <tr>
+            <td><%= new Date(r.created_at).toLocaleString('es-CL') %></td>
+            <td><%= r.name_pet || '-' %></td>
+            <td><%= (r.datos?.medicamentos || []).join(', ') %></td>
+            <td>
+              <a
+                class="btn btn--outline"
+                href="/documentos/<%= r.pet_id %>/receta/<%= r.id %>/pdf"
+                >PDF</a
+              >
+              <a
+                class="btn btn--primary"
+                href="/documentos/owner/<%= r.owner_id %>/doc/<%= r.id %>/wsp"
+                >WhatsApp</a
+              >
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PRESUPUESTOS -->
+  <div class="card shadow-sm" style="margin-top: 16px">
+    <div class="card-body p-0">
+      <div class="p-2"><strong>Presupuestos</strong></div>
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Mascota</th>
+            <th>Título</th>
+            <th>Total</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% presupuestos.forEach(function(p){ const total = (p.datos?.items ||
+          []).reduce((acc, it) => acc + (it.qty * it.price), 0); %>
+          <tr>
+            <td><%= new Date(p.created_at).toLocaleString('es-CL') %></td>
+            <td><%= p.name_pet || '-' %></td>
+            <td><%= p.datos?.titulo || '-' %></td>
+            <td>$<%= total %></td>
+            <td>
+              <a
+                class="btn btn--outline"
+                href="/documentos/owner/<%= p.owner_id %>/presupuesto/<%= p.id %>/pdf"
+                >PDF</a
+              >
+              <a
+                class="btn btn--primary"
+                href="/documentos/owner/<%= p.owner_id %>/doc/<%= p.id %>/wsp"
+                >WhatsApp</a
+              >
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- MODAL: Nueva receta -->
+  <div
+    id="recetaModal"
+    class="modal-backdrop"
+    style="
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.35);
+      z-index: 50;
+    "
+  >
+    <div
+      class="card shadow-sm"
+      style="max-width: 520px; margin: 10vh auto; background: #fff"
+    >
+      <div class="card-body">
+        <h4 class="mb-3">Nueva receta</h4>
+        <p class="text-muted">
+          Selecciona la mascota del propietario para crear la receta.
+        </p>
+        <div class="mb-3">
+          <label><strong>Mascota</strong></label>
+          <select id="selPetReceta" class="form-control">
+            <option value="">Cargando mascotas...</option>
+          </select>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn" id="goReceta" disabled>Ir al formulario</button>
+          <button class="btn btn--outline" id="cancelReceta">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Nuevo presupuesto -->
+  <div
+    id="presupuestoModal"
+    class="modal-backdrop"
+    style="
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.35);
+      z-index: 50;
+    "
+  >
+    <div
+      class="card shadow-sm"
+      style="max-width: 520px; margin: 10vh auto; background: #fff"
+    >
+      <div class="card-body">
+        <h4 class="mb-3">Nuevo presupuesto</h4>
+        <p class="text-muted">
+          Selecciona la mascota del propietario para crear el presupuesto.
+        </p>
+        <div class="mb-3">
+          <label><strong>Mascota</strong></label>
+          <select id="selPetPres" class="form-control">
+            <option value="">Cargando mascotas...</option>
+          </select>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn" id="goPresupuesto" disabled>
+            Ir al formulario
+          </button>
+          <button class="btn btn--outline" id="cancelPresupuesto">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JS externo -->
+<script src="/js/documentos_owner.js"></script>

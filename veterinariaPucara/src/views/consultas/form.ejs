@@ -1,0 +1,15 @@
+<%- include('../layouts/layout', { body: `
+<h2>Nueva consulta</h2>
+<div class="card shadow-sm">
+  <div class="card-body">
+    <form method="POST" action="/consultas/${pet_id}/nueva" class="form">
+      <label>Fecha<input type="datetime-local" name="fecha" required /></label>
+      <label>Motivo<input name="motivo" required /></label>
+      <label>Diagnóstico<textarea name="diagnostico"></textarea></label>
+      <label>Tratamiento<textarea name="tratamiento"></textarea></label>
+      <label>Vacunas<textarea name="vacunas"></textarea></label>
+      <button class="btn">Guardar</button>
+    </form>
+  </div>
+</div>
+` }) %>

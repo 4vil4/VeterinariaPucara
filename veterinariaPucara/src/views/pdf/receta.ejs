@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title><%= title %></title>
+    <link rel="stylesheet" href="<%= baseUrl %>/css/pdf.css" />
+  </head>
+  <body>
+    <header
+      class="pdf-header"
+      style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 8px;
+        margin-bottom: 12px;
+      "
+    >
+      <div>
+        <h1 style="margin: 0">Clínica Veterinaria Pucará</h1>
+        <div class="muted">Receta médica</div>
+      </div>
+      <div class="muted">Generado el <%= generadoEl %></div>
+    </header>
+
+    <section style="margin: 8px 0 12px">
+      <div>
+        <strong>Mascota:</strong> <%= pet ? pet.nombre : '-' %>
+        <span class="muted"
+          >(<%= pet ? pet.especie : '' %> <%= pet && pet.raza ? '· '+pet.raza :
+          '' %>)</span
+        >
+      </div>
+      <div>
+        <strong>Titular:</strong> <%= owner ? owner.nombre : '-' %>
+        <span class="muted"
+          ><%= owner && owner.fono ? '· '+owner.fono : '' %> <%= owner &&
+          owner.email ? '· '+owner.email : '' %></span
+        >
+      </div>
+      <div><strong>Fecha:</strong> <%= receta.fecha %></div>
+      <div><strong>ID Receta:</strong> <%= receta.id %></div>
+    </section>
+
+    <section>
+      <h3 style="margin: 10px 0 6px">Medicamentos</h3>
+      <ul style="margin: 6px 0 10px 18px">
+        <% (receta.medicamentos || []).forEach(m => { %>
+        <li><%= m %></li>
+        <% }) %>
+      </ul>
+
+      <h3 style="margin: 10px 0 6px">Indicaciones</h3>
+      <div><%= receta.indicaciones || '-' %></div>
+    </section>
+
+    <footer
+      class="pdf-footer"
+      style="margin-top: 16px; text-align: center; color: #6b7280"
+    >
+      © <%= new Date().getFullYear() %> Clínica Veterinaria Pucará
+    </footer>
+  </body>
+</html>

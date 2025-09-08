@@ -1,0 +1,18 @@
+<%- include('../layouts/layout', { body: `
+<h2>Nueva receta</h2>
+<div class="card shadow-sm">
+  <div class="card-body">
+    <form method="POST" action="/documentos/${pet_id}/receta" class="form">
+      <label
+        >Medicamentos (uno por línea)
+        <textarea name="medicamentos" required></textarea>
+      </label>
+      <label
+        >Indicaciones
+        <textarea name="indicaciones" required></textarea>
+      </label>
+      <button class="btn">Guardar</button>
+    </form>
+  </div>
+</div>
+` }) %>

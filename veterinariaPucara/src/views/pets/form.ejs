@@ -1,0 +1,21 @@
+<%- include('../layouts/layout', { body: `
+<h2>Nueva mascota para ${owner.name}</h2>
+<div class="card shadow-sm">
+  <div class="card-body">
+    <form method="POST" action="/mascotas/${owner.id}/nueva" class="form">
+      <label>Nombre<input name="name_pet" required /></label>
+      <label
+        >Especie
+        <select name="especie">
+          <option value="perro">Perro</option>
+          <option value="gato">Gato</option>
+          <option value="otro">Otro</option>
+        </select>
+      </label>
+      <label>Raza<input name="raza" /></label>
+      <label>Edad<input type="number" name="age" min="0" /></label>
+      <button class="btn">Guardar</button>
+    </form>
+  </div>
+</div>
+` }) %>
