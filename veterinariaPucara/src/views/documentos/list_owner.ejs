@@ -1,13 +1,19 @@
 <%- include('../layouts/layout', { body: '' }) %>
 
 <div id="owner-docs" data-owner-id="<%= owner.id %>">
-  <h2>Documentos de <%= owner.name %></h2>
+  <div class="page-header">
+    <h2>Documentos de <%= owner.name %></h2>
 
-  <button class="btn" id="btnNuevoPresupuesto">Nuevo presupuesto</button>
-  <button class="btn btn--outline" id="btnNuevaReceta">Nueva receta</button>
+    <!-- Botones de acciones -->
+    <div class="d-flex gap-2">
+      <button class="btn btn--outline" id="btnHistorial">Historial</button>
+      <button class="btn" id="btnNuevoPresupuesto">Nuevo presupuesto</button>
+      <button class="btn btn--outline" id="btnNuevaReceta">Nueva receta</button>
+    </div>
+  </div>
 
-  <!-- RECETAS -->
-  <div class="card shadow-sm" style="margin-top: 16px">
+  <!-- === Sección: Recetas === -->
+  <div class="card shadow-sm mt-3">
     <div class="card-body p-0">
       <div class="p-2"><strong>Recetas</strong></div>
       <table class="tbl">
@@ -20,22 +26,32 @@
           </tr>
         </thead>
         <tbody>
-          <% recetas.forEach(function(r){ %>
+          <% recetas.forEach(function(r){ const fecha = new
+          Date(r.created_at).toLocaleString('es-CL'); const meds =
+          Array.isArray(r.datos?.medicamentos) ? r.datos.medicamentos : [];
+          const indic = r.datos?.indicaciones || ''; const datosTxt = indic ||
+          (meds.length ? meds.join(', ') : '-'); %>
           <tr>
-            <td><%= new Date(r.created_at).toLocaleString('es-CL') %></td>
+            <td><%= fecha %></td>
             <td><%= r.name_pet || '-' %></td>
-            <td><%= (r.datos?.medicamentos || []).join(', ') %></td>
+            <td><%= datosTxt || '-' %></td>
             <td>
-              <a
-                class="btn btn--outline"
-                href="/documentos/<%= r.pet_id %>/receta/<%= r.id %>/pdf"
-                >PDF</a
-              >
-              <a
-                class="btn btn--primary"
-                href="/documentos/owner/<%= r.owner_id %>/doc/<%= r.id %>/wsp"
-                >WhatsApp</a
-              >
+              <div class="acciones-btns">
+                <a
+                  class="btn-pdf"
+                  href="/documentos/<%= r.pet_id %>/receta/<%= r.id %>/pdf"
+                  title="PDF"
+                >
+                  <i class="fa-regular fa-file-pdf"></i>
+                </a>
+                <a
+                  class="btn-wsp"
+                  href="/documentos/owner/<%= owner.id %>/doc/<%= r.id %>/wsp"
+                  title="WhatsApp"
+                >
+                  <i class="fab fa-whatsapp"></i>
+                </a>
+              </div>
             </td>
           </tr>
           <% }) %>
@@ -44,8 +60,8 @@
     </div>
   </div>
 
-  <!-- PRESUPUESTOS -->
-  <div class="card shadow-sm" style="margin-top: 16px">
+  <!-- === Sección: Presupuestos === -->
+  <div class="card shadow-sm mt-3">
     <div class="card-body p-0">
       <div class="p-2"><strong>Presupuestos</strong></div>
       <table class="tbl">
@@ -59,24 +75,34 @@
           </tr>
         </thead>
         <tbody>
-          <% presupuestos.forEach(function(p){ const total = (p.datos?.items ||
-          []).reduce((acc, it) => acc + (it.qty * it.price), 0); %>
+          <% presupuestos.forEach(function(p){ const fecha = new
+          Date(p.created_at).toLocaleString('es-CL'); const items =
+          Array.isArray(p.datos?.items) ? p.datos.items : []; const total =
+          items.reduce((acc, it) => acc + Number(it.qty||0) *
+          Number(it.price||0), 0); %>
           <tr>
-            <td><%= new Date(p.created_at).toLocaleString('es-CL') %></td>
+            <td><%= fecha %></td>
             <td><%= p.name_pet || '-' %></td>
             <td><%= p.datos?.titulo || '-' %></td>
             <td>$<%= total %></td>
             <td>
-              <a
-                class="btn btn--outline"
-                href="/documentos/owner/<%= p.owner_id %>/presupuesto/<%= p.id %>/pdf"
-                >PDF</a
-              >
-              <a
-                class="btn btn--primary"
-                href="/documentos/owner/<%= p.owner_id %>/doc/<%= p.id %>/wsp"
-                >WhatsApp</a
-              >
+              <div class="acciones-btns">
+                <!-- Si tienes endpoint de PDF para presupuesto, apunta acá -->
+                <a
+                  class="btn-pdf"
+                  href="/documentos/owner/<%= owner.id %>/presupuesto/<%= p.id %>/pdf"
+                  title="PDF"
+                >
+                  <i class="fa-regular fa-file-pdf"></i>
+                </a>
+                <a
+                  class="btn-wsp"
+                  href="/documentos/owner/<%= owner.id %>/doc/<%= p.id %>/wsp"
+                  title="WhatsApp"
+                >
+                  <i class="fab fa-whatsapp"></i>
+                </a>
+              </div>
             </td>
           </tr>
           <% }) %>
@@ -85,22 +111,9 @@
     </div>
   </div>
 
-  <!-- MODAL: Nueva receta -->
-  <div
-    id="recetaModal"
-    class="modal-backdrop"
-    style="
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.35);
-      z-index: 50;
-    "
-  >
-    <div
-      class="card shadow-sm"
-      style="max-width: 520px; margin: 10vh auto; background: #fff"
-    >
+  <!-- === Modal: Nueva receta === -->
+  <div id="recetaModal" class="modal-backdrop">
+    <div class="card shadow-sm">
       <div class="card-body">
         <h4 class="mb-3">Nueva receta</h4>
         <p class="text-muted">
@@ -120,22 +133,9 @@
     </div>
   </div>
 
-  <!-- MODAL: Nuevo presupuesto -->
-  <div
-    id="presupuestoModal"
-    class="modal-backdrop"
-    style="
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.35);
-      z-index: 50;
-    "
-  >
-    <div
-      class="card shadow-sm"
-      style="max-width: 520px; margin: 10vh auto; background: #fff"
-    >
+  <!-- === Modal: Nuevo presupuesto === -->
+  <div id="presupuestoModal" class="modal-backdrop">
+    <div class="card shadow-sm">
       <div class="card-body">
         <h4 class="mb-3">Nuevo presupuesto</h4>
         <p class="text-muted">
@@ -158,7 +158,31 @@
       </div>
     </div>
   </div>
+
+  <!-- === Modal: Historial (nuevo) === -->
+  <div id="historialModal" class="modal-backdrop">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h4 class="mb-3">Ver historial</h4>
+        <p class="text-muted">
+          Selecciona la mascota cuyo historial quieres ver.
+        </p>
+        <div class="mb-3">
+          <label><strong>Mascota</strong></label>
+          <select id="selPetHist" class="form-control">
+            <option value="">Cargando mascotas...</option>
+          </select>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn" id="goHistorial" disabled>Ver historial</button>
+          <button class="btn btn--outline" id="cancelHistorial">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- JS externo -->
+<!-- JS sin embebidos -->
 <script src="/js/documentos_owner.js"></script>

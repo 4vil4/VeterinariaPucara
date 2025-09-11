@@ -1,5 +1,8 @@
 <%- include('../layouts/layout', { body: `
-<h2>Nuevo presupuesto</h2>
+<div class="page-header">
+  <h2>Nuevo presupuesto</h2>
+</div>
+
 <div class="card shadow-sm">
   <div class="card-body">
     <form
@@ -9,20 +12,23 @@
       id="f"
     >
       <input type="hidden" name="owner_id" value="${owner_id}" />
-      <label
-        >Mascota (ID)
-        <input name="pet_id" value="${pet_id}" required />
-      </label>
-      <label
-        >Título
-        <input name="titulo" required />
-      </label>
-      <label
-        >Notas
-        <textarea name="notas"></textarea>
+
+      <label>
+        Mascota (ID)
+        <input name="pet_id" value="${pet_id}" class="form-control" required />
       </label>
 
-      <div class="border rounded p-2" style="margin: 12px 0">
+      <label>
+        Título
+        <input name="titulo" class="form-control" required />
+      </label>
+
+      <label>
+        Notas
+        <textarea name="notas" class="form-control"></textarea>
+      </label>
+
+      <div class="border rounded p-2 mt-2">
         <div class="d-flex align-items-center justify-content-between mb-2">
           <strong>Ítems</strong>
           <button type="button" class="btn btn--outline" onclick="addItem()">
@@ -32,22 +38,27 @@
         <div id="items"></div>
       </div>
 
-      <button class="btn">Guardar</button>
+      <button class="btn mt-3">Guardar</button>
     </form>
   </div>
 </div>
 
 <script>
-  function addItem(desc='', qty='', price='') {
-    const div = document.createElement('div');
-    div.className = 'grid';
-    div.style = 'display:grid; grid-template-columns: 1fr 120px 120px auto; gap:8px; margin-bottom:8px;';
-    div.innerHTML = 
-      '<input name="item_desc" placeholder="Descripción" value="' + desc + '" required />' +
-      '<input name="item_qty" type="number" min="0" step="1" placeholder="Cant." value="' + qty + '" required />' +
-      '<input name="item_price" type="number" min="0" step="0.01" placeholder="Precio" value="' + price + '" required />' +
-      '<button type="button" class="btn btn--ghost" onclick="this.parentElement.remove()">Eliminar</button>';
-    document.getElementById('items').appendChild(div);
+  function addItem(desc = "", qty = "", price = "") {
+    const row = document.createElement("div");
+    row.className = "grid mt-2";
+    row.innerHTML =
+      '<input name="item_desc" class="form-control" placeholder="Descripción" value="' +
+      desc +
+      '" required />' +
+      '<input name="item_qty" class="form-control" type="number" min="0" step="1" placeholder="Cant." value="' +
+      qty +
+      '" required />' +
+      '<input name="item_price" class="form-control" type="number" min="0" step="0.01" placeholder="Precio" value="' +
+      price +
+      '" required />' +
+      '<button type="button" class="btn btn--outline" onclick="this.parentElement.remove()">Eliminar</button>';
+    document.getElementById("items").appendChild(row);
   }
   addItem();
 </script>

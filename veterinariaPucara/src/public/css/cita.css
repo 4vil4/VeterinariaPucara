@@ -2,21 +2,13 @@
 .btn-pdf,
 .btn-ir {
     width: 50px;
-    /* ancho fijo */
     height: 50px;
-    /* alto fijo */
     display: flex;
-    /* centrado flexible */
     align-items: center;
-    /* centra verticalmente */
     justify-content: center;
-    /* centra horizontalmente */
     border-radius: 50%;
-    /* hace el botón circular */
     padding: 0;
-    /* quita padding para centrar mejor */
     font-size: 24px;
-    /* tamaño del icono */
 }
 
 /* WhatsApp */
@@ -57,24 +49,20 @@
     cursor: not-allowed;
 }
 
+/* Botones de filtro */
 .acciones-btns {
     display: flex;
     gap: 8px;
-    /* separación entre botones */
     justify-content: center;
-    /* centrado dentro de la celda */
     align-items: center;
 }
 
 .filtros-fecha {
     display: flex;
     gap: 16px;
-    /* más separación entre botones */
     justify-content: center;
-    /* centrado horizontal */
     align-items: center;
     margin: 20px 0;
-    /* más aire arriba y abajo */
 }
 
 .chip {

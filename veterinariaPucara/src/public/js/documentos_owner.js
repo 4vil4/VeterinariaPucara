@@ -85,4 +85,37 @@
     modalPres && modalPres.addEventListener('click', (e) => {
         if (e.target === modalPres) modalPres.style.display = 'none';
     });
+
+    // --- Historial ---
+    const btnHist = document.getElementById('btnHistorial');
+    const modalHist = document.getElementById('historialModal');
+    const selHist = document.getElementById('selPetHist');
+    const goHist = document.getElementById('goHistorial');
+    const cancelHist = document.getElementById('cancelHistorial');
+
+    btnHist && btnHist.addEventListener('click', () => {
+        if (modalHist) modalHist.style.display = 'block';
+        loadPetsInto(selHist);
+        if (goHist) goHist.disabled = true;
+    });
+
+    cancelHist && cancelHist.addEventListener('click', () => {
+        if (modalHist) modalHist.style.display = 'none';
+    });
+
+    selHist && selHist.addEventListener('change', () => {
+        if (goHist) goHist.disabled = !selHist.value;
+    });
+
+    goHist && goHist.addEventListener('click', () => {
+        if (selHist && selHist.value) {
+            // redirige al historial (list.ejs) de la mascota seleccionada
+            location.href = '/documentos/' + selHist.value;
+        }
+    });
+
+    // cerrar al hacer click fuera de la tarjeta
+    modalHist && modalHist.addEventListener('click', (e) => {
+        if (e.target === modalHist) modalHist.style.display = 'none';
+    });
 })();

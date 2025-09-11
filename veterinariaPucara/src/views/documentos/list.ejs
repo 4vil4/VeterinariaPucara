@@ -1,24 +1,12 @@
 <%- include('../layouts/layout', { body: `
-<div class="d-flex align-items-center justify-content-between mb-3">
+<div class="page-header">
   <h2>Documentos de la mascota #${pet_id}</h2>
-  <a class="btn" href="/documentos/${pet_id}/receta">Nueva receta</a>
-</div>
-
-<div class="card shadow-sm">
-  <div class="card-body p-0">
-    <table class="tbl">
-      <thead>
-        <tr>
-          <th>Tipo</th>
-          <th>Fecha</th>
-          <th>Datos</th>
-          <th style="width: 120px">Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${rowsHtml}
-      </tbody>
-    </table>
+  <div class="d-flex gap-2">
+    <a class="btn btn--outline" href="/documentos/owner/${pet_id}">Volver</a>
+    <a class="btn" href="/documentos/${pet_id}/receta">Nueva receta</a>
   </div>
 </div>
+
+<!-- Tarjetas generadas en servidor -->
+<div id="docs-cards">${cardsHtml}</div>
 ` }) %>

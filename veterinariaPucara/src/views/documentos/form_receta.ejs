@@ -1,17 +1,22 @@
 <%- include('../layouts/layout', { body: `
-<h2>Nueva receta</h2>
+<div class="page-header">
+  <h2>Nueva receta</h2>
+</div>
+
 <div class="card shadow-sm">
   <div class="card-body">
     <form method="POST" action="/documentos/${pet_id}/receta" class="form">
-      <label
-        >Medicamentos (uno por línea)
-        <textarea name="medicamentos" required></textarea>
+      <label>
+        Medicamentos (uno por línea)
+        <textarea name="medicamentos" class="form-control" required></textarea>
       </label>
-      <label
-        >Indicaciones
-        <textarea name="indicaciones" required></textarea>
+
+      <label>
+        Indicaciones
+        <textarea name="indicaciones" class="form-control" required></textarea>
       </label>
-      <button class="btn">Guardar</button>
+
+      <button class="btn mt-2">Guardar</button>
     </form>
   </div>
 </div>
