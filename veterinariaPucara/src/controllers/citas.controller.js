@@ -4,8 +4,19 @@ import dayjs from 'dayjs';
 
 export async function list(req, res) {
     const ok = req.query.ok === '1';
-    const citas = await Citas.getCitas();
-    res.render('citas/list', { citas, ok });
+    const f = (req.query.f || 'todos').toLowerCase();
+
+    let citas;
+    if (f === 'hoy' || f === 'manana') {
+        const base = f === 'hoy' ? dayjs() : dayjs().add(1, 'day');
+        const start = base.startOf('day').format('YYYY-MM-DD HH:mm:ss');
+        const end = base.endOf('day').format('YYYY-MM-DD HH:mm:ss');
+        citas = await Citas.getCitasByRange(start, end);
+    } else {
+        citas = await Citas.getCitas();
+    }
+
+    res.render('citas/list', { citas, ok, f });
 }
 
 export async function formNew(req, res) {

@@ -2,13 +2,19 @@
 
   <div class="d-flex align-items-center justify-content-between mb-3">
     <h2>Citas</h2>
-    <a class="btn" href="/citas/nueva">Nueva cita</a>
+    <a class="btn-new" href="/citas/nueva">Nueva cita</a>
     <% if (typeof ok !=='undefined' && ok) { %>
       <div class="alert alert-success" style="margin-bottom: 16px">
         Cita agregada exitosamente.
       </div>
       <% } %>
   </div>
+  <div class="filtros-fecha">
+    <a href="/citas?f=hoy" class="chip <%= (f === 'hoy') ? 'active' : '' %>">Hoy</a>
+    <a href="/citas?f=manana" class="chip <%= (f === 'manana') ? 'active' : '' %>">Mañana</a>
+    <a href="/citas?f=todos" class="chip <%= (!f || f === 'todos') ? 'active' : '' %>">Todos</a>
+  </div>
+
 
   <div class="card shadow-sm">
     <div class="card-body p-0">
@@ -46,28 +52,22 @@
                 <%= c.observaciones || '-' %>
               </td>
               <td>
-                <a
-                  class="btn btn-sm btn-outline-success"
-                  href="/citas/<%= c.id %>/whatsapp"
-                  target="_blank"
-                >WhatsApp</a>
+                <div class="acciones-btns">
+                  <a class="btn btn-wsp" href="/citas/<%= c.id %>/whatsapp" target="_blank">
+                    <i class="fab fa-whatsapp"></i>
+                  </a>
 
-                <a href="/citas/<%= c.id %>/pdf" class="btn btn-sm btn-primary">PDF</a>
+                  <a href="/citas/<%= c.id %>/pdf" class="btn-pdf">
+                    <i class="fa-regular fa-file-pdf"></i>
+                  </a>
 
-                <% 
-                  const d = new Date(c.fecha);
-                  const now = new Date();
-                  const isToday =
-                    d.getFullYear() === now.getFullYear() &&
-                    d.getMonth() === now.getMonth() &&
-                    d.getDate() === now.getDate();
-                %>
+                  <% const d=new Date(c.fecha); const now=new Date(); const isToday=d.getFullYear()===now.getFullYear()
+                    && d.getMonth()===now.getMonth() && d.getDate()===now.getDate(); %>
 
-                <a
-                  href="/mascotas/<%= c.pet_id %>/consultas"
-                  class="btn btn-sm btn-secondary <%= isToday ? '' : 'disabled' %>"
-                  <%= isToday ? '' : 'tabindex=-1 aria-disabled=true' %>
-                >Ir</a>
+                    <a href="/mascotas/<%= c.pet_id %>/consultas" class="btn-ir <%= isToday ? '' : 'disabled' %>"
+                      <%=isToday ? '' : 'tabindex=-1 aria-disabled=true' %>
+                      >Ir</a>
+                </div>
               </td>
             </tr>
             <% }) %>

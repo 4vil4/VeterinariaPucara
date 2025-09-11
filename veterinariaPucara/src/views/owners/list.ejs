@@ -1,7 +1,7 @@
 <%- include('../layouts/layout', { body: `
 <div class="d-flex align-items-center justify-content-between mb-3">
   <h2>Propietarios</h2>
-  <a class="btn" href="/propietarios/nuevo">Nuevo propietario</a>
+  <a class="btn-new" href="/propietarios/nuevo">Nuevo propietario</a>
 </div>
 <div class="card shadow-sm">
   <div class="card-body p-0">
@@ -21,7 +21,7 @@
           <td>${o.fono || '-'}</td>
           <td>${o.email || '-'}</td>
           <td>
-            <a class="link" href="/propietarios/${o.id}/mascotas">Mascotas</a>
+            <a class="link btn-pets" href="/propietarios/${o.id}/mascotas">Mascotas</a>
           </td>
         </tr>
         `).join('')}

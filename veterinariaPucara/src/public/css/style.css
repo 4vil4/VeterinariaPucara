@@ -108,4 +108,49 @@ h5 {
 
 .text-muted {
     color: var(--muted) !important;
+} 
+
+.btn-acit {
+    background-color: #007bff;
+    color: white;
+    padding: 5px 10px;
+    text-decoration: none;
+    border-radius: 15px;
+    font-weight: bold;
+    font-size: 1.4rem;
+}
+
+.btn-acit:hover {
+    background-color: #0056b3;
+    color: white;
+}
+
+.btn-apro {
+    background-color: #28a745;
+    color: white;
+    padding: 5px 10px;
+    text-decoration: none;
+    border-radius: 15px;
+    font-weight: bold;
+    font-size: 1.4rem;
+}
+
+.btn-apro:hover {
+    background-color: #1e7e34;
+    color: white;
+}
+
+.btn-sub {
+    background-color: #007bff;
+    color: white;
+    padding: 5px 10px;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.btn-sub:hover {
+    background-color: #0056b3;
+    color: white;
 }

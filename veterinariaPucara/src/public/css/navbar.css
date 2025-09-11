@@ -17,3 +17,39 @@
 .navbar-nav .nav-link:hover {
     color: #0e6fd6;
 }
+
+.navbar-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-right: 60px;
+}
+
+.btn-pro {
+    background-color: #007bff;
+    color: white;
+    padding: 5px 10px;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.btn-cit {
+    background-color: #007bff;
+    color: white;
+    padding: 5px 10px;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.btn-pro:hover {
+    background-color: #4093ec;
+    color: white;
+}
+
+.btn-cit:hover {
+    background-color: #0056b3;
+    color: white;
+}

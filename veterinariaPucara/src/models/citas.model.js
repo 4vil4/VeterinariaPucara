@@ -21,6 +21,23 @@ export async function getCitas() {
   return rows;
 }
 
+export async function getCitasByRange(start, end) {
+  const [rows] = await pool.query(`
+    SELECT 
+      c.id, c.fecha, c.tipo, c.observaciones, c.urgencia,
+      p.id AS pet_id,
+      p.name_pet AS mascota,
+      u.name AS propietario
+    FROM citas c
+    LEFT JOIN citas_mascotas cm ON cm.cita_id = c.id
+    LEFT JOIN pets p ON p.id = cm.pet_id
+    LEFT JOIN users u ON u.id = p.user_id
+    WHERE c.fecha BETWEEN ? AND ?
+    ORDER BY c.fecha DESC
+  `, [start, end]);
+  return rows;
+}
+
 export async function createCita({ fecha, tipo, observaciones, urgencia, pet_ids }) {
   const conn = await pool.getConnection();
   try {
