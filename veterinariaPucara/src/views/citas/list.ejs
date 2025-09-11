@@ -61,12 +61,18 @@
                     <i class="fa-regular fa-file-pdf"></i>
                   </a>
 
-                  <% const d=new Date(c.fecha); const now=new Date(); const isToday=d.getFullYear()===now.getFullYear()
-                    && d.getMonth()===now.getMonth() && d.getDate()===now.getDate(); %>
+                  <% 
+                    const d = new Date(c.fecha); 
+                    const now = new Date(); 
+                    const isToday = d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth() && d.getDate()===now.getDate();
+                    const isUrgent = !!c.urgencia;
+                  %>
 
-                    <a href="/mascotas/<%= c.pet_id %>/consultas" class="btn-ir <%= isToday ? '' : 'disabled' %>"
-                      <%=isToday ? '' : 'tabindex=-1 aria-disabled=true' %>
-                      >Ir</a>
+                  <a 
+                    href="/mascotas/<%= c.pet_id %>/consultas" 
+                    class="btn-ir <%= isUrgent ? 'btn-ir--urgent' : (isToday ? '' : 'disabled') %>"
+                    <%= (isUrgent || isToday) ? '' : 'tabindex=-1 aria-disabled=true' %>
+                  >Ir</a>
                 </div>
               </td>
             </tr>

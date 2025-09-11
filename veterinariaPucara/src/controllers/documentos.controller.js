@@ -13,10 +13,13 @@ export async function listByPet(req, res) {
     datos: d.datos || {},
   }));
 
-  const cardsHtml = docsParsed.map(d => {
-    const actionsHtml = (d.tipo === 'receta')
-      ? `<a class="btn btn--outline" href="/documentos/${petId}/receta/${d.id}/pdf">PDF</a>`
-      : '';
+  const buildCard = (d) => {
+    const actionsHtml =
+      d.tipo === 'receta'
+        ? `<a class="btn-pdf" href="/documentos/${petId}/receta/${d.id}/pdf" title="PDF"><i class="fa-regular fa-file-pdf"></i></a>`
+        : d.tipo === 'presupuesto'
+          ? `<a class="btn-pdf" href="/documentos/${petId}/presupuesto/${d.id}/pdf" title="PDF"><i class="fa-regular fa-file-pdf"></i></a>`
+          : '';
 
     let contentHtml = '';
 
@@ -96,9 +99,16 @@ export async function listByPet(req, res) {
         </div>
       </div>
     `;
-  }).join('');
+  };
 
-  res.render('documentos/list', { pet_id: petId, cardsHtml });
+  const cardsRecetasHtml = docsParsed.filter(d => d.tipo === 'receta').map(buildCard).join('');
+  const cardsPresupuestosHtml = docsParsed.filter(d => d.tipo === 'presupuesto').map(buildCard).join('');
+
+  res.render('documentos/list', {
+    pet_id: petId,
+    cardsRecetasHtml,
+    cardsPresupuestosHtml
+  });
 }
 
 // ===== LISTA por propietario (tablas) =====
@@ -167,6 +177,48 @@ export async function exportRecetaPdf(req, res) {
     res.status(500).send('No fue posible generar el PDF.');
   }
 }
+
+// ===== PDF Presupuesto =====
+export async function exportPresupuestoPdf(req, res) {
+  try {
+    const { petId, docId } = req.params;
+    const doc = await Docs.getDocById(docId);
+    if (!doc || doc.tipo !== 'presupuesto' || String(doc.pet_id) !== String(petId)) {
+      return res.status(404).send('Presupuesto no encontrado');
+    }
+
+    const pet = await Docs.getPetById(petId);
+    const owner = await Docs.getOwnerByPetId(petId);
+    const items = Array.isArray(doc.datos?.items) ? doc.datos.items : [];
+    const total = items.reduce((acc, it) => acc + Number(it.qty || 0) * Number(it.price || 0), 0);
+
+    const data = {
+      title: 'Presupuesto',
+      generadoEl: dayjs().format('DD/MM/YYYY HH:mm'),
+      baseUrl: `${req.protocol}://${req.get('host')}`,
+      presupuesto: {
+        id: doc.id,
+        fecha: dayjs(doc.created_at).format('DD/MM/YYYY HH:mm'),
+        titulo: doc.datos?.titulo || '',
+        notas: doc.datos?.notas || '',
+        items,
+        total,
+      },
+      pet: pet ? { id: pet.id, nombre: pet.name_pet, especie: pet.especie, raza: pet.raza } : null,
+      owner: owner ? { nombre: owner.name, fono: owner.fono, email: owner.email } : null,
+      clinica: { nombre: 'Clínica Veterinaria Pucará' },
+    };
+
+    const pdfBuffer = await generatePdfFromView(req.app, 'pdf/presupuesto', data);
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="presupuesto_${doc.id}.pdf"`);
+    res.send(pdfBuffer);
+  } catch (err) {
+    console.error('Error exportando presupuesto a PDF:', err);
+    res.status(500).send('No fue posible generar el PDF.');
+  }
+}
+
 
 // ===== CREATE Presupuesto =====
 export async function formPresupuesto(req, res) {

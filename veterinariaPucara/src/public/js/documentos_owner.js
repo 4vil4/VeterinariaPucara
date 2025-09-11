@@ -109,7 +109,6 @@
 
     goHist && goHist.addEventListener('click', () => {
         if (selHist && selHist.value) {
-            // redirige al historial (list.ejs) de la mascota seleccionada
             location.href = '/documentos/' + selHist.value;
         }
     });

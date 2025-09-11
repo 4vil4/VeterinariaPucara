@@ -23,7 +23,7 @@
 
 /* PDF */
 .btn-pdf {
-    background-color: #d32f2f;
+    background-color: #f14d4d;
     color: white;
 }
 
@@ -91,4 +91,23 @@
     border-color: #0056b3;
     color: #fff;
     box-shadow: 0 4px 10px rgba(0, 123, 255, .4);
+}
+
+/* Ir urgente: siempre rojo */
+.btn-ir--urgent {
+    background-color: #d32f2f;
+    color: #fff;
+}
+
+.btn-ir--urgent:hover {
+    background-color: #b71c1c;
+}
+
+.acciones-btns .btn-ir.btn-ir--urgent {
+    background-color: #d32f2f;
+    color: #fff;
+}
+
+.acciones-btns .btn-ir.btn-ir--urgent:hover {
+    background-color: #b71c1c;
 }

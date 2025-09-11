@@ -2,11 +2,24 @@
 <div class="page-header">
   <h2>Documentos de la mascota #${pet_id}</h2>
   <div class="d-flex gap-2">
-    <a class="btn btn--outline" href="/documentos/owner/${pet_id}">Volver</a>
+    <a class="btn btn--outline" href="javascript:history.back()">Volver</a>
     <a class="btn" href="/documentos/${pet_id}/receta">Nueva receta</a>
   </div>
 </div>
 
-<!-- Tarjetas generadas en servidor -->
-<div id="docs-cards">${cardsHtml}</div>
+<!-- Encabezado de sección: Recetas -->
+<div class="card shadow-sm card-bg">
+  <div class="card-body p-0">
+    <div class="p-2"><strong>Recetas</strong></div>
+  </div>
+</div>
+${cardsRecetasHtml ? cardsRecetasHtml : '<div class="text-muted p-2">Sin recetas</div>'}
+
+<!-- Encabezado de sección: Presupuestos -->
+<div class="card shadow-sm mt-3 card-bg">
+  <div class="card-body p-0">
+    <div class="p-2"><strong>Presupuestos</strong></div>
+  </div>
+</div>
+${cardsPresupuestosHtml ? cardsPresupuestosHtml : '<div class="text-muted p-2">Sin presupuestos</div>'}
 ` }) %>

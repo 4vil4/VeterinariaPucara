@@ -401,3 +401,31 @@ body {
 .mt-4 {
     margin-top: 1.25rem;
 }
+
+.card-bg {
+    background-color: #094db1;
+    color: #fff;
+    font-size: 1.4rem;
+}
+
+/* PDF */
+.btn-pdf-doc {
+    background-color: #f14d4d;
+    color: white;
+}
+
+.btn-pdf-doc:hover {
+    background-color: #b71c1c;
+    color: white;
+}
+
+.btn-pdf-doc {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    padding: 0;
+    font-size: 24px;
+}
