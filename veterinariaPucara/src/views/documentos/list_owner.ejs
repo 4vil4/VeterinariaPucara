@@ -1,0 +1,188 @@
+<%- include('../layouts/layout', { body: '' }) %>
+
+<div id="owner-docs" data-owner-id="<%= owner.id %>">
+  <div class="page-header">
+    <h2>Documentos de <%= owner.name %></h2>
+
+    <!-- Botones de acciones -->
+    <div class="d-flex gap-2">
+      <button class="btn btn--outline" id="btnHistorial">Historial</button>
+      <button class="btn" id="btnNuevoPresupuesto">Nuevo presupuesto</button>
+      <button class="btn btn--outline" id="btnNuevaReceta">Nueva receta</button>
+    </div>
+  </div>
+
+  <!-- === Sección: Recetas === -->
+  <div class="card shadow-sm mt-3">
+    <div class="card-body p-0">
+      <div class="p-2"><strong>Recetas</strong></div>
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Mascota</th>
+            <th>Datos</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% recetas.forEach(function(r){ const fecha = new
+          Date(r.created_at).toLocaleString('es-CL'); const meds =
+          Array.isArray(r.datos?.medicamentos) ? r.datos.medicamentos : [];
+          const indic = r.datos?.indicaciones || ''; const datosTxt = indic ||
+          (meds.length ? meds.join(', ') : '-'); %>
+          <tr>
+            <td><%= fecha %></td>
+            <td><%= r.name_pet || '-' %></td>
+            <td><%= datosTxt || '-' %></td>
+            <td>
+              <div class="acciones-btns">
+                <a
+                  class="btn-pdf"
+                  href="/documentos/<%= r.pet_id %>/receta/<%= r.id %>/pdf"
+                  title="PDF"
+                >
+                  <i class="fa-regular fa-file-pdf"></i>
+                </a>
+                <a
+                  class="btn-wsp"
+                  href="/documentos/owner/<%= owner.id %>/doc/<%= r.id %>/wsp"
+                  title="WhatsApp"
+                >
+                  <i class="fab fa-whatsapp"></i>
+                </a>
+              </div>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- === Sección: Presupuestos === -->
+  <div class="card shadow-sm mt-3">
+    <div class="card-body p-0">
+      <div class="p-2"><strong>Presupuestos</strong></div>
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Mascota</th>
+            <th>Título</th>
+            <th>Total</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% presupuestos.forEach(function(p){ const fecha = new
+          Date(p.created_at).toLocaleString('es-CL'); const items =
+          Array.isArray(p.datos?.items) ? p.datos.items : []; const total =
+          items.reduce((acc, it) => acc + Number(it.qty||0) *
+          Number(it.price||0), 0); %>
+          <tr>
+            <td><%= fecha %></td>
+            <td><%= p.name_pet || '-' %></td>
+            <td><%= p.datos?.titulo || '-' %></td>
+            <td>$<%= total %></td>
+            <td>
+              <div class="acciones-btns">
+                <!-- Si tienes endpoint de PDF para presupuesto, apunta acá -->
+                <a
+                  class="btn-pdf"
+                  href="/documentos/owner/<%= owner.id %>/presupuesto/<%= p.id %>/pdf"
+                  title="PDF"
+                >
+                  <i class="fa-regular fa-file-pdf"></i>
+                </a>
+                <a
+                  class="btn-wsp"
+                  href="/documentos/owner/<%= owner.id %>/doc/<%= p.id %>/wsp"
+                  title="WhatsApp"
+                >
+                  <i class="fab fa-whatsapp"></i>
+                </a>
+              </div>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- === Modal: Nueva receta === -->
+  <div id="recetaModal" class="modal-backdrop">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h4 class="mb-3">Nueva receta</h4>
+        <p class="text-muted">
+          Selecciona la mascota del propietario para crear la receta.
+        </p>
+        <div class="mb-3">
+          <label><strong>Mascota</strong></label>
+          <select id="selPetReceta" class="form-control">
+            <option value="">Cargando mascotas...</option>
+          </select>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn" id="goReceta" disabled>Ir al formulario</button>
+          <button class="btn btn--outline" id="cancelReceta">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- === Modal: Nuevo presupuesto === -->
+  <div id="presupuestoModal" class="modal-backdrop">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h4 class="mb-3">Nuevo presupuesto</h4>
+        <p class="text-muted">
+          Selecciona la mascota del propietario para crear el presupuesto.
+        </p>
+        <div class="mb-3">
+          <label><strong>Mascota</strong></label>
+          <select id="selPetPres" class="form-control">
+            <option value="">Cargando mascotas...</option>
+          </select>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn" id="goPresupuesto" disabled>
+            Ir al formulario
+          </button>
+          <button class="btn btn--outline" id="cancelPresupuesto">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- === Modal: Historial (nuevo) === -->
+  <div id="historialModal" class="modal-backdrop">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h4 class="mb-3">Ver historial</h4>
+        <p class="text-muted">
+          Selecciona la mascota cuyo historial quieres ver.
+        </p>
+        <div class="mb-3">
+          <label><strong>Mascota</strong></label>
+          <select id="selPetHist" class="form-control">
+            <option value="">Cargando mascotas...</option>
+          </select>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn" id="goHistorial" disabled>Ver historial</button>
+          <button class="btn btn--outline" id="cancelHistorial">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JS sin embebidos -->
+<script src="/js/documentos_owner.js"></script>

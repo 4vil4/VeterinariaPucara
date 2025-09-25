@@ -1,0 +1,29 @@
+.btn-pet {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 15px;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.btn-con {
+    background-color: #007bff;
+    color: white;
+    padding: 5px 10px;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.btn-con:hover {
+    background-color: #0056b3;
+    color: white;
+}
+
+.btn-pet:hover {
+    background-color: #134e21;
+    color: white;
+}

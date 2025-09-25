@@ -1,0 +1,123 @@
+<%- include('../layouts/layout', { title: 'Nueva cita', body: `
+<h2 class="mb-3">Nueva cita</h2>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <form method="POST" action="/citas/nueva" class="form" id="citaForm">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label">Fecha</label>
+          <input
+            type="datetime-local"
+            class="form-control"
+            name="fecha"
+            required
+          />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Tipo</label>
+          <input class="form-control" name="tipo" value="consulta" />
+        </div>
+        <div class="col-md-4 d-flex align-items-center">
+          <div class="form-check mt-4">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="urgencia"
+              value="1"
+              id="urg"
+            />
+            <label class="form-check-label" for="urg">Urgencia</label>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Propietario</label>
+          <select id="ownerSelect" class="form-select" required>
+            <option value="">Seleccione un propietario…</option>
+          </select>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Mascota(s)</label>
+          <select id="petSelect" class="form-select" multiple disabled required>
+            <option value="">Seleccione primero un propietario…</option>
+          </select>
+          <div class="form-text">
+            Puedes seleccionar más de una (Ctrl/Cmd + clic).
+          </div>
+        </div>
+
+        <div class="col-12">
+          <label class="form-label">Observaciones</label>
+          <textarea class="form-control" name="observaciones"></textarea>
+        </div>
+      </div>
+
+      <input type="hidden" name="pet_ids" id="petIdsHidden" />
+
+      <p class="muted mt-3">
+        Intervalos (min): ${ (config && config[0]) ? config[0].intervalo_min :
+        30 } — configurables en la tabla agenda_config.
+      </p>
+
+      <button class="btn btn-primary mt-2">Guardar</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  (async function () {
+    const ownerSel = document.getElementById("ownerSelect");
+    const petSel = document.getElementById("petSelect");
+    const hidden = document.getElementById("petIdsHidden");
+
+    const owners = await fetch("/api/owners").then((r) => r.json());
+    owners.forEach((o) => {
+      const opt = document.createElement("option");
+      opt.value = o.id;
+      opt.textContent = o.name + (o.fono ? " — " + o.fono : "");
+      ownerSel.appendChild(opt);
+    });
+
+    ownerSel.addEventListener("change", async () => {
+      petSel.innerHTML = "";
+      petSel.disabled = true;
+
+      if (!ownerSel.value) return;
+
+      const pets = await fetch("/api/owners/" + ownerSel.value + "/pets").then(
+        (r) => r.json()
+      );
+      if (!pets.length) {
+        const opt = document.createElement("option");
+        opt.value = "";
+        opt.textContent = "Este propietario no tiene mascotas registradas";
+        petSel.appendChild(opt);
+      } else {
+        pets.forEach((p) => {
+          const opt = document.createElement("option");
+          opt.value = p.id;
+          opt.textContent =
+            p.name_pet + (p.especie ? " (" + p.especie + ")" : "");
+          petSel.appendChild(opt);
+        });
+      }
+      petSel.disabled = false;
+    });
+
+    document.getElementById("citaForm").addEventListener("submit", (e) => {
+      const ids = Array.from(petSel.selectedOptions)
+        .map((o) => o.value)
+        .filter(Boolean);
+      const unique = Array.from(new Set(ids));
+      if (!unique.length) {
+        e.preventDefault();
+        alert("Selecciona al menos una mascota.");
+        return;
+      }
+      hidden.value = unique.join(",");
+    });
+  })();
+</script>
+` }) %>
