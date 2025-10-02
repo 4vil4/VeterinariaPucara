@@ -10,7 +10,7 @@
         renderer: 'svg',
         loop: true,
         autoplay: true,
-        path: '/anim/a-dog.json'
+        path: '/anim/a-cat.json'
     });
 
     pet.addEventListener('click', () => {
