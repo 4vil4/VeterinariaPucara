@@ -5,6 +5,13 @@
     --dark: #1b1f23;
     --soft: #f5f7fb;
     --muted: #6b7280;
+    --page-bg: #fcf3e3;
+}
+
+html,
+body {
+    min-height: 100%;
+    background: var(--page-bg) !important;
 }
 
 .bg-soft {
@@ -23,7 +30,7 @@
         #ffffff;
 }
 
-.pet-badge {
+.pet-badge-i {
     font-size: 68px;
     line-height: 1;
     opacity: .9;
@@ -108,7 +115,7 @@ h5 {
 
 .text-muted {
     color: var(--muted) !important;
-} 
+}
 
 .btn-acit {
     background-color: #007bff;
@@ -153,4 +160,30 @@ h5 {
 .btn-sub:hover {
     background-color: #0056b3;
     color: white;
+}
+
+.tbl {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tbl th,
+.tbl td {
+    padding: 10px 12px;
+    border-top: 1px solid #eee;
+    vertical-align: middle;
+}
+
+.tbl thead th {
+    background: #fafafa;
+    border-bottom: 1px solid #eee;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: #fff;
+}
+
+.btn-danger:hover {
+    filter: brightness(0.95);
 }
