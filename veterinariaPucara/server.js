@@ -12,6 +12,7 @@ import consultasRouter from './src/routes/consultas.routes.js';
 import citasRouter from './src/routes/citas.routes.js';
 import documentosRouter from './src/routes/documentos.routes.js';
 import apiRouter from './src/routes/api.routes.js';
+import galeriaRouter from './src/routes/galeria.routes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -39,6 +40,7 @@ app.use('/consultas', consultasRouter);
 app.use('/citas', citasRouter);
 app.use('/documentos', documentosRouter);
 app.use('/api', apiRouter);
+app.use('/galeria', galeriaRouter);
 
 // Abre WhatsApp con el texto prellenado
 app.get('/wsp/compose', (req, res) => {

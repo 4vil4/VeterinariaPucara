@@ -161,3 +161,29 @@ h5 {
     background-color: #0056b3;
     color: white;
 }
+
+.tbl {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tbl th,
+.tbl td {
+    padding: 10px 12px;
+    border-top: 1px solid #eee;
+    vertical-align: middle;
+}
+
+.tbl thead th {
+    background: #fafafa;
+    border-bottom: 1px solid #eee;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: #fff;
+}
+
+.btn-danger:hover {
+    filter: brightness(0.95);
+}

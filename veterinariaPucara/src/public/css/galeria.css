@@ -1,0 +1,55 @@
+/* --- layout tabla de galería --- */
+.tbl-galeria .col-img { width: 80px; }
+.tbl-galeria .col-precio { width: 120px; }
+.tbl-galeria .col-acciones { width: 160px; }
+
+/* miniatura en la lista */
+.gal-thumb {
+  width: 64px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 6px;
+  display: block;
+}
+
+/* tarjeta del formulario */
+.gal-form-card { max-width: 740px; }
+
+/* preview de imagen en el form */
+.gal-preview {
+  width: 160px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  display: block;
+}
+
+/* (opcional) grilla de tiles si la usas en otra vista */
+.grid-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+.tile {
+  border: 1px solid #eee;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.tile:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,.06);
+}
+.tile img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+}
+.tile figcaption {
+  padding: 8px 10px;
+  font-size: 14px;
+  color: #555;
+}
