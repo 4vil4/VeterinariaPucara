@@ -174,3 +174,23 @@
     box-shadow: 0 2px 8px rgba(14, 165, 233, .35);
     cursor: pointer;
 }
+
+a.btn-ficha {
+    background: #0d6efd;
+    color: #fff !important;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-weight: 600
+}
+
+a.btn-ficha:hover {
+    filter: brightness(.95)
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #2ecc71;
+    display: inline-block
+}
