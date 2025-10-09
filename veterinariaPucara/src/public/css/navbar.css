@@ -1,21 +1,55 @@
 .navbar {
+    --bs-navbar-padding-y: 0;
+    padding-block: 0;
     font-size: 1.4rem;
     font-weight: 600;
 }
 
+.bg {
+    background-color: #0250a3 !important;
+}
+
+.navbar .container {
+    display: flex;
+    align-items: center;
+    height: 120px;
+}
+
 .navbar-brand {
-    font-size: 1.3rem;
-    font-weight: 700;
+    padding: 0;
+    margin: 0;
+    line-height: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.brand-logo {
+    padding: 10px 0;
+    padding-top: 14%;
+    height: 170%;
+    width: auto;
+    display: block;
+}
+
+.navbar-collapse,
+.navbar-nav {
+    height: 100%;
+    display: flex;
+    align-items: center;
 }
 
 .navbar-nav .nav-link {
     font-size: 1.4rem;
     font-weight: 700;
-    transition: color 0.2s ease-in-out;
+    padding-top: 0;
+    padding-bottom: 0;
+    line-height: 1;
+    transition: color .2s ease-in-out;
 }
 
 .navbar-nav .nav-link:hover {
-    color: #0e6fd6;
+    color: #96c9ff;
 }
 
 .navbar-title {
@@ -24,32 +58,55 @@
     margin-right: 60px;
 }
 
-.btn-pro {
-    background-color: #007bff;
-    color: white;
-    padding: 5px 10px;
-    text-decoration: none;
-    border-radius: 10px;
-    font-weight: bold;
-    font-size: 1rem;
+.navbar-title:hover {
+    color: #96c9ff;
 }
 
+.btn-pro,
 .btn-cit {
-    background-color: #007bff;
-    color: white;
+    background-color: #ffd000;
+    color: #0e6fd6;
     padding: 5px 10px;
     text-decoration: none;
     border-radius: 10px;
     font-weight: bold;
     font-size: 1rem;
+    line-height: 1;
 }
 
-.btn-pro:hover {
-    background-color: #4093ec;
-    color: white;
-}
-
+.btn-pro:hover,
 .btn-cit:hover {
-    background-color: #0056b3;
-    color: white;
+    background-color: #bb9900;
+    color: #fff;
+}
+
+.forum {
+    color: #fff;
+}
+
+.promo-banner {
+    width: 100%;
+    aspect-ratio: 3 / 1;
+    /* alto cómodo y consistente */
+    border-radius: 12px;
+    /* igual que las cards */
+    overflow: hidden;
+}
+
+.promo-banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* centra y recorta sin deformar */
+    display: block;
+}
+
+@media (max-width:576px) {
+    .navbar .container {
+        height: 120px;
+    }
+
+    .brand-logo {
+        height: 100%;
+    }
 }
