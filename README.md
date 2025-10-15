@@ -80,12 +80,12 @@ veterinaria-front/
    cd veterinaria-pucara
 
 2. Instalar dependencias:
-
+    ```bash
     cd veterinaria-back
     npm install
 
 3. Iniciar el servidor de desarrollo:
-
+    ```bash
     cd veterinaria-back
     npm run dev
 
@@ -98,8 +98,8 @@ veterinaria-front/
     en Workbench => conectar
 
 4. Ejecutar la Web:
-
+    ```bash
     cd veterinaria-front
     npx serve -l 5500
-
+    ```
     abrir en el navegador => http://localhost:5500
