@@ -1,31 +1,6 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Servidor: 127.0.0.1
--- Tiempo de generación: 15-10-2025 a las 22:58:54
--- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.2.12
-
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Base de datos: `clinica_pucara`
---
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `antiparasitario`
---
 
 CREATE TABLE `antiparasitario` (
   `id` bigint(20) NOT NULL,
@@ -44,12 +19,6 @@ CREATE TABLE `antiparasitario` (
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `antipulgas`
---
-
 CREATE TABLE `antipulgas` (
   `id` bigint(20) NOT NULL,
   `mascota_id` bigint(20) NOT NULL,
@@ -65,12 +34,6 @@ CREATE TABLE `antipulgas` (
   `monto_total` decimal(10,2) NOT NULL DEFAULT 0.00,
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `cirugia`
---
 
 CREATE TABLE `cirugia` (
   `id` bigint(20) NOT NULL,
@@ -90,12 +53,6 @@ CREATE TABLE `cirugia` (
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `cita`
---
-
 CREATE TABLE `cita` (
   `id` bigint(20) NOT NULL,
   `fecha_inicio` datetime(3) NOT NULL,
@@ -110,31 +67,10 @@ CREATE TABLE `cita` (
   `updated_at` datetime(3) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Volcado de datos para la tabla `cita`
---
-
-INSERT INTO `cita` (`id`, `fecha_inicio`, `fecha_fin`, `tipo`, `urgencia`, `estado`, `observaciones`, `propietario_id`, `created_by`, `created_at`, `updated_at`) VALUES
-(1, '2025-10-15 06:46:00.000', NULL, 'consultas', 0, '', 'testter', 1, NULL, '2025-10-14 15:46:54.112', '2025-10-14 16:59:49.000'),
-(2, '2025-10-15 19:24:00.000', NULL, 'consulta', 1, 'confirmada', 'test', 1, NULL, '2025-10-14 16:24:44.843', '0000-00-00 00:00:00.000'),
-(3, '2025-10-23 02:04:00.000', NULL, 'consulta', 0, 'atendida', 'test', 1, NULL, '2025-10-14 17:04:17.185', '2025-10-14 17:08:30.000');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `citamascota`
---
-
 CREATE TABLE `citamascota` (
   `cita_id` bigint(20) NOT NULL,
   `mascota_id` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `consulta`
---
 
 CREATE TABLE `consulta` (
   `id` bigint(20) NOT NULL,
@@ -149,19 +85,6 @@ CREATE TABLE `consulta` (
   `anestesia_bool` tinyint(1) NOT NULL DEFAULT 0,
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Volcado de datos para la tabla `consulta`
---
-
-INSERT INTO `consulta` (`id`, `mascota_id`, `fecha`, `motivo`, `diagnostico`, `indicaciones`, `atendido_por`, `veterinario_id`, `monto_total`, `anestesia_bool`, `created_at`) VALUES
-(1, 1, '2025-10-15 14:08:00', 'control', 'test', 'test', NULL, NULL, 0.00, 0, '2025-10-14 14:08:41');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `control`
---
 
 CREATE TABLE `control` (
   `id` bigint(20) NOT NULL,
@@ -181,12 +104,6 @@ CREATE TABLE `control` (
   `created_at` datetime(3) NOT NULL DEFAULT current_timestamp(3)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `defuncion`
---
-
 CREATE TABLE `defuncion` (
   `id` bigint(20) NOT NULL,
   `mascota_id` bigint(20) NOT NULL,
@@ -198,12 +115,6 @@ CREATE TABLE `defuncion` (
   `observaciones` text DEFAULT NULL,
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `dermatologia`
---
 
 CREATE TABLE `dermatologia` (
   `id` bigint(20) NOT NULL,
@@ -221,12 +132,6 @@ CREATE TABLE `dermatologia` (
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `hospitalizacion`
---
-
 CREATE TABLE `hospitalizacion` (
   `id` bigint(20) NOT NULL,
   `mascota_id` bigint(20) NOT NULL,
@@ -242,12 +147,6 @@ CREATE TABLE `hospitalizacion` (
   `monto_total` decimal(10,2) NOT NULL DEFAULT 0.00,
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `mascota`
---
 
 CREATE TABLE `mascota` (
   `id` bigint(20) NOT NULL,
@@ -268,16 +167,6 @@ CREATE TABLE `mascota` (
   `updated_at` datetime(3) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Volcado de datos para la tabla `mascota`
---
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `oftalmologia`
---
-
 CREATE TABLE `oftalmologia` (
   `id` bigint(20) NOT NULL,
   `mascota_id` bigint(20) NOT NULL,
@@ -295,12 +184,6 @@ CREATE TABLE `oftalmologia` (
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `orden_examen`
---
-
 CREATE TABLE `orden_examen` (
   `id` bigint(20) NOT NULL,
   `mascota_id` bigint(20) NOT NULL,
@@ -315,12 +198,6 @@ CREATE TABLE `orden_examen` (
   `monto_total` decimal(10,2) NOT NULL DEFAULT 0.00,
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `profilaxis`
---
 
 CREATE TABLE `profilaxis` (
   `id` bigint(20) NOT NULL,
@@ -337,12 +214,6 @@ CREATE TABLE `profilaxis` (
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `propietario`
---
-
 CREATE TABLE `propietario` (
   `id` bigint(20) NOT NULL,
   `nombre` varchar(191) NOT NULL,
@@ -353,19 +224,6 @@ CREATE TABLE `propietario` (
   `created_at` datetime(3) NOT NULL DEFAULT current_timestamp(3),
   `updated_at` datetime(3) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Volcado de datos para la tabla `propietario`
---
-
-INSERT INTO `propietario` (`id`, `nombre`, `correo`, `movil`, `rut`, `direccion`, `created_at`, `updated_at`) VALUES
-(1, 'mario', 'test@test.cl', '+56912121212', '18188188-9', 'test', '2025-10-13 23:31:40.000', '2025-10-13 23:31:40.000');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `registro_comision`
---
 
 CREATE TABLE `registro_comision` (
   `id` bigint(20) NOT NULL,
@@ -378,12 +236,6 @@ CREATE TABLE `registro_comision` (
   `fecha` date NOT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `triaje`
---
 
 CREATE TABLE `triaje` (
   `id` bigint(20) NOT NULL,
@@ -398,12 +250,6 @@ CREATE TABLE `triaje` (
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `user`
---
-
 CREATE TABLE `user` (
   `id` bigint(20) NOT NULL,
   `nombre` varchar(255) NOT NULL,
@@ -415,20 +261,6 @@ CREATE TABLE `user` (
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `user`
---
-
-INSERT INTO `user` (`id`, `nombre`, `email`, `password_hash`, `role`, `reset_token`, `reset_expires`, `created_at`, `updated_at`) VALUES
-(1, 'Admin', 'admin@pucara.cl', '$2a$10$3X79bWGu7Q2KiIyFI6TOKOMEXt5UCb0QjUylVDLN8sldxpLENfic2', 'admin', NULL, NULL, '2025-10-14 20:03:36', NULL),
-(2, 'Mao', 'vet@test.cl', '$2a$10$rnbTacTroa36CHKGQhT89e2Q/WKKkjunxoTjCQbvCJcFEA9s4l5CG', 'vet', NULL, NULL, '2025-10-15 12:43:35', NULL);
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `vacuna`
---
 
 CREATE TABLE `vacuna` (
   `id` bigint(20) NOT NULL,
@@ -446,12 +278,6 @@ CREATE TABLE `vacuna` (
   `created_at` datetime(3) NOT NULL DEFAULT current_timestamp(3)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `veterinario`
---
-
 CREATE TABLE `veterinario` (
   `id` bigint(20) NOT NULL,
   `nombre` varchar(191) NOT NULL,
@@ -462,19 +288,6 @@ CREATE TABLE `veterinario` (
   `activo` tinyint(1) NOT NULL DEFAULT 1,
   `created_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Volcado de datos para la tabla `veterinario`
---
-
-INSERT INTO `veterinario` (`id`, `nombre`, `rut`, `correo`, `movil`, `user_id`, `activo`, `created_at`) VALUES
-(1, 'Mao', '17000000-6', 'test@tester.cl', '+56934343434', 2, 1, '2025-10-15 12:43:35');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `veterinarios`
---
 
 CREATE TABLE `veterinarios` (
   `id` int(11) NOT NULL,
@@ -487,440 +300,236 @@ CREATE TABLE `veterinarios` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
+DROP VIEW IF EXISTS `v_comision_mensual_vet`;
+CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `v_comision_mensual_vet` AS
+SELECT
+  `rc`.`veterinario_id` AS `veterinario_id`,
+  DATE_FORMAT(`rc`.`fecha`, '%Y-%m') AS `mes`,
+  COUNT(0) AS `cantidad_registros`,
+  SUM(`rc`.`base_monto`) AS `total_bruto`,
+  SUM(`rc`.`comision_monto`) AS `total_comision`
+FROM `registro_comision` `rc`
+GROUP BY `rc`.`veterinario_id`, DATE_FORMAT(`rc`.`fecha`, '%Y-%m');
 
---
--- Estructura Stand-in para la vista `v_comision_mensual_vet`
--- (Véase abajo para la vista actual)
---
-CREATE TABLE `v_comision_mensual_vet` (
-`veterinario_id` bigint(20)
-,`mes` varchar(7)
-,`cantidad_registros` bigint(21)
-,`total_bruto` decimal(32,2)
-,`total_comision` decimal(32,2)
-);
-
--- --------------------------------------------------------
-
---
--- Estructura para la vista `v_comision_mensual_vet`
---
-DROP TABLE IF EXISTS `v_comision_mensual_vet`;
-
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_comision_mensual_vet`  AS SELECT `rc`.`veterinario_id` AS `veterinario_id`, date_format(`rc`.`fecha`,'%Y-%m') AS `mes`, count(0) AS `cantidad_registros`, sum(`rc`.`base_monto`) AS `total_bruto`, sum(`rc`.`comision_monto`) AS `total_comision` FROM `registro_comision` AS `rc` GROUP BY `rc`.`veterinario_id`, date_format(`rc`.`fecha`,'%Y-%m') ;
-
---
--- Índices para tablas volcadas
---
-
---
--- Indices de la tabla `antiparasitario`
---
 ALTER TABLE `antiparasitario`
   ADD PRIMARY KEY (`id`),
   ADD KEY `mascota_id` (`mascota_id`),
   ADD KEY `fk_antiparasitario_veterinario` (`veterinario_id`);
 
---
--- Indices de la tabla `antipulgas`
---
 ALTER TABLE `antipulgas`
   ADD PRIMARY KEY (`id`),
   ADD KEY `mascota_id` (`mascota_id`),
   ADD KEY `fk_antipulgas_veterinario` (`veterinario_id`);
 
---
--- Indices de la tabla `cirugia`
---
 ALTER TABLE `cirugia`
   ADD PRIMARY KEY (`id`),
   ADD KEY `mascota_id` (`mascota_id`),
   ADD KEY `fk_cirugia_veterinario` (`veterinario_id`);
 
---
--- Indices de la tabla `cita`
---
 ALTER TABLE `cita`
   ADD PRIMARY KEY (`id`);
 
---
--- Indices de la tabla `citamascota`
---
 ALTER TABLE `citamascota`
   ADD PRIMARY KEY (`cita_id`,`mascota_id`),
   ADD KEY `CitaMascota_mascota_id_fkey` (`mascota_id`);
 
---
--- Indices de la tabla `consulta`
---
 ALTER TABLE `consulta`
   ADD PRIMARY KEY (`id`),
   ADD KEY `mascota_id` (`mascota_id`),
   ADD KEY `fk_consulta_veterinario` (`veterinario_id`);
 
---
--- Indices de la tabla `control`
---
 ALTER TABLE `control`
   ADD PRIMARY KEY (`id`),
   ADD KEY `Control_mascota_id_fecha_idx` (`mascota_id`,`fecha`),
   ADD KEY `fk_control_veterinario` (`veterinario_id`);
 
---
--- Indices de la tabla `defuncion`
---
 ALTER TABLE `defuncion`
   ADD PRIMARY KEY (`id`),
   ADD KEY `mascota_id` (`mascota_id`);
 
---
--- Indices de la tabla `dermatologia`
---
 ALTER TABLE `dermatologia`
   ADD PRIMARY KEY (`id`),
   ADD KEY `mascota_id` (`mascota_id`),
   ADD KEY `fk_dermatologia_veterinario` (`veterinario_id`);
 
---
--- Indices de la tabla `hospitalizacion`
---
 ALTER TABLE `hospitalizacion`
   ADD PRIMARY KEY (`id`),
   ADD KEY `mascota_id` (`mascota_id`),
   ADD KEY `fk_hospitalizacion_veterinario` (`veterinario_id`);
 
---
--- Indices de la tabla `mascota`
---
 ALTER TABLE `mascota`
   ADD PRIMARY KEY (`id`),
   ADD KEY `Mascota_propietario_id_fkey` (`propietario_id`);
 
---
--- Indices de la tabla `oftalmologia`
---
 ALTER TABLE `oftalmologia`
   ADD PRIMARY KEY (`id`),
   ADD KEY `mascota_id` (`mascota_id`),
   ADD KEY `fk_oftalmologia_veterinario` (`veterinario_id`);
 
---
--- Indices de la tabla `orden_examen`
---
 ALTER TABLE `orden_examen`
   ADD PRIMARY KEY (`id`),
   ADD KEY `mascota_id` (`mascota_id`),
   ADD KEY `fk_orden_examen_veterinario` (`veterinario_id`);
 
---
--- Indices de la tabla `profilaxis`
---
 ALTER TABLE `profilaxis`
   ADD PRIMARY KEY (`id`),
   ADD KEY `mascota_id` (`mascota_id`),
   ADD KEY `fk_profilaxis_veterinario` (`veterinario_id`);
 
---
--- Indices de la tabla `propietario`
---
 ALTER TABLE `propietario`
   ADD PRIMARY KEY (`id`);
 
---
--- Indices de la tabla `registro_comision`
---
 ALTER TABLE `registro_comision`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_vet_fecha` (`veterinario_id`,`fecha`);
 
---
--- Indices de la tabla `triaje`
---
 ALTER TABLE `triaje`
   ADD PRIMARY KEY (`id`),
   ADD KEY `mascota_id` (`mascota_id`),
   ADD KEY `fk_triaje_veterinario` (`veterinario_id`);
 
---
--- Indices de la tabla `user`
---
 ALTER TABLE `user`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `email` (`email`);
 
---
--- Indices de la tabla `vacuna`
---
 ALTER TABLE `vacuna`
   ADD PRIMARY KEY (`id`),
   ADD KEY `Vacuna_mascota_id_fecha_idx` (`mascota_id`,`fecha`),
   ADD KEY `fk_vacuna_veterinario` (`veterinario_id`);
 
---
--- Indices de la tabla `veterinario`
---
 ALTER TABLE `veterinario`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uk_veterinario_user` (`user_id`);
 
---
--- Indices de la tabla `veterinarios`
---
 ALTER TABLE `veterinarios`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `user_id` (`user_id`);
 
---
--- AUTO_INCREMENT de las tablas volcadas
---
-
---
--- AUTO_INCREMENT de la tabla `antiparasitario`
---
 ALTER TABLE `antiparasitario`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `antipulgas`
---
 ALTER TABLE `antipulgas`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `cirugia`
---
 ALTER TABLE `cirugia`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `cita`
---
 ALTER TABLE `cita`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `consulta`
---
 ALTER TABLE `consulta`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `control`
---
 ALTER TABLE `control`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `defuncion`
---
 ALTER TABLE `defuncion`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `dermatologia`
---
 ALTER TABLE `dermatologia`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `hospitalizacion`
---
 ALTER TABLE `hospitalizacion`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `mascota`
---
 ALTER TABLE `mascota`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `oftalmologia`
---
 ALTER TABLE `oftalmologia`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `orden_examen`
---
 ALTER TABLE `orden_examen`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `profilaxis`
---
 ALTER TABLE `profilaxis`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `propietario`
---
 ALTER TABLE `propietario`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `registro_comision`
---
 ALTER TABLE `registro_comision`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `triaje`
---
 ALTER TABLE `triaje`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `user`
---
 ALTER TABLE `user`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `vacuna`
---
 ALTER TABLE `vacuna`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `veterinario`
---
 ALTER TABLE `veterinario`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `veterinarios`
---
 ALTER TABLE `veterinarios`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
---
--- Restricciones para tablas volcadas
---
-
---
--- Filtros para la tabla `antiparasitario`
---
 ALTER TABLE `antiparasitario`
   ADD CONSTRAINT `antiparasitario_ibfk_1` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`),
   ADD CONSTRAINT `fk_antiparasitario_veterinario` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`);
 
---
--- Filtros para la tabla `antipulgas`
---
 ALTER TABLE `antipulgas`
   ADD CONSTRAINT `antipulgas_ibfk_1` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`),
   ADD CONSTRAINT `fk_antipulgas_veterinario` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`);
 
---
--- Filtros para la tabla `cirugia`
---
 ALTER TABLE `cirugia`
   ADD CONSTRAINT `cirugia_ibfk_1` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`),
   ADD CONSTRAINT `fk_cirugia_veterinario` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`);
 
---
--- Filtros para la tabla `citamascota`
---
 ALTER TABLE `citamascota`
   ADD CONSTRAINT `CitaMascota_cita_id_fkey` FOREIGN KEY (`cita_id`) REFERENCES `cita` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `CitaMascota_mascota_id_fkey` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`) ON UPDATE CASCADE;
 
---
--- Filtros para la tabla `consulta`
---
 ALTER TABLE `consulta`
   ADD CONSTRAINT `consulta_ibfk_1` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`),
   ADD CONSTRAINT `fk_consulta_veterinario` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`);
 
---
--- Filtros para la tabla `control`
---
 ALTER TABLE `control`
   ADD CONSTRAINT `Control_mascota_id_fkey` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`) ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_control_veterinario` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`);
 
---
--- Filtros para la tabla `defuncion`
---
 ALTER TABLE `defuncion`
   ADD CONSTRAINT `defuncion_ibfk_1` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`);
 
---
--- Filtros para la tabla `dermatologia`
---
 ALTER TABLE `dermatologia`
   ADD CONSTRAINT `dermatologia_ibfk_1` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`),
   ADD CONSTRAINT `fk_dermatologia_veterinario` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`);
 
---
--- Filtros para la tabla `hospitalizacion`
---
 ALTER TABLE `hospitalizacion`
   ADD CONSTRAINT `fk_hospitalizacion_veterinario` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`),
   ADD CONSTRAINT `hospitalizacion_ibfk_1` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`);
 
---
--- Filtros para la tabla `mascota`
---
 ALTER TABLE `mascota`
   ADD CONSTRAINT `Mascota_propietario_id_fkey` FOREIGN KEY (`propietario_id`) REFERENCES `propietario` (`id`) ON UPDATE CASCADE;
 
---
--- Filtros para la tabla `oftalmologia`
---
 ALTER TABLE `oftalmologia`
   ADD CONSTRAINT `fk_oftalmologia_veterinario` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`),
   ADD CONSTRAINT `oftalmologia_ibfk_1` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`);
 
---
--- Filtros para la tabla `orden_examen`
---
 ALTER TABLE `orden_examen`
   ADD CONSTRAINT `fk_orden_examen_veterinario` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`),
   ADD CONSTRAINT `orden_examen_ibfk_1` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`);
 
---
--- Filtros para la tabla `profilaxis`
---
 ALTER TABLE `profilaxis`
   ADD CONSTRAINT `fk_profilaxis_veterinario` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`),
   ADD CONSTRAINT `profilaxis_ibfk_1` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`);
 
---
--- Filtros para la tabla `registro_comision`
---
 ALTER TABLE `registro_comision`
   ADD CONSTRAINT `fk_registro_comision_vet` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`);
 
---
--- Filtros para la tabla `triaje`
---
 ALTER TABLE `triaje`
   ADD CONSTRAINT `fk_triaje_veterinario` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`),
   ADD CONSTRAINT `triaje_ibfk_1` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`);
 
---
--- Filtros para la tabla `vacuna`
---
 ALTER TABLE `vacuna`
   ADD CONSTRAINT `Vacuna_mascota_id_fkey` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`) ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_vacuna_veterinario` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`);
 
---
--- Filtros para la tabla `veterinario`
---
 ALTER TABLE `veterinario`
   ADD CONSTRAINT `fk_veterinario_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`);
 
---
--- Filtros para la tabla `veterinarios`
---
 ALTER TABLE `veterinarios`
   ADD CONSTRAINT `fk_vet_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`);
-COMMIT;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+COMMIT;
