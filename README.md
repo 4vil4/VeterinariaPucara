@@ -6,6 +6,7 @@ Proyecto desarrollado con **HTML + CSS + JavaScript**, con base de datos **MySQL
 ## 📂 Estructura del proyecto
 
 ### **Backend**
+```
 veterinaria-back/
 ├─ src/
 │ ├─ middlewares/
@@ -22,8 +23,10 @@ veterinaria-back/
 │ └─ db.js
 ├─ server.js
 └─ package.json
+```
 
 ### **Frontend**
+```
 veterinaria-front/
 ├─ assets/
 |   └─ logo.png
@@ -66,6 +69,7 @@ veterinaria-front/
 |     └─ urgencias.html
 ├─ index.html
 └─ package.json
+```
 
 ## ⚙️ Requisitos
 
