@@ -325,3 +325,33 @@ body {
     border: 1px solid #cbd5e1;
     border-radius: 10px
 }
+
+/* WhatsApp FAB */
+.whats-fab {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #25D366;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, .22);
+    cursor: pointer;
+    z-index: 9999;
+    transition: transform .15s ease, filter .15s ease;
+}
+
+.whats-fab:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.05);
+}
+
+.whats-fab svg {
+    width: 60px;
+    height: 60px;
+    fill: currentColor;
+}

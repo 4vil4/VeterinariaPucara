@@ -19,7 +19,7 @@ function setPublicUI(isPublic) {
   if (sidebar) {
     sidebar.classList.toggle('is-hidden', isPublic);
     sidebar.style.display = isPublic ? 'none' : '';
-    const shell = sidebar.parentElement; 
+    const shell = sidebar.parentElement;
     if (shell) shell.classList.toggle('public-no-sidebar', isPublic);
   }
 
@@ -138,6 +138,7 @@ async function router() {
 
   if (!isLoggedIn()) {
     setPublicUI(true);
+    updateWhatsFab(); 
     if (route !== '/public') {
       location.hash = '#/public';
       return;
@@ -154,6 +155,7 @@ async function router() {
   // UI privada 
   setPublicUI(false);
   buildMenu();
+  updateWhatsFab(); 
 
   if (!guardRoute(route)) return;
 
@@ -217,3 +219,39 @@ async function loadModuleOnce(url) {
   loadedModules.set(abs, mod);
   return mod;
 }
+
+// === WhatsApp FAB ===
+const WHATS_PHONE = '56912345678'; // <-- tu número en formato internacional SIN + ni 00
+const WHATS_MSG = 'Hola 👋, quisiera más información.';
+let $whatsFab = null;
+
+function ensureWhatsFab() {
+  if ($whatsFab) return $whatsFab;
+  const a = document.createElement('a');
+  a.id = 'whatsFab';
+  a.className = 'whats-fab';
+  a.href = `https://wa.me/${WHATS_PHONE}?text=${encodeURIComponent(WHATS_MSG)}`;
+  a.target = '_blank';
+  a.rel = 'noopener';
+  a.title = 'Escríbenos por WhatsApp';
+  a.innerHTML = `
+    <svg viewBox="0 0 32 32" aria-hidden="true">
+      <path d="M19.11 17.6c-.28-.14-1.63-.8-1.88-.89-.25-.09-.43-.14-.62.14-.19.28-.71.88-.88 1.06-.16.19-.32.21-.6.07-.28-.14-1.19-.44-2.27-1.41-.84-.75-1.41-1.68-1.58-1.96-.16-.28-.02-.43.12-.57.12-.12.28-.32.42-.49.14-.16.19-.28.28-.47.09-.19.05-.36-.02-.5-.07-.14-.62-1.49-.85-2.05-.22-.53-.44-.46-.62-.47h-.53c-.19 0-.5.07-.76.36-.26.28-1 1-1 2.43 0 1.43 1.02 2.81 1.16 3 .14.19 2 3.06 4.84 4.29.68.29 1.21.46 1.62.59.68.22 1.3.19 1.79.12.55-.08 1.63-.67 1.86-1.31.23-.64.23-1.19.16-1.31-.07-.12-.25-.19-.53-.33zM27 16c0 6.08-4.93 11-11 11-1.93 0-3.75-.5-5.32-1.39L4 27.99l2.43-6.46A10.94 10.94 0 0 1 5 16c0-6.07 4.93-11 11-11s11 4.93 11 11z"/>
+    </svg>`;
+  document.body.appendChild(a);
+  $whatsFab = a;
+  return $whatsFab;
+}
+
+function shouldShowWhatsFab() {
+  const role = getUser()?.role || null;
+  // visible si NO es admin (incluye público sin sesión y vet/user)
+  return role !== 'admin';
+}
+
+function updateWhatsFab() {
+  ensureWhatsFab();
+  $whatsFab.style.display = shouldShowWhatsFab() ? '' : 'none';
+}
+
+ensureWhatsFab(); updateWhatsFab();
