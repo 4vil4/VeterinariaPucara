@@ -9,7 +9,28 @@ function authHeaders() { const t = getToken(); return t ? { Authorization: `Bear
 /* ===== DOM ===== */
 const $sidebar = document.querySelector('aside.sidebar');
 const $menu = document.querySelector('aside.sidebar .menu');
-const $btnHeaderLogin = document.getElementById('btnHeaderLogin'); // botón en top-right
+const $btnHeaderLogin = document.getElementById('btnHeaderLogin');
+
+// === Config FAQ PetBot ===
+const PETBOT_FAQS = [
+  { q: '¿Horario de atención?', a: 'Atendemos de Lunes a Sábado de 09:00 a 19:00 hrs.', kw: ['horario', 'hora', 'abren', 'cierran'] },
+  { q: '¿Dónde están ubicados?', a: 'Estamos en Av. Pucará 1234, Ñuñoa, Santiago.', kw: ['dirección', 'ubicación', 'mapa', 'donde'] },
+  { q: '¿Toman urgencias?', a: 'Sí, recibimos urgencias. Si es crítico, ven cuanto antes y también avísanos por WhatsApp.', kw: ['urgencia', 'emergencia'] },
+  { q: '¿Vacunación?', a: 'Aplicamos el plan de vacunación completo para perros y gatos. Te asesoramos según edad y esquema.', kw: ['vacuna', 'vacunación'] },
+  { q: '¿Precios de consulta?', a: 'La consulta general tiene valor de $XXXXX. Pide tu hora por WhatsApp para confirmación.', kw: ['precio', 'valor', 'costo', 'consulta'] },
+];
+
+function normalize(s) { return (s || '').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+function findFaq(text) {
+  const t = normalize(text);
+  // 1) incluye por keyword
+  for (const f of PETBOT_FAQS) {
+    if (f.kw?.some(k => t.includes(normalize(k)))) return f;
+  }
+  // 2) incluye por parte de la pregunta
+  return PETBOT_FAQS.find(f => normalize(f.q).includes(t) || t.includes(normalize(f.q))) || null;
+}
+
 
 /* ===== Alternar UI pública/privada ===== */
 function setPublicUI(isPublic) {
@@ -138,7 +159,8 @@ async function router() {
 
   if (!isLoggedIn()) {
     setPublicUI(true);
-    updateWhatsFab(); 
+    updateWhatsFab();
+    updatePetBot();
     if (route !== '/public') {
       location.hash = '#/public';
       return;
@@ -155,7 +177,8 @@ async function router() {
   // UI privada 
   setPublicUI(false);
   buildMenu();
-  updateWhatsFab(); 
+  updateWhatsFab();
+  updatePetBot(); 
 
   if (!guardRoute(route)) return;
 
@@ -221,7 +244,7 @@ async function loadModuleOnce(url) {
 }
 
 // === WhatsApp FAB ===
-const WHATS_PHONE = '56912345678'; // <-- tu número en formato internacional SIN + ni 00
+const WHATS_PHONE = '56912345678';
 const WHATS_MSG = 'Hola 👋, quisiera más información.';
 let $whatsFab = null;
 
@@ -255,3 +278,111 @@ function updateWhatsFab() {
 }
 
 ensureWhatsFab(); updateWhatsFab();
+
+let $petFab = null, $petPanel = null, $petBody = null, $petInput = null;
+
+function ensurePetBotUI() {
+  if ($petFab && $petPanel) return;
+
+  // FAB (carita de perrito)
+  const fab = document.createElement('button');
+  fab.className = 'petbot-fab';
+  fab.type = 'button';
+  fab.title = 'Mascota virtual';
+  fab.innerHTML = `
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M5 9c0-2.76 2.24-5 5-5 1.64 0 3.09.8 4 2.02C15.91 4.8 17.36 4 19 4c2.76 0 5 2.24 5 5 0 3.87-3.13 7-7 7h-5c-3.87 0-7-3.13-7-7z" fill="#FFC107"/>
+      <circle cx="10" cy="10" r="1.5" fill="#111"/>
+      <circle cx="18" cy="10" r="1.5" fill="#111"/>
+      <path d="M12 14c.8 1 2.2 1 3 0" stroke="#111" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+    </svg>`;
+  fab.addEventListener('click', () => $petPanel.classList.toggle('open'));
+  document.body.appendChild(fab);
+  $petFab = fab;
+
+  // Panel
+  const panel = document.createElement('div');
+  panel.className = 'petbot-panel';
+  panel.innerHTML = `
+    <div class="petbot-header">
+      <div class="title">Pucará Bot 🐶</div>
+      <button class="petbot-close" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="petbot-body"></div>
+    <div class="petbot-input">
+      <input type="text" placeholder="Escribe tu pregunta..." />
+      <button type="button">Enviar</button>
+    </div>`;
+  document.body.appendChild(panel);
+
+  panel.querySelector('.petbot-close').addEventListener('click', () => panel.classList.remove('open'));
+  $petBody = panel.querySelector('.petbot-body');
+  $petInput = panel.querySelector('.petbot-input input');
+  const sendBtn = panel.querySelector('.petbot-input button');
+
+  function pushMsg(text, who = 'bot') {
+    const b = document.createElement('div');
+    b.className = `pb-msg ${who}`;
+    b.textContent = text;
+    $petBody.appendChild(b);
+    // auto scroll
+    $petBody.scrollTop = $petBody.scrollHeight;
+  }
+
+  function send(text) {
+    if (!text) return;
+    pushMsg(text, 'user');
+    const hit = findFaq(text);
+    if (hit) {
+      pushMsg(hit.a, 'bot');
+    } else {
+      pushMsg('No tengo esa respuesta aún 🤔. Puedes revisar las preguntas rápidas abajo o contáctanos por WhatsApp:', 'bot');
+      // botón a wsp
+      const quick = document.createElement('div'); quick.className = 'petbot-quick';
+      const a = document.createElement('a');
+      a.href = `https://wa.me/${WHATS_PHONE}?text=${encodeURIComponent('Hola, necesito ayuda: ' + text)}`;
+      a.target = '_blank'; a.rel = 'noopener';
+      a.className = 'btn-wa';
+      a.textContent = 'Abrir WhatsApp';
+      a.style = 'background:#25D366;color:#fff;border:none;padding:8px 10px;border-radius:8px;';
+      quick.appendChild(a);
+      $petBody.appendChild(quick);
+      $petBody.scrollTop = $petBody.scrollHeight;
+    }
+  }
+
+  function sendFromInput() {
+    const v = $petInput.value.trim();
+    if (!v) return;
+    $petInput.value = '';
+    send(v);
+  }
+
+  $petInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendFromInput(); });
+  sendBtn.addEventListener('click', sendFromInput);
+
+  // saludo + sugerencias
+  pushMsg('¡Hola! Soy tu mascota virtual. ¿En qué te ayudo?');
+  const quick = document.createElement('div'); quick.className = 'petbot-quick';
+  PETBOT_FAQS.slice(0, 5).forEach(f => {
+    const b = document.createElement('button');
+    b.textContent = f.q;
+    b.addEventListener('click', () => send(f.q));
+    quick.appendChild(b);
+  });
+  $petBody.appendChild(quick);
+
+  $petPanel = panel;
+}
+
+function shouldShowPetBot() {
+  const role = getUser()?.role || null;
+  return role !== 'admin'; // oculto para admin
+}
+
+function updatePetBot() {
+  ensurePetBotUI();
+  const show = shouldShowPetBot();
+  $petFab.style.display = show ? '' : 'none';
+  $petPanel.style.display = (show && $petPanel.classList.contains('open')) ? 'flex' : (show ? 'none' : 'none');
+}

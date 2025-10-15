@@ -329,8 +329,8 @@ body {
 /* WhatsApp FAB */
 .whats-fab {
     position: fixed;
-    right: 18px;
-    bottom: 18px;
+    right: 28px;
+    bottom: 28px;
     width: 80px;
     height: 80px;
     border-radius: 50%;
@@ -354,4 +354,157 @@ body {
     width: 60px;
     height: 60px;
     fill: currentColor;
+}
+
+
+/* ===== Mascota virtual (PetBot) ===== */
+.petbot-fab {
+    position: fixed;
+    right: 38px;
+    bottom: 120px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #fff;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, .22);
+    cursor: pointer;
+    z-index: 9998;
+    transition: transform .15s ease, filter .15s ease;
+}
+
+.petbot-fab:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.04);
+}
+
+.petbot-fab svg {
+    width: 32px;
+    height: 32px;
+}
+
+.petbot-panel {
+    position: fixed;
+    right: 18px;
+    bottom: 150px;
+    width: 320px;
+    max-height: 60vh;
+    background: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 16px 28px rgba(0, 0, 0, .24);
+    z-index: 9998;
+    display: none;
+    flex-direction: column;
+}
+
+.petbot-panel.open {
+    display: flex;
+}
+
+.petbot-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: #0b5ca8;
+    color: #fff;
+}
+
+.petbot-header .title {
+    font-weight: 700;
+}
+
+.petbot-close {
+    margin-left: auto;
+    background: transparent;
+    border: 0;
+    color: #fff;
+    cursor: pointer;
+}
+
+.petbot-body {
+    padding: 10px;
+    overflow: auto;
+    background: #f8fafc;
+}
+
+.pb-msg {
+    display: inline-block;
+    padding: 8px 10px;
+    border-radius: 12px;
+    margin: 4px 0;
+    max-width: 85%;
+}
+
+.pb-msg.bot {
+    background: #e2f3ff;
+    align-self: flex-start;
+}
+
+.pb-msg.user {
+    background: #e5e7eb;
+    align-self: flex-end;
+}
+
+.petbot-quick {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+}
+
+.petbot-quick button {
+    border: 1px solid #d1d5db;
+    padding: 6px 8px;
+    border-radius: 999px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.petbot-quick button:hover {
+    background: #f3f4f6;
+}
+
+.petbot-input {
+    display: flex;
+    gap: 6px;
+    padding: 10px;
+    border-top: 1px solid #e5e7eb;
+    background: #fff;
+}
+
+.petbot-input input {
+    flex: 1;
+    padding: 8px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+}
+
+.petbot-input button {
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 8px;
+    background: #0b5ca8;
+    color: #fff;
+    cursor: pointer;
+}
+
+/* Responsive: en móviles, que no tape demasiado */
+@media (max-width: 480px) {
+    .petbot-panel {
+        right: 12px;
+        left: 12px;
+        width: auto;
+        bottom: 140px;
+    }
+
+    .petbot-fab {
+        right: 12px;
+        bottom: 86px;
+    }
 }
