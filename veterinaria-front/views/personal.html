@@ -1,0 +1,31 @@
+<div class="card">
+  <div class="prop-header">
+    <h2>Personal</h2>
+    <div class="prop-actions">
+      <input id="vetSearch" class="input" placeholder="Buscar veterinario..." />
+      <button id="btnNuevoVet" class="btn btn-primary">
+        Nuevo veterinario
+      </button>
+    </div>
+  </div>
+
+  <div class="grid" style="grid-template-columns: 1fr 2fr; gap: 12px">
+    <div>
+      <div id="vetTableWrap">Cargando...</div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="citas-head">
+          <h3 id="vetTitle">Histórico por mes</h3>
+          <div class="citas-actions">
+            <input id="from" type="month" class="input" />
+            <input id="to" type="month" class="input" />
+            <button id="btnFiltrar" class="btn btn-outline">Filtrar</button>
+          </div>
+        </div>
+        <div id="vetResumenWrap">Seleccione un veterinario…</div>
+        <div id="vetDetalleWrap" style="margin-top: 12px"></div>
+      </div>
+    </div>
+  </div>
+</div>

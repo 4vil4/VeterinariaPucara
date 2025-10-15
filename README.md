@@ -1,23 +1,71 @@
 # 🐾 Veterinaria Pucará - Sitio Web Estático
 
 Sitio web institucional para **Veterinaria Pucará** en San Bernardo.  
-Proyecto desarrollado con **HTML + CSS + JavaScript**, sin base de datos.  
+Proyecto desarrollado con **HTML + CSS + JavaScript**, con base de datos **MySQL**.  
 
 ## 📂 Estructura del proyecto
 
-veterinaria-pucara-express/
-├─ public/
-│ ├─ index.html
-│ ├─ privacy.html
-│ ├─ terms.html
-│ ├─ /assets # imágenes, favicon, logo
-│ ├─ /css
-│ │ └─ styles.css
-│ └─ /js
+### **Backend**
+veterinaria-back/
+├─ src/
+│ ├─ middlewares/
+| |     └─auth.middlewares.js
+│ ├─ routes/
+| |     ├─ auth.routes.js
+| |     ├─ citas.routes.js
+| |     ├─ index.routes.js
+| |     ├─ mascotas.routes.js
+| |     ├─ personal.routes.js
+| |     ├─ propietarios.routes.js
+| |     ├─ registros.routes.js
+| |     └─ urgencias.routes.js
+│ └─ db.js
+├─ server.js
+└─ package.json
+
+### **Frontend**
+veterinaria-front/
+├─ assets/
+|   └─ logo.png
+├─ css/
+|   ├─ calendario.css
+|   ├─ citas.css
+|   ├─ historico.css
+|   ├─ login.css
+|   ├─ mascotas.css
+|   ├─ propietarios.css
+|   ├─ public.css
+|   ├─ registro.css
+|   ├─ style.css
+|   └─ urgencias.css
+├─ js/
+│ ├─ views/
+| |     ├─ login/
+| |     |   └─ login.js
+| |     ├─ calendario.js
+| |     ├─ citas.js
+| |     ├─ historico.js
+| |     ├─ mascotas.js
+| |     ├─ personal.js
+| |     ├─ propietarios.js
+| |     ├─ public.js
+| |     ├─ registro.js
+| |     └─ urgencias.js
 │ └─ main.js
-├─ server.js # servidor Express opcional
-├─ package.json
-└─ README.md
+├─ views/
+|     ├─ login/
+|     |   └─ login.html
+|     ├─ calendario.html
+|     ├─ citas.html
+|     ├─ historico.html
+|     ├─ mascotas.html
+|     ├─ personal.html
+|     ├─ propietarios.html
+|     ├─ public.html
+|     ├─ registro.html
+|     └─ urgencias.html
+├─ index.html
+└─ package.json
 
 ## ⚙️ Requisitos
 
@@ -33,12 +81,25 @@ veterinaria-pucara-express/
 
 2. Instalar dependencias:
 
+    cd veterinaria-back
     npm install
 
 3. Iniciar el servidor de desarrollo:
 
+    cd veterinaria-back
     npm run dev
 
-4. Abrir en el navegador:
+4. Instalacion BD MySQL:
 
-    http://localhost:3000
+    Abrir XAMPP o MySQL workbench
+    importar el archivo **clinica_pucara.sql**
+
+    en XAMPP => dar **Start** (Apachhe y MySQL)
+    en Workbench => conectar
+
+4. Ejecutar la Web:
+
+    cd veterinaria-front
+    npx serve -l 5500
+
+    abrir en el navegador => http://localhost:5500

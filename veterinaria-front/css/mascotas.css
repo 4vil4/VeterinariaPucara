@@ -1,0 +1,101 @@
+/* Vista Mascotas */
+.tbl {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow)
+}
+
+.tbl th,
+.tbl td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #eef2f7;
+    text-align: left;
+    font-size: .95rem
+}
+
+.tbl th {
+    background: #f3f6fb;
+    color: #475569
+}
+
+.tbl tr:hover {
+    background: #f9fbff
+}
+
+.actions {
+    display: flex;
+    gap: 8px
+}
+
+.btn-sm {
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 0;
+    cursor: pointer
+}
+
+.btn-primary {
+    background: #0250a3;
+    color: #fff
+}
+
+.btn-outline {
+    background: #fff;
+    border: 1px solid #cbd5e1
+}
+
+.pet-card {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 16px;
+    align-items: center
+}
+
+.pet-photo {
+    width: 120px;
+    height: 120px;
+    border-radius: 12px;
+    object-fit: cover;
+    background: #e2e8f0
+}
+
+.pet-title {
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: .3px
+}
+
+.kv {
+    margin: 2px 0;
+    color: #334155
+}
+
+.kv b {
+    color: #0f172a
+}
+
+.badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #e2e8f0;
+    color: #0f172a;
+    font-size: .8rem;
+    font-weight: 600
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px
+}
+
+.input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px
+}

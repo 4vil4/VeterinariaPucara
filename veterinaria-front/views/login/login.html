@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Clínica Pucará · Ingreso</title>
+
+    <!-- CSS del login (ruta absoluta para evitar problemas de ubicación) -->
+    <link rel="stylesheet" href="../../css/login.css" />
+  </head>
+  <body class="auth-page">
+    <main class="auth-wrap">
+      <section class="auth-card">
+        <div class="brand">
+          <!-- Si tienes un logo, descomenta la línea de abajo y ajusta la ruta -->
+          <img src="/assets/logo.png" alt="Clínica Pucará" class="logo" />
+          <p class="subtitle">Bienvenido 🐾</p>
+        </div>
+
+        <div class="tabs">
+          <button type="button" class="active" data-tab="login">
+            Ingresar
+          </button>
+          <button type="button" data-tab="register">Crear cuenta</button>
+          <button type="button" data-tab="forgot">Recuperar</button>
+        </div>
+
+        <!-- LOGIN -->
+        <form id="f_login" class="tab active" autocomplete="on">
+          <label for="l_email">Email</label>
+          <input
+            id="l_email"
+            type="email"
+            class="input"
+            placeholder="tucorreo@ejemplo.cl"
+            required
+          />
+
+          <label for="l_pass">Contraseña</label>
+          <input
+            id="l_pass"
+            type="password"
+            class="input"
+            placeholder="********"
+            required
+          />
+
+          <button class="btn btn-primary" type="submit">Entrar</button>
+        </form>
+
+        <!-- REGISTER -->
+        <form id="f_register" class="tab" autocomplete="off">
+          <label for="r_nombre">Nombre</label>
+          <input
+            id="r_nombre"
+            type="text"
+            class="input"
+            placeholder="Tu nombre"
+            required
+          />
+
+          <label for="r_email">Email</label>
+          <input
+            id="r_email"
+            type="email"
+            class="input"
+            placeholder="tucorreo@ejemplo.cl"
+            required
+          />
+
+          <label for="r_pass">Contraseña</label>
+          <input
+            id="r_pass"
+            type="password"
+            class="input"
+            placeholder="Mín. 6 caracteres"
+            minlength="6"
+            required
+          />
+
+          <button class="btn btn-primary" type="submit">Crear cuenta</button>
+        </form>
+
+        <!-- FORGOT -->
+        <form id="f_forgot" class="tab" autocomplete="off">
+          <label for="f_email">Email</label>
+          <input
+            id="f_email"
+            type="email"
+            class="input"
+            placeholder="tucorreo@ejemplo.cl"
+            required
+          />
+
+          <button class="btn btn-primary" type="submit">Enviar enlace</button>
+          <p id="forgot_msg" class="help"></p>
+        </form>
+
+        <footer class="small">Mantén tus mascotas al día.</footer>
+      </section>
+    </main>
+
+    <!-- Tu módulo JS del login -->
+    <script type="module" src="../../js/views/login/login.js"></script>
+  </body>
+</html>

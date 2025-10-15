@@ -1,0 +1,215 @@
+/* /css/public.css */
+
+/* Layout base */
+.public__container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 16px;
+}
+
+/* Hero / banner */
+.public__hero {
+    background: linear-gradient(135deg, #0b4e9b 0%, #0f69c4 60%, #0b4e9b 100%);
+    color: #fff;
+    padding: 28px 0;
+}
+
+.public__heroTitle {
+    margin: 0 0 6px;
+    font-size: 28px;
+    line-height: 1.2;
+}
+
+.public__heroSubtitle {
+    margin: 0;
+    opacity: .9;
+}
+
+/* Encabezado de sección */
+.public__header {
+    margin-top: 16px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.public__title {
+    margin: 0;
+}
+
+/* Grid de promociones */
+.promo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    min-height: 120px;
+}
+
+@media (max-width: 980px) {
+    .promo-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .promo-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* State loading */
+.promo-grid.is-loading::after {
+    content: 'Actualizando…';
+    display: block;
+    color: #64748b;
+    font-size: 14px;
+}
+
+/* Tarjetas */
+.promo-card {
+    padding: 0;
+    overflow: hidden;
+    border-radius: 14px;
+    box-shadow: 0 6px 20px rgba(2, 6, 23, .06);
+    transition: transform .15s ease, box-shadow .15s ease;
+    background: #fff;
+}
+
+.promo-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 26px rgba(2, 6, 23, .08);
+}
+
+.promo-card__media {
+    aspect-ratio: 16/9;
+    background: #e2e8f0;
+    /* slate-200 fallback cuando no hay img */
+    overflow: hidden;
+}
+
+.promo-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.promo-card__body {
+    padding: 12px 14px 14px;
+}
+
+.promo-card__head {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.promo-card__title {
+    margin: 0 0 6px;
+    font-size: 16px;
+}
+
+.promo-card__price {
+    font-weight: 700;
+}
+
+.promo-card__desc {
+    margin: 0 0 10px;
+    color: #475569;
+}
+
+.promo-card__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.promo-card__note {
+    color: #64748b;
+    font-size: 12px;
+}
+
+/* Badge genérica (si no hay una global) */
+.badge {
+    display: inline-block;
+    font-size: 12px;
+    line-height: 1;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+/* Empty state */
+.public__empty {
+    background: #f8fafc;
+    text-align: center;
+    padding: 24px;
+}
+
+.public__empty h3 {
+    margin: 0 0 4px;
+}
+
+.public__empty p {
+    margin: 0;
+    color: #64748b;
+}
+
+/* ===== Kill-switch de layout cuando estamos en modo público ===== */
+
+/* Ocultar el sidebar sin importar el selector */
+body.public-mode aside.sidebar,
+body.public-mode #sidebar,
+body.public-mode .sidebar {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* El contenedor que marcamos desde JS (padre del sidebar) se vuelve 1 columna */
+body.public-mode .public-no-sidebar {
+  display: block !important;
+  grid-template-columns: 1fr !important;
+  grid-auto-columns: 1fr !important;
+  gap: 0 !important;
+}
+
+/* Si ese contenedor usa flex con un ancho fijo para el aside, forzamos wrap y ancho completo */
+body.public-mode .public-no-sidebar {
+  flex-wrap: nowrap !important;
+}
+body.public-mode .public-no-sidebar > * {
+  flex: 0 0 auto;
+}
+body.public-mode .public-no-sidebar > #app,
+body.public-mode .public-no-sidebar > .content,
+body.public-mode .public-no-sidebar > main {
+  flex: 1 1 100% !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Por si el layout aplica margen/padding a la columna de contenido */
+body.public-mode main,
+body.public-mode .content,
+body.public-mode .main,
+body.public-mode .app,
+body.public-mode .app-content,
+body.public-mode .layout,
+body.public-mode .container,
+body.public-mode #app-wrapper,
+body.public-mode #app {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+}
+
+/* Ancho centrado agradable para la landing */
+body.public-mode #app,
+body.public-mode .public__container {
+  max-width: 1100px;
+  margin: 0 auto !important;
+  padding: 16px !important;
+}

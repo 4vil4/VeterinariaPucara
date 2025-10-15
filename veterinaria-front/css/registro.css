@@ -1,0 +1,44 @@
+.reg-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px
+}
+
+.reg-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center
+}
+
+#regSearch {
+    max-width: 320px
+}
+
+/* tabla genérica */
+.tbl {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow)
+}
+
+.tbl th,
+.tbl td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #eef2f7;
+    text-align: left;
+    font-size: .95rem
+}
+
+.tbl th {
+    background: #f3f6fb;
+    color: #475569
+}
+
+.tbl tr:hover {
+    background: #f9fbff
+}

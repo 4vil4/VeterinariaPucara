@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Clínica Pucará — Admin</title>
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
+  <body>
+    <!-- TOPBAR azul -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <img src="./assets/logo.png" alt="Logo" class="logo" />
+        <span class="brand">Clínica Pucará</span>
+      </div>
+      <div class="topbar__right">
+        <a class="btn btn-primary" href="/views/login/login.html" id="btnHeaderLogin">Iniciar sesión</a>
+      </div>
+    </header>
+
+    <div class="layout">
+      <!-- SIDEBAR -->
+      <aside class="sidebar" id="sidebar">
+        <nav class="menu">
+          <a href="#/mascotas" class="menu__item text-menu">
+            <span>🐾 Mascotas</span>
+          </a>
+          <a href="#/propietarios" class="menu__item text-menu">
+            <span>🧑 Propietarios</span>
+          </a>
+
+          <!-- REGISTROS con submenú -->
+          <button class="menu__item menu__item--btn  text-menu" id="btnRegistros">
+            📑</i><span>Registros</span>
+            <i class="i i-caret" aria-hidden="true"></i>
+          </button>
+          <div class="submenu" id="submenuRegistros">
+            <a href="#/registro/consulta" class="submenu__item text-submenu">📝 Consulta</a>
+            <a href="#/registro/control" class="submenu__item text-submenu">📝 Control</a>
+            <a href="#/registro/cirugia" class="submenu__item text-submenu">📝 Cirugía</a>
+            <a href="#/registro/vacuna" class="submenu__item text-submenu">📝 Vacuna</a>
+            <a href="#/registro/antiparasitario" class="submenu__item text-submenu"
+              >📝 Antiparasitario</a
+            >
+            <a href="#/registro/antipulgas" class="submenu__item text-submenu">📝 Antipulgas</a>
+            <a href="#/registro/hospitalizacion" class="submenu__item text-submenu"
+              >📝 Hospitalización</a
+            >
+            <a href="#/registro/triaje" class="submenu__item text-submenu">📝 Triaje</a>
+            <a href="#/registro/profilaxis" class="submenu__item text-submenu">📝 Profilaxis</a>
+            <a href="#/registro/defuncion" class="submenu__item text-submenu">📝 Defunción</a>
+            <a href="#/registro/dermatologia" class="submenu__item text-submenu"
+              >📝 Dermatología</a
+            >
+            <a href="#/registro/orden_examen" class="submenu__item text-submenu"
+              >📝 Orden de exámenes</a
+            >
+            <a href="#/registro/oftalmologia" class="submenu__item text-submenu"
+              >📝 Oftalmología</a
+            >
+          </div>
+
+          <a href="#/citas" class="menu__item text-menu text-menu">
+            <span>🧭 Citas</span>
+          </a>
+          <a href="#/calendario" class="menu__item text-menu text-menu">
+           <span>🗓️ Calendario</span>
+          </a>
+          <a href="#/urgencias" class="menu__item text-menu">
+            <span>🚨 Urgencias</span>
+          </a>
+          <a href="#/historico" class="menu__item text-menu">
+            <span>📁 Historico</span>
+          </a>
+          <a href="#/personal" class="menu__item text-menu">
+            <span>🩺 Personal</span>
+          </a>
+
+          <div class="menu__spacer"></div>
+
+          <button class="menu__item menu__item--btn  text-menu btn btn-outline" id="btnLogout">
+            <span>🔴 Cerrar sesión</span>
+          </button>
+        </nav>
+      </aside>
+
+      <!-- CONTENIDO -->
+      <main class="content" id="app">
+        <h1>Panel administrador</h1>
+        <p>Selecciona una opción del menú para comenzar.</p>
+      </main>
+    </div>
+
+    <script type="module" src="./js/main.js"></script>
+  </body>
+</html>
