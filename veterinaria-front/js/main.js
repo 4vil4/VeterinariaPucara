@@ -1,4 +1,5 @@
 const API = 'http://localhost:4000';
+let petAnim = null;
 
 /* ===== Auth helpers ===== */
 function getUser() { try { return JSON.parse(localStorage.getItem('auth_user') || 'null'); } catch { return null; } }
@@ -23,14 +24,9 @@ const PETBOT_FAQS = [
 function normalize(s) { return (s || '').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
 function findFaq(text) {
   const t = normalize(text);
-  // 1) incluye por keyword
-  for (const f of PETBOT_FAQS) {
-    if (f.kw?.some(k => t.includes(normalize(k)))) return f;
-  }
-  // 2) incluye por parte de la pregunta
+  for (const f of PETBOT_FAQS) if (f.kw?.some(k => t.includes(normalize(k)))) return f;
   return PETBOT_FAQS.find(f => normalize(f.q).includes(t) || t.includes(normalize(f.q))) || null;
 }
-
 
 /* ===== Alternar UI pública/privada ===== */
 function setPublicUI(isPublic) {
@@ -44,9 +40,7 @@ function setPublicUI(isPublic) {
     if (shell) shell.classList.toggle('public-no-sidebar', isPublic);
   }
 
-  // Botón "Iniciar sesión" solo en público
   if (btnHeaderLogin) btnHeaderLogin.style.display = isPublic ? '' : 'none';
-
   document.body.classList.toggle('public-mode', isPublic);
 }
 
@@ -160,7 +154,7 @@ async function router() {
   if (!isLoggedIn()) {
     setPublicUI(true);
     updateWhatsFab();
-    updatePetBot();
+    ensurePetBotUI(); updatePetBot(); await mountPetLottie();
     if (route !== '/public') {
       location.hash = '#/public';
       return;
@@ -178,7 +172,7 @@ async function router() {
   setPublicUI(false);
   buildMenu();
   updateWhatsFab();
-  updatePetBot(); 
+  ensurePetBotUI(); updatePetBot(); await mountPetLottie();
 
   if (!guardRoute(route)) return;
 
@@ -243,7 +237,7 @@ async function loadModuleOnce(url) {
   return mod;
 }
 
-// === WhatsApp FAB ===
+/* ========== WhatsApp ========== */
 const WHATS_PHONE = '56912345678';
 const WHATS_MSG = 'Hola 👋, quisiera más información.';
 let $whatsFab = null;
@@ -268,7 +262,6 @@ function ensureWhatsFab() {
 
 function shouldShowWhatsFab() {
   const role = getUser()?.role || null;
-  // visible si NO es admin (incluye público sin sesión y vet/user)
   return role !== 'admin';
 }
 
@@ -279,28 +272,33 @@ function updateWhatsFab() {
 
 ensureWhatsFab(); updateWhatsFab();
 
+/* ========== PetBot (Lottie) ========== */
+const PET_USE = 'dog'; // 'dog' o 'cat'
+const PET_LOTTIE = PET_USE === 'cat' ? '../assets/lottie/a-cat.json' : '../assets/lottie/a-dog.json'; // relativo a /js/main.js
 let $petFab = null, $petPanel = null, $petBody = null, $petInput = null;
+let _lottieLoaded = false;
+
+async function loadLottieOnce() {
+  if (_lottieLoaded || window.lottie) { _lottieLoaded = true; return; }
+  await new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = 'https://unpkg.com/lottie-web@5.12.2/build/player/lottie.min.js';
+    s.async = true; s.onload = () => { _lottieLoaded = true; res(); }; s.onerror = rej;
+    document.head.appendChild(s);
+  });
+}
 
 function ensurePetBotUI() {
   if ($petFab && $petPanel) return;
 
-  // FAB (carita de perrito)
   const fab = document.createElement('button');
   fab.className = 'petbot-fab';
   fab.type = 'button';
   fab.title = 'Mascota virtual';
-  fab.innerHTML = `
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M5 9c0-2.76 2.24-5 5-5 1.64 0 3.09.8 4 2.02C15.91 4.8 17.36 4 19 4c2.76 0 5 2.24 5 5 0 3.87-3.13 7-7 7h-5c-3.87 0-7-3.13-7-7z" fill="#FFC107"/>
-      <circle cx="10" cy="10" r="1.5" fill="#111"/>
-      <circle cx="18" cy="10" r="1.5" fill="#111"/>
-      <path d="M12 14c.8 1 2.2 1 3 0" stroke="#111" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-    </svg>`;
-  fab.addEventListener('click', () => $petPanel.classList.toggle('open'));
+  fab.innerHTML = `<div id="petLottie" class="petbot-lottie"></div>`;
   document.body.appendChild(fab);
   $petFab = fab;
 
-  // Panel
   const panel = document.createElement('div');
   panel.className = 'petbot-panel';
   panel.innerHTML = `
@@ -325,7 +323,6 @@ function ensurePetBotUI() {
     b.className = `pb-msg ${who}`;
     b.textContent = text;
     $petBody.appendChild(b);
-    // auto scroll
     $petBody.scrollTop = $petBody.scrollHeight;
   }
 
@@ -336,8 +333,7 @@ function ensurePetBotUI() {
     if (hit) {
       pushMsg(hit.a, 'bot');
     } else {
-      pushMsg('No tengo esa respuesta aún 🤔. Puedes revisar las preguntas rápidas abajo o contáctanos por WhatsApp:', 'bot');
-      // botón a wsp
+      pushMsg('No tengo esa respuesta aún 🤔. Revisa las preguntas rápidas o contáctanos por WhatsApp:', 'bot');
       const quick = document.createElement('div'); quick.className = 'petbot-quick';
       const a = document.createElement('a');
       a.href = `https://wa.me/${WHATS_PHONE}?text=${encodeURIComponent('Hola, necesito ayuda: ' + text)}`;
@@ -361,7 +357,6 @@ function ensurePetBotUI() {
   $petInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendFromInput(); });
   sendBtn.addEventListener('click', sendFromInput);
 
-  // saludo + sugerencias
   pushMsg('¡Hola! Soy tu mascota virtual. ¿En qué te ayudo?');
   const quick = document.createElement('div'); quick.className = 'petbot-quick';
   PETBOT_FAQS.slice(0, 5).forEach(f => {
@@ -372,17 +367,40 @@ function ensurePetBotUI() {
   });
   $petBody.appendChild(quick);
 
+  fab.addEventListener('click', () => $petPanel.classList.toggle('open'));
+
   $petPanel = panel;
 }
 
 function shouldShowPetBot() {
   const role = getUser()?.role || null;
-  return role !== 'admin'; // oculto para admin
+  return role !== 'admin'; 
 }
 
 function updatePetBot() {
   ensurePetBotUI();
   const show = shouldShowPetBot();
   $petFab.style.display = show ? '' : 'none';
-  $petPanel.style.display = (show && $petPanel.classList.contains('open')) ? 'flex' : (show ? 'none' : 'none');
+  if (!show) $petPanel.classList.remove('open');
 }
+
+async function mountPetLottie() {
+  await loadLottieOnce();
+  const container = document.getElementById('petLottie');
+  if (!container || !window.lottie) return;
+
+  if (petAnim && typeof petAnim.destroy === 'function') {
+    petAnim.destroy();
+    petAnim = null;
+  }
+  container.innerHTML = '';
+
+  petAnim = window.lottie.loadAnimation({
+    container,
+    renderer: 'svg',
+    loop: true,
+    autoplay: true,
+    path: PET_LOTTIE
+  });
+}
+

@@ -357,13 +357,13 @@ body {
 }
 
 
-/* ===== Mascota virtual (PetBot) ===== */
+/* ===== Mascota virtual (PetBot con Lottie) ===== */
 .petbot-fab {
     position: fixed;
     right: 38px;
     bottom: 120px;
-    width: 56px;
-    height: 56px;
+    width: 72px;
+    height: 72px;
     border-radius: 50%;
     background: #fff;
     color: #1f2937;
@@ -381,15 +381,15 @@ body {
     filter: brightness(1.04);
 }
 
-.petbot-fab svg {
-    width: 32px;
-    height: 32px;
+.petbot-lottie {
+    width: 64px;
+    height: 64px;
 }
 
 .petbot-panel {
     position: fixed;
     right: 18px;
-    bottom: 150px;
+    bottom: 206px;
     width: 320px;
     max-height: 60vh;
     background: #ffffff;
@@ -494,17 +494,43 @@ body {
     cursor: pointer;
 }
 
-/* Responsive: en móviles, que no tape demasiado */
+/* Responsive */
 @media (max-width: 480px) {
     .petbot-panel {
         right: 12px;
         left: 12px;
         width: auto;
-        bottom: 140px;
+        bottom: 190px;
     }
 
     .petbot-fab {
         right: 12px;
-        bottom: 86px;
+        bottom: 120px;
     }
+}
+
+/* === PetBot === */
+.petbot-fab {
+    position: fixed !important;
+    right: 38px !important;
+    bottom: 120px !important;
+    z-index: 10000 !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    opacity: 1 !important;
+}
+
+.petbot-lottie {
+    width: 72px !important;
+    height: 72px !important;
+    pointer-events: none !important;
+}
+
+.whats-fab {
+    z-index: 9999 !important;
 }
