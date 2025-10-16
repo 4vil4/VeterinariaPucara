@@ -15,7 +15,7 @@ const $btnHeaderLogin = document.getElementById('btnHeaderLogin');
 // === Config FAQ PetBot ===
 const PETBOT_FAQS = [
   { q: '¿Horario de atención?', a: 'Atendemos de Lunes a Sábado de 09:00 a 19:00 hrs.', kw: ['horario', 'hora', 'abren', 'cierran'] },
-  { q: '¿Dónde están ubicados?', a: 'Estamos en Av. Pucará 1234, Ñuñoa, Santiago.', kw: ['dirección', 'ubicación', 'mapa', 'donde'] },
+  { q: '¿Dónde están ubicados?', a: 'Estamos en Esmeralda 97, San Bernardo, Santiago.', kw: ['dirección', 'ubicación', 'mapa', 'donde'] },
   { q: '¿Toman urgencias?', a: 'Sí, recibimos urgencias. Si es crítico, ven cuanto antes y también avísanos por WhatsApp.', kw: ['urgencia', 'emergencia'] },
   { q: '¿Vacunación?', a: 'Aplicamos el plan de vacunación completo para perros y gatos. Te asesoramos según edad y esquema.', kw: ['vacuna', 'vacunación'] },
   { q: '¿Precios de consulta?', a: 'La consulta general tiene valor de $XXXXX. Pide tu hora por WhatsApp para confirmación.', kw: ['precio', 'valor', 'costo', 'consulta'] },
