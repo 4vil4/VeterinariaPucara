@@ -1,5 +1,12 @@
 :root {
-    --blue: #0250a3;
+    --celeste: #7fd3ff;
+    --cyan: #00e5ff;
+    --azul: #0250a3;
+
+    --blue-gradient: linear-gradient(135deg,
+            var(--azul) 0%,
+            var(--cyan) 60%,
+            var(--celeste) 100%);
     --blue-600: #074e9c;
     --bg: #f6f7fb;
     --text: #1f2937;
@@ -45,7 +52,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 10px 16px;
-    background: var(--blue);
+    background: var(--blue-gradient);
     color: #fff;
 }
 
@@ -66,7 +73,7 @@ body {
 
 .brand {
     font-weight: 700;
-    font-size: 1.05rem;
+    font-size: 2rem;
     letter-spacing: .2px
 }
 
