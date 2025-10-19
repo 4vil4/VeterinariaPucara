@@ -123,4 +123,91 @@ router.delete('/:id', async (req, res) => {
     res.json({ ok: true, affected: r.affectedRows });
 });
 
+router.get('/:id/historial', async (req, res) => {
+    const mascotaId = Number(req.params.id);
+    const LIM = Math.min(parseInt(req.query.limit || '500', 10) || 500, 2000);
+
+    if (!mascotaId) return res.status(400).json({ error: 'mascota_id inválido' });
+
+    const sources = [
+        {
+            tipo: 'Receta', tabla: 'receta', colFecha: 'fecha',
+            resumen: "TRIM(CONCAT_WS(' — ', NULLIF(diagnostico,''), NULLIF(medicamentos,''), NULLIF(indicaciones,'')))"
+        },
+        {
+            tipo: 'Consulta', tabla: 'consulta', colFecha: 'fecha',
+            resumen: "TRIM(CONCAT_WS(' — ', NULLIF(motivo,''), NULLIF(diagnostico,'')))"
+        },
+        {
+            tipo: 'Control', tabla: 'control', colFecha: 'fecha',
+            resumen: "TRIM(CONCAT_WS(' — ', NULLIF(motivo,''), NULLIF(diagnostico,'')))"
+        },
+        {
+            tipo: 'Cirugía', tabla: 'cirugia', colFecha: 'fecha',
+            resumen: "TRIM(CONCAT_WS(' — ', NULLIF(procedimiento,''), NULLIF(observaciones,'')))"
+        },
+        {
+            tipo: 'Vacuna', tabla: 'vacuna', colFecha: 'fecha',
+            resumen: "TRIM(CONCAT_WS(' — ', NULLIF(vacuna,''), NULLIF(observaciones,'')))"
+        },
+        {
+            tipo: 'Antiparasitario', tabla: 'antiparasitario', colFecha: 'fecha',
+            resumen: "TRIM(CONCAT_WS(' — ', NULLIF(producto,''), NULLIF(observaciones,'')))"
+        },
+        {
+            tipo: 'Antipulgas', tabla: 'antipulgas', colFecha: 'fecha',
+            resumen: "TRIM(CONCAT_WS(' — ', NULLIF(producto,''), NULLIF(observaciones,'')))"
+        },
+        {
+            tipo: 'Hospitalización', tabla: 'hospitalizacion', colFecha: 'fecha_ingreso',
+            resumen: "TRIM(CONCAT_WS(' — ', NULLIF(motivo,''), NULLIF(indicaciones,'')))"
+        },
+        {
+            tipo: 'Triaje', tabla: 'triaje', colFecha: 'fecha',
+            resumen: "TRIM(CONCAT_WS(' — ', NULLIF(motivo,''), NULLIF(observaciones,'')))"
+        },
+        {
+            tipo: 'Profilaxis', tabla: 'profilaxis', colFecha: 'fecha',
+            resumen: "TRIM(CONCAT_WS(' — ', NULLIF(procedimiento,''), NULLIF(observaciones,'')))"
+        },
+        {
+            tipo: 'Defunción', tabla: 'defuncion', colFecha: 'fecha',
+            resumen: "TRIM(CONCAT_WS(' — ', NULLIF(causa,''), NULLIF(observaciones,'')))"
+        },
+        {
+            tipo: 'Dermatología', tabla: 'dermatologia', colFecha: 'fecha',
+            resumen: "TRIM(CONCAT_WS(' — ', NULLIF(motivo,''), NULLIF(diagnostico,'')))"
+        },
+        {
+            tipo: 'Orden de exámenes', tabla: 'orden_examenes', colFecha: 'fecha',
+            resumen: "TRIM(CONCAT_WS(' — ', NULLIF(examenes,''), NULLIF(indicaciones,'')))"
+        },
+        {
+            tipo: 'Oftalmología', tabla: 'oftalmologia', colFecha: 'fecha',
+            resumen: "TRIM(CONCAT_WS(' — ', NULLIF(motivo,''), NULLIF(diagnostico,'')))"
+        },
+    ];
+
+    const all = [];
+
+    for (const s of sources) {
+        try {
+            const sql = `
+        SELECT id, '${s.tipo}' AS tipo, mascota_id, ${s.colFecha} AS fecha,
+               ${s.resumen} AS resumen
+        FROM ${s.tabla}
+        WHERE mascota_id = ?
+        ORDER BY ${s.colFecha} DESC, id DESC
+        LIMIT ?
+      `;
+            const [rows] = await pool.query(sql, [mascotaId, LIM]);
+            all.push(...rows);
+        } catch (e) {
+        }
+    }
+
+    all.sort((a, b) => new Date(b.fecha || 0) - new Date(a.fecha || 0) || (b.id - a.id));
+    res.json(all.slice(0, LIM));
+});
+
 export default router;

@@ -58,6 +58,9 @@ function buildMenu() {
     { href: '#/urgencias', label: '🚨 Urgencias' },
     { href: '#/historico', label: '📁 Historico' },
     { href: '#/personal', label: '🩺 Personal' },
+    { href: '#/alimentos', label: '🍖 Alimentos' },
+    { href: '#/medicamentos', label: '💊 Medicamentos' },
+    { href: '#/accesorios', label: '🛍️ Accesorios' },
   ];
   const vetMenu = [
     { href: '#/mascotas', label: '🐾 Mascotas' },
@@ -73,6 +76,7 @@ function buildMenu() {
       📑<span>Registros</span><i class="i i-caret" aria-hidden="true"></i>
     </button>
     <div class="submenu" id="submenuRegistros">
+      <a href="#/receta" class="submenu__item text-submenu">📝 Receta</a>
       <a href="#/registro/consulta" class="submenu__item text-submenu">📝 Consulta</a>
       <a href="#/registro/control" class="submenu__item text-submenu">📝 Control</a>
       <a href="#/registro/cirugia" class="submenu__item text-submenu">📝 Cirugía</a>
@@ -128,14 +132,25 @@ const routes = {
   '/historico': () => mountView('historico'),
   '/personal': () => mountView('personal'),
   '/registro/:tipo': (p) => mountView('registro', p),
+  '/alimentos': () => mountView('alimentos'),
+  '/medicamentos': () => mountView('medicamentos'),
+  '/accesorios': () => mountView('accesorios'),
+  '/ver/:tipo': (p) => mountView('catalogo', p),
+  '/receta': () => mountView('receta'),
 };
 
 function parseHash() {
   const hash = location.hash || '#/';
   const parts = hash.replace(/^#\//, '').split('/');
+
   if (parts[0] === 'registro' && parts[1]) {
     return { route: '/registro/:tipo', params: { tipo: parts[1] } };
   }
+
+  if (parts[0] === 'ver' && parts[1]) {
+    return { route: '/ver/:tipo', params: { tipo: parts[1] } };
+  }
+
   return { route: `/${parts[0] || ''}` };
 }
 
@@ -155,11 +170,15 @@ async function router() {
     setPublicUI(true);
     updateWhatsFab();
     ensurePetBotUI(); updatePetBot(); await mountPetLottie();
-    if (route !== '/public') {
+
+    const PUBLIC_ROUTES = ['/public', '/ver/:tipo'];
+
+    if (!PUBLIC_ROUTES.includes(route)) {
       location.hash = '#/public';
       return;
     }
-    await routes['/public']();
+
+    await routes[route](params || {});
     return;
   }
 
@@ -168,7 +187,6 @@ async function router() {
     return;
   }
 
-  // UI privada 
   setPublicUI(false);
   buildMenu();
   updateWhatsFab();
@@ -179,6 +197,7 @@ async function router() {
   if (routes[route]) routes[route](params || {});
   else app.innerHTML = `<div class="card"><h2>Panel</h2><p>Selecciona una opción del menú.</p></div>`;
 }
+
 
 window.addEventListener('hashchange', router);
 window.addEventListener('load', router);
@@ -195,6 +214,11 @@ const viewCssDeps = {
   propietarios: ['../css/propietarios.css'],
   registro: ['../css/registro.css'],
   historico: ['../css/citas.css', '../css/historico.css'],
+  alimentos: ['../css/productos.css'],
+  medicamentos: ['../css/productos.css'],
+  accesorios: ['../css/productos.css'],
+  catalogo: ['../css/public.css', '../css/public-catalogo.css'],
+  receta: ['../css/receta.css'],
 };
 
 async function mountView(name, params = {}) {
@@ -273,7 +297,7 @@ function updateWhatsFab() {
 ensureWhatsFab(); updateWhatsFab();
 
 /* ========== PetBot (Lottie) ========== */
-const PET_USE = 'dog'; // 'dog' o 'cat'
+const PET_USE = 'dog'; 
 const PET_LOTTIE = PET_USE === 'cat' ? '../assets/lottie/a-cat.json' : '../assets/lottie/a-dog.json'; // relativo a /js/main.js
 let $petFab = null, $petPanel = null, $petBody = null, $petInput = null;
 let _lottieLoaded = false;
@@ -374,7 +398,7 @@ function ensurePetBotUI() {
 
 function shouldShowPetBot() {
   const role = getUser()?.role || null;
-  return role !== 'admin'; 
+  return role !== 'admin';
 }
 
 function updatePetBot() {

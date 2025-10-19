@@ -1,0 +1,126 @@
+.cat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+}
+
+@media (max-width:1100px) {
+    .cat-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width:800px) {
+    .cat-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width:520px) {
+    .cat-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.cat-card {
+    cursor: pointer;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: var(--shadow, 0 10px 30px rgba(0, 0, 0, .08));
+    overflow: hidden;
+    transition: transform .12s ease;
+}
+
+.cat-card:hover {
+    transform: translateY(-2px);
+}
+
+.cat-card__imgwrap {
+    aspect-ratio: 16/9;
+    background: #eef2f7;
+}
+
+.cat-card__imgwrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.cat-card__info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+}
+
+.cat-card__name {
+    font-size: 1rem;
+    margin: 0;
+    font-weight: 600;
+}
+
+.cat-card__price {
+    font-size: 1rem;
+}
+
+.cat-modal::backdrop {
+    background: rgba(0, 0, 0, .35);
+}
+
+.cat-modal {
+    border: none;
+    padding: 0;
+    border-radius: 18px;
+    width: min(900px, 96vw);
+}
+
+.cat-modal__card {
+    margin: 0;
+}
+
+.cat-modal__content {
+    display: flex;
+    gap: 16px;
+}
+
+.cat-modal__img {
+    width: 48%;
+    max-height: 60vh;
+    object-fit: cover;
+    border-radius: 14px;
+    background: #eef2f7;
+}
+
+.cat-modal__body {
+    flex: 1;
+}
+
+.cat-modal__meta {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.cat-modal__close {
+    position: absolute;
+    right: 10px;
+    top: 8px;
+    border: none;
+    background: #eee;
+    border-radius: 10px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+}
+
+@media (max-width:760px) {
+    .cat-modal__content {
+        flex-direction: column;
+    }
+
+    .cat-modal__img {
+        width: 100%;
+    }
+}

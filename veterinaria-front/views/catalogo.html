@@ -1,0 +1,29 @@
+<section class="public">
+  <div class="public__container">
+    <div class="public__header">
+      <h2 class="public__title" id="catTitle">Catálogo</h2>
+      <button id="btnBackPublic" class="btn btn-outline">Volver</button>
+    </div>
+
+    <div id="catGrid" class="cat-grid"></div>
+  </div>
+
+  <dialog id="catModal" class="cat-modal">
+    <article class="card cat-modal__card">
+      <button class="cat-modal__close" id="catClose" aria-label="Cerrar">
+        ✕
+      </button>
+      <div class="cat-modal__content">
+        <img id="mFoto" class="cat-modal__img" alt="" />
+        <div class="cat-modal__body">
+          <h3 id="mNombre"></h3>
+          <p id="mDesc"></p>
+          <div class="cat-modal__meta">
+            <strong id="mPrecio"></strong>
+            <span id="mStock"></span>
+          </div>
+        </div>
+      </div>
+    </article>
+  </dialog>
+</section>

@@ -519,7 +519,7 @@ body {
 /* === PetBot === */
 .petbot-fab {
     position: fixed !important;
-    right: 38px !important;
+    right: 10px !important;
     bottom: 120px !important;
     z-index: 10000 !important;
     background: transparent !important;
@@ -533,11 +533,27 @@ body {
 }
 
 .petbot-lottie {
-    width: 72px !important;
-    height: 72px !important;
+    width: 120px !important;
+    height: 120px !important;
     pointer-events: none !important;
 }
 
 .whats-fab {
     z-index: 9999 !important;
+}
+
+#btnBackPublic {
+    background-color: #0250a3;
+    color: #fff;
+    border: 1px solid #0250a3;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+#btnBackPublic:hover {
+    background-color: #043d7c;
+    transform: translateY(-1px);
 }

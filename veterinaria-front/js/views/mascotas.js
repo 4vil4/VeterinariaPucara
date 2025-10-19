@@ -1,61 +1,94 @@
 export async function init({ root, API }) {
-    const tblWrap = root.querySelector('#tblWrap');
-    const detalle = root.querySelector('#detalle');
+  const tblWrap = root.querySelector('#tblWrap');
+  const detalle = root.querySelector('#detalle');
 
-    const data = await fetchJSON(`${API}/api/mascotas`);
-    tblWrap.innerHTML = buildMascotasTable(data, API);
+  const data = await fetchJSON(`${API}/api/mascotas`);
+  tblWrap.innerHTML = buildMascotasTable(data, API);
 
-    tblWrap.querySelectorAll('tr[data-id]').forEach(tr => {
-        tr.addEventListener('click', async (e) => {
-            if (e.target.closest('button')) return;
-            const id = tr.getAttribute('data-id');
-            const m = await fetchJSON(`${API}/api/mascotas/${id}`);
-            detalle.innerHTML = renderPetCard(m);
-        });
+  tblWrap.querySelectorAll('tr[data-id]').forEach(tr => {
+    tr.addEventListener('click', async (e) => {
+      if (e.target.closest('button')) return;
+      const id = tr.getAttribute('data-id');
+      const m = await fetchJSON(`${API}/api/mascotas/${id}`);
+      detalle.innerHTML = renderPetCard(m);
     });
+  });
 
-    tblWrap.querySelectorAll('.btn-edit').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-            e.stopPropagation();
-            const id = btn.dataset.id;
-            const m = await fetchJSON(`${API}/api/mascotas/${id}`);
-            showMascotaForm(root, API, 'Editar mascota', m, async (fd) => {
-                await apiPutForm(`${API}/api/mascotas/${id}`, fd);
-                await init({ root, API });
-            });
-        });
+  tblWrap.querySelectorAll('.btn-edit').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const id = btn.dataset.id;
+      const m = await fetchJSON(`${API}/api/mascotas/${id}`);
+      showMascotaForm(root, API, 'Editar mascota', m, async (fd) => {
+        await apiPutForm(`${API}/api/mascotas/${id}`, fd);
+        await init({ root, API });
+      });
     });
+  });
 
-    tblWrap.querySelectorAll('.btn-del').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-            e.stopPropagation();
-            const id = btn.dataset.id;
-            if (!confirm('¿Eliminar esta mascota?')) return;
-            await apiDelete(`${API}/api/mascotas/${id}`);
-            await init({ root, API });
-        });
+  tblWrap.querySelectorAll('.btn-del').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const id = btn.dataset.id;
+      if (!confirm('¿Eliminar esta mascota?')) return;
+      await apiDelete(`${API}/api/mascotas/${id}`);
+      await init({ root, API });
     });
+  });
 
-    root.querySelector('#btnNuevaMascota').addEventListener('click', () => {
-        showMascotaForm(root, API, 'Nueva mascota', null, async (fd) => {
-            await apiPostForm(`${API}/api/mascotas`, fd);
-            await init({ root, API });
-        });
+  tblWrap.querySelectorAll('.btn-hist').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const id = Number(btn.dataset.id);
+      const nombre = btn.dataset.nombre || 'Mascota';
+
+      let items = [];
+      try {
+        const res = await fetch(`${API}/api/mascotas/${id}/historial`);
+        if (res.ok) items = await res.json();
+      } catch (_) { }
+
+      if (!items || !items.length) {
+        try {
+          const resR = await fetch(`${API}/api/recetas?mascota_id=${id}`);
+          if (resR.ok) {
+            const recetas = await resR.json();
+            items = (recetas || []).map(r => ({
+              tipo: 'Receta',
+              fecha: r.fecha || r.created_at,
+              resumen: r.diagnostico || r.medicamentos || r.indicaciones || '',
+            }));
+          }
+        } catch (_) { }
+      }
+
+      items.sort((a, b) => new Date(b.fecha || b.created_at || 0) - new Date(a.fecha || a.created_at || 0));
+
+      detalle.innerHTML = renderHistorial(nombre, items);
+      detalle.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
+  });
+
+  root.querySelector('#btnNuevaMascota').addEventListener('click', () => {
+    showMascotaForm(root, API, 'Nueva mascota', null, async (fd) => {
+      await apiPostForm(`${API}/api/mascotas`, fd);
+      await init({ root, API });
+    });
+  });
 }
 
 /* ---------- UI ---------- */
 function buildMascotasTable(rows, API) {
-    const head = `
+  const head = `
   <thead><tr>
     <th>Foto</th><th>Nombre</th><th>N° Historial</th><th>Especie</th>
-    <th>Raza</th><th>Sexo</th><th>Propietario</th><th style="width:160px">Acciones</th>
+    <th>Raza</th><th>Sexo</th><th>Propietario</th><th style="width:220px">Acciones</th>
   </tr></thead>`;
-    const body = `
+  const body = `
   <tbody>
     ${rows.map(r => {
-        const thumb = `${API}/api/mascotas/${r.id}/foto?ts=${encodeURIComponent(r.updated_at || '')}`;
-        return `
+    const thumb = `${API}/api/mascotas/${r.id}/foto?ts=${encodeURIComponent(r.updated_at || '')}`;
+    return `
       <tr data-id="${r.id}">
         <td><img src="${thumb}" alt="" style="width:40px;height:40px;object-fit:cover;border-radius:8px" onerror="this.style.display='none'"/></td>
         <td>${esc(r.nombre)}</td>
@@ -66,20 +99,21 @@ function buildMascotasTable(rows, API) {
         <td>${esc(r.propietario_nombre || '')}</td>
         <td>
           <div class="actions">
+            <button class="btn-sm btn-outline btn-hist" data-id="${r.id}" data-nombre="${esc(r.nombre)}">Historial</button>
             <button class="btn-sm btn-outline btn-edit" data-id="${r.id}">Editar</button>
             <button class="btn-sm btn-outline btn-del" data-id="${r.id}">Eliminar</button>
           </div>
         </td>
       </tr>`;
-    }).join('')}
+  }).join('')}
   </tbody>`;
-    return `<table class="tbl">${head}${body}</table>`;
+  return `<table class="tbl">${head}${body}</table>`;
 }
 
 function renderPetCard(m) {
-    const foto = m.foto_url || '';
-    const edadTxt = calcularEdad(m.fecha_nacimiento);
-    return `
+  const foto = m.foto_url || '';
+  const edadTxt = calcularEdad(m.fecha_nacimiento);
+  return `
     <div class="card">
       <div class="pet-card">
         <img class="pet-photo" src="${foto || ''}" alt="Foto" onerror="this.style.display='none'"/>
@@ -96,11 +130,47 @@ function renderPetCard(m) {
     </div>`;
 }
 
+function renderHistorial(nombreMascota, items) {
+  const fmt = s => s ? new Date(s).toLocaleString() : '';
+  const escTxt = s => (s ?? '').toString().replace(/\s+/g, ' ').trim();
+
+  if (!items.length) {
+    return `
+      <div class="card">
+        <h3 style="margin:0 0 8px 0">Historial de ${esc(nombreMascota)}</h3>
+        <p class="muted">No hay registros para esta mascota.</p>
+      </div>`;
+  }
+
+  const rows = items.map(it => {
+    const tipo = (it.tipo || it.category || it.clase || 'Registro').toString();
+    const fecha = fmt(it.fecha || it.created_at);
+    const resumen = escTxt(it.resumen || it.diagnostico || it.descripcion || it.indicaciones || it.motivo || it.medicamentos || '');
+    return `
+      <li class="hist-item">
+        <div class="hist-dot"></div>
+        <div class="hist-body">
+          <div class="hist-top">
+            <span class="hist-badge">${esc(tipo)}</span>
+            <span class="hist-date">${esc(fecha)}</span>
+          </div>
+          ${resumen ? `<div class="hist-txt">${esc(resumen)}</div>` : ''}
+        </div>
+      </li>`;
+  }).join('');
+
+  return `
+    <div class="card">
+      <h3 style="margin:0 0 8px 0">Historial de ${esc(nombreMascota)}</h3>
+      <ul class="hist-list">${rows}</ul>
+    </div>`;
+}
+
 function showMascotaForm(root, API, title, m, onSubmit) {
-    const v = m || {};
-    const form = document.createElement('div');
-    form.className = 'card';
-    form.innerHTML = `
+  const v = m || {};
+  const form = document.createElement('div');
+  form.className = 'card';
+  form.innerHTML = `
     <h3 style="margin-top:0">${title}</h3>
     <div class="form-grid">
       <div><label>Nombre</label><input class="input" id="f_nombre" value="${esc(v.nombre || '')}" /></div>
@@ -153,114 +223,111 @@ function showMascotaForm(root, API, title, m, onSubmit) {
       <button class="btn btn-outline" id="f_cancelar">Cancelar</button>
     </div>
   `;
-    root.prepend(form);
+  root.prepend(form);
 
-    // Preview foto
-    const fileInput = form.querySelector('#f_foto');
-    const preview = form.querySelector('#f_preview');
-    fileInput.addEventListener('change', () => {
-        const f = fileInput.files?.[0];
-        if (!f) return;
-        const reader = new FileReader();
-        reader.onload = e => { preview.src = e.target.result; preview.style.display = 'block'; };
-        reader.readAsDataURL(f);
-    });
+  const fileInput = form.querySelector('#f_foto');
+  const preview = form.querySelector('#f_preview');
+  fileInput.addEventListener('change', () => {
+    const f = fileInput.files?.[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = e => { preview.src = e.target.result; preview.style.display = 'block'; };
+    reader.readAsDataURL(f);
+  });
 
-    // Selector propietario
-    const propSearch = form.querySelector('#f_prop_search');
-    const propSelect = form.querySelector('#f_prop_select');
-    let propietariosCache = [];
-    let selectedOwnerId = v.propietario_id ?? null;
+  const propSearch = form.querySelector('#f_prop_search');
+  const propSelect = form.querySelector('#f_prop_select');
+  let propietariosCache = [];
+  let selectedOwnerId = v.propietario_id ?? null;
 
-    (async () => {
-        await loadPropietarios('');
-        renderPropOptions(propietariosCache, selectedOwnerId);
-        if (selectedOwnerId) propSelect.value = String(selectedOwnerId);
-    })();
+  (async () => {
+    await loadPropietarios('');
+    renderPropOptions(propietariosCache, selectedOwnerId);
+    if (selectedOwnerId) propSelect.value = String(selectedOwnerId);
+  })();
 
-    let tSearch;
-    propSearch.addEventListener('input', () => {
-        clearTimeout(tSearch);
-        tSearch = setTimeout(async () => {
-            await loadPropietarios(propSearch.value.trim());
-            renderPropOptions(propietariosCache, null);
-        }, 250);
-    });
-    propSelect.addEventListener('change', () => { selectedOwnerId = Number(propSelect.value) || null; });
+  let tSearch;
+  propSearch.addEventListener('input', () => {
+    clearTimeout(tSearch);
+    tSearch = setTimeout(async () => {
+      await loadPropietarios(propSearch.value.trim());
+      renderPropOptions(propietariosCache, null);
+    }, 250);
+  });
+  propSelect.addEventListener('change', () => { selectedOwnerId = Number(propSelect.value) || null; });
 
-    const box = form.querySelector('#newOwnerBox');
-    form.querySelector('#btnNewOwner').onclick = () => { box.style.display = (box.style.display === 'none') ? 'block' : 'none'; };
+  const box = form.querySelector('#newOwnerBox');
+  form.querySelector('#btnNewOwner').onclick = () => { box.style.display = (box.style.display === 'none') ? 'block' : 'none'; };
 
-    form.querySelector('#o_guardar').onclick = async () => {
-        const payload = {
-            nombre: form.querySelector('#o_nombre').value.trim(),
-            rut: form.querySelector('#o_rut').value.trim(),
-            correo: form.querySelector('#o_correo').value.trim(),
-            movil: form.querySelector('#o_movil').value.trim(),
-            direccion: form.querySelector('#o_direccion').value.trim(),
-        };
-        if (!payload.nombre) { alert('Nombre de propietario es obligatorio'); return; }
-        const r = await apiPost(`${API}/api/propietarios`, payload);
-        await loadPropietarios('');
-        renderPropOptions(propietariosCache, r.id);
-        selectedOwnerId = r.id;
-        box.style.display = 'none';
-        form.querySelector('#prop_hint').textContent = 'Propietario creado y seleccionado.';
+  form.querySelector('#o_guardar').onclick = async () => {
+    const payload = {
+      nombre: form.querySelector('#o_nombre').value.trim(),
+      rut: form.querySelector('#o_rut').value.trim(),
+      correo: form.querySelector('#o_correo').value.trim(),
+      movil: form.querySelector('#o_movil').value.trim(),
+      direccion: form.querySelector('#o_direccion').value.trim(),
     };
-    form.querySelector('#o_cancelar').onclick = () => { box.style.display = 'none'; };
+    if (!payload.nombre) { alert('Nombre de propietario es obligatorio'); return; }
+    const r = await apiPost(`${API}/api/propietarios`, payload);
+    await loadPropietarios('');
+    renderPropOptions(propietariosCache, r.id);
+    selectedOwnerId = r.id;
+    box.style.display = 'none';
+    form.querySelector('#prop_hint').textContent = 'Propietario creado y seleccionado.';
+  };
+  form.querySelector('#o_cancelar').onclick = () => { box.style.display = 'none'; };
 
-    async function loadPropietarios(search = '') {
-        const url = `${API}/api/propietarios${search ? `?search=${encodeURIComponent(search)}` : ''}`;
-        propietariosCache = await fetchJSON(url);
-    }
-    function renderPropOptions(list, selectId) {
-        propSelect.innerHTML = list.map(p =>
-            `<option value="${p.id}">${esc(p.nombre)}${p.rut ? ' — ' + esc(p.rut) : ''}${p.movil ? ' — ' + esc(p.movil) : ''}</option>`
-        ).join('');
-        if (selectId) propSelect.value = String(selectId);
-    }
+  async function loadPropietarios(search = '') {
+    const url = `${API}/api/propietarios${search ? `?search=${encodeURIComponent(search)}` : ''}`;
+    propietariosCache = await fetchJSON(url);
+  }
+  function renderPropOptions(list, selectId) {
+    propSelect.innerHTML = list.map(p =>
+      `<option value="${p.id}">${esc(p.nombre)}${p.rut ? ' — ' + esc(p.rut) : ''}${p.movil ? ' — ' + esc(p.movil) : ''}</option>`
+    ).join('');
+    if (selectId) propSelect.value = String(selectId);
+  }
 
-    // Guardar / Cancelar
-    form.querySelector('#f_cancelar').onclick = () => form.remove();
-    form.querySelector('#f_guardar').onclick = async () => {
-        const payload = {
-            nombre: val('#f_nombre', form),
-            n_historial: val('#f_hist', form),
-            especie: val('#f_especie', form),
-            raza: val('#f_raza', form),
-            sexo: val('#f_sexo', form),
-            fecha_nacimiento: val('#f_fnac', form) || null,
-            peso_kg: parseFloat(val('#f_peso', form)) || null,
-            propietario_id: selectedOwnerId
-        };
-        if (!payload.nombre) { alert('Nombre es requerido'); return; }
-        if (!payload.propietario_id) { alert('Selecciona o crea un propietario.'); return; }
-
-        const fd = new FormData();
-        Object.entries(payload).forEach(([k, v]) => { if (v !== null && v !== undefined && v !== '') fd.append(k, v); });
-        const f = fileInput.files?.[0];
-        if (f) fd.append('foto', f);
-
-        await onSubmit(fd);
-        form.remove();
+  form.querySelector('#f_cancelar').onclick = () => form.remove();
+  form.querySelector('#f_guardar').onclick = async () => {
+    const payload = {
+      nombre: val('#f_nombre', form),
+      n_historial: val('#f_hist', form),
+      especie: val('#f_especie', form),
+      raza: val('#f_raza', form),
+      sexo: val('#f_sexo', form),
+      fecha_nacimiento: val('#f_fnac', form) || null,
+      peso_kg: parseFloat(val('#f_peso', form)) || null,
+      propietario_id: selectedOwnerId
     };
+    if (!payload.nombre) { alert('Nombre es requerido'); return; }
+    if (!payload.propietario_id) { alert('Selecciona o crea un propietario.'); return; }
+
+    const fd = new FormData();
+    Object.entries(payload).forEach(([k, v]) => { if (v !== null && v !== undefined && v !== '') fd.append(k, v); });
+    const f = fileInput.files?.[0];
+    if (f) fd.append('foto', f);
+
+    await onSubmit(fd);
+    form.remove();
+  };
 }
 
 /* ---------- helpers ---------- */
 function val(sel, root = document) { return root.querySelector(sel).value?.trim(); }
 function esc(s) { return (s ?? '').toString().replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])); }
 function calcularEdad(iso) {
-    if (!iso) return '';
-    const d = new Date(iso); if (isNaN(d)) return '';
-    const now = new Date();
-    let y = now.getFullYear() - d.getFullYear();
-    let m = now.getMonth() - d.getMonth();
-    let day = now.getDate() - d.getDate();
-    if (day < 0) m--;
-    if (m < 0) { y--; m += 12; }
-    const ys = y > 0 ? `${y} año${y > 1 ? 's' : ''}` : '';
-    const ms = m > 0 ? `${m} mes${m > 1 ? 'es' : ''}` : '';
-    return [ys, ms].filter(Boolean).join(' ');
+  if (!iso) return '';
+  const d = new Date(iso); if (isNaN(d)) return '';
+  const now = new Date();
+  let y = now.getFullYear() - d.getFullYear();
+  let m = now.getMonth() - d.getMonth();
+  let day = now.getDate() - d.getDate();
+  if (day < 0) m--;
+  if (m < 0) { y--; m += 12; }
+  const ys = y > 0 ? `${y} año${y > 1 ? 's' : ''}` : '';
+  const ms = m > 0 ? `${m} mes${m > 1 ? 'es' : ''}` : '';
+  return [ys, ms].filter(Boolean).join(' ');
 }
 async function fetchJSON(url) { const r = await fetch(url); if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
 async function apiPost(url, body) { const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }); if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }

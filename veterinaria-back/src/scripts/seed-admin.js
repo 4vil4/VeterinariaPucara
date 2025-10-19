@@ -1,6 +1,5 @@
-// src/scripts/seed-admin.js
 import 'dotenv/config.js';
-import pool from '../db.js';            // ajusta la ruta según dónde esté tu db.js
+import pool from '../db.js';
 import bcrypt from 'bcryptjs';
 
 async function main() {
@@ -14,7 +13,7 @@ async function main() {
     process.exit(0);
   }
 
-  const hash = await bcrypt.hash(password, 10);  // bcryptjs soporta el mismo API
+  const hash = await bcrypt.hash(password, 10);
   const [r] = await pool.query(
     `INSERT INTO user (nombre, email, password_hash, role)
      VALUES (?, ?, ?, 'admin')`,

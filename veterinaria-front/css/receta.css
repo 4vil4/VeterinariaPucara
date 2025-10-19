@@ -1,0 +1,148 @@
+.receta .toolbar {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.receta .toolbar h2 {
+    margin: 0;
+}
+
+.receta .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+}
+
+@media (max-width:980px) {
+    .receta .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.receta .card {
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: var(--shadow, 0 8px 24px rgba(0, 0, 0, .06));
+    background: #fff;
+}
+
+.receta form.frm {
+    display: grid;
+    gap: 12px;
+}
+
+.receta .row {
+    display: flex;
+    gap: 12px;
+}
+
+.receta .row>* {
+    flex: 1;
+}
+
+.receta label {
+    font-weight: 600;
+    color: #0f172a;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.receta input[type="text"],
+.receta input[type="datetime-local"],
+.receta select,
+.receta textarea {
+    width: 100%;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 10px 12px;
+    background: #f8fafc;
+    outline: none;
+    transition: .15s ease;
+}
+
+.receta textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+.receta input:focus,
+.receta select:focus,
+.receta textarea:focus {
+    background: #fff;
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, .15);
+}
+
+.receta .hint {
+    font-size: .9rem;
+    color: #64748b;
+}
+
+.receta .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 999px;
+    background: #ecfeff;
+    color: #0e7490;
+    border: 1px solid #a5f3fc;
+    font-weight: 600;
+}
+
+.receta .actions {
+    display: flex;
+    gap: 8px;
+}
+
+.receta .tbl {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.receta .tbl th,
+.receta .tbl td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #eef2f7;
+}
+
+.receta .tbl th {
+    background: #f1f5f9;
+    text-align: left;
+}
+
+.btn {
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: #0250a3;
+    color: #fff;
+    border-color: #0250a3;
+}
+
+.btn-outline {
+    background: #fff;
+    color: #0250a3;
+    border-color: #93c5fd;
+}
+
+.btn-wsp {
+    border-color: #22c55e;
+    color: #16a34a;
+    background: #ecfdf5;
+}
+
+.receta #tblWrap {
+    max-height: 520px;
+    overflow: auto;
+    border: 1px solid #eef2f7;
+    border-radius: 12px;
+    background: #fff;
+}

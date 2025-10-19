@@ -12,6 +12,10 @@ import urgenciasRoutes from './src/routes/urgencias.routes.js';
 import registrosRoutes from './src/routes/registros.routes.js';
 import authRoutes from './src/routes/auth.routes.js';
 import personalRoutes from './src/routes/personal.routes.js';
+import alimentosRoutes from './src/routes/alimentos.routes.js';
+import medicamentosRoutes from './src/routes/medicamentos.routes.js';
+import accesoriosRoutes from './src/routes/accesorios.routes.js';
+import recetasRoutes from './src/routes/recetas.routes.js';
 
 const app = express();
 app.use(cors({ origin: true }));
@@ -27,6 +31,10 @@ app.use('/api/urgencias', urgenciasRoutes);
 app.use('/api/registros', registrosRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/personal', personalRoutes);
+app.use('/api/alimentos', alimentosRoutes);
+app.use('/api/medicamentos', medicamentosRoutes);
+app.use('/api/accesorios', accesoriosRoutes);
+app.use('/api/recetas', recetasRoutes);
 
 app.get('/api/health', (_, res) => res.json({ ok: true }));
 
