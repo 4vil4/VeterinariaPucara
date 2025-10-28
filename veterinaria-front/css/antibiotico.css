@@ -1,18 +1,22 @@
-.citas-head {
+.reg-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 12px;
-    margin-bottom: 12px
+    margin-bottom: 10px
 }
 
-.citas-actions {
+.reg-actions {
     display: flex;
     gap: 8px;
-    align-items: center;
-    flex-wrap: wrap
+    align-items: center
 }
 
+#regSearch {
+    max-width: 320px
+}
+
+/* tabla genérica */
 .tbl {
     width: 100%;
     border-collapse: collapse;
@@ -39,39 +43,6 @@
     background: #f9fbff
 }
 
-.badge-urg {
-    background: #fee2e2;
-    border-radius: 999px;
-    padding: 2px 8px;
-    font-size: .75rem
-}
-
-.state {
-    font-size: .85rem;
-    color: #475569
-}
-
-.actions {
-    display: flex;
-    gap: 6px
-}
-
-.iconbtn {
-    background: #fff;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    padding: 6px 10px;
-    cursor: pointer
-}
-
-.iconbtn:hover {
-    background: #f8fafc
-}
-
-.form-card {
-    margin-top: 12px
-}
-
 .btn-hist {
     background: #03ce79;
     color: #fff;
@@ -95,6 +66,28 @@
 }
 
 .btn-del {
+    background: #ce2203;
+    color: #fff;
+    border: 0;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer
+}
+
+.btn-env {
+    background: #03ce79;
+    color: #fff;
+    border: 0;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer
+}
+
+.btn-noenv {
     background: #ce2203;
     color: #fff;
     border: 0;

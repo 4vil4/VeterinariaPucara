@@ -1,0 +1,85 @@
+.hosp-card {
+    border: 2px solid #0250a3;
+    background: #f8fafc;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, .08);
+    margin-bottom: 16px;
+    padding: 16px;
+}
+
+.hosp-title {
+    color: #0250a3;
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+}
+
+.hosp-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    align-items: end;
+}
+
+.hosp-hours small {
+    color: #64748b;
+}
+
+.hosp-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+    flex-wrap: wrap;
+}
+
+.hosp-days {
+    font-weight: bold;
+    color: #0250a3;
+}
+
+.hosp-badge {
+    background: #e0ecff;
+    padding: 4px 10px;
+    border-radius: 8px;
+}
+
+.hosp-obs {
+    margin-top: 16px;
+    border-top: 1px solid #ccc;
+    padding-top: 10px;
+}
+
+.hosp-obs.hidden {
+    display: none;
+}
+
+.hosp-obs textarea {
+    width: 100%;
+    resize: vertical;
+}
+
+.obs-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.btn-hosp {
+    background: #03b6ce;
+    color: #fff;
+    border: 0;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer
+}
+
+.btn-hosp2 {
+    background: #003079;
+    color: #fff;
+    border: 0;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer
+} 

@@ -98,8 +98,8 @@ function showForm(root, title, data, onSubmit) {
       <div style="grid-column:1 / -1"><label>Dirección</label><input class="input" id="f_direccion" value="${esc(v.direccion || '')}" /></div>
     </div>
     <div style="margin-top:14px;display:flex;gap:8px">
-      <button class="btn btn-primary" id="f_guardar">Guardar</button>
-      <button class="btn btn-outline" id="f_cancelar">Cancelar</button>
+      <button class="btn-hist" id="f_guardar">Guardar</button>
+      <button class="btn-del" id="f_cancelar">Cancelar</button>
     </div>
   `;
     root.prepend(wrap);

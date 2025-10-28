@@ -63,8 +63,8 @@ export async function init({ root, API }) {
       }
 
       items.sort((a, b) => new Date(b.fecha || b.created_at || 0) - new Date(a.fecha || a.created_at || 0));
-
       detalle.innerHTML = renderHistorial(nombre, items);
+      bindHistClicks(detalle, API);
       detalle.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   });
@@ -99,9 +99,9 @@ function buildMascotasTable(rows, API) {
         <td>${esc(r.propietario_nombre || '')}</td>
         <td>
           <div class="actions">
-            <button class="btn-sm btn-outline btn-hist" data-id="${r.id}" data-nombre="${esc(r.nombre)}">Historial</button>
-            <button class="btn-sm btn-outline btn-edit" data-id="${r.id}">Editar</button>
-            <button class="btn-sm btn-outline btn-del" data-id="${r.id}">Eliminar</button>
+            <button class="btn-hist" data-id="${r.id}" data-nombre="${esc(r.nombre)}">Historial</button>
+            <button class="btn-edit" data-id="${r.id}">Editar</button>
+            <button class="btn-del" data-id="${r.id}">Eliminar</button>
           </div>
         </td>
       </tr>`;
@@ -113,6 +113,8 @@ function buildMascotasTable(rows, API) {
 function renderPetCard(m) {
   const foto = m.foto_url || '';
   const edadTxt = calcularEdad(m.fecha_nacimiento);
+  const esterTxt = (m.esterilizado === 1 || m.esterilizado === '1') ? 'Sí' :
+    (m.esterilizado === 0 || m.esterilizado === '0') ? 'No' : '—';
   return `
     <div class="card">
       <div class="pet-card">
@@ -122,6 +124,8 @@ function renderPetCard(m) {
           <div class="kv"><b>N° Historia:</b> ${esc(m.n_historial || '—')}</div>
           <div class="kv"><b>Raza:</b> ${esc(m.raza || '—')}</div>
           <div class="kv"><b>Sexo:</b> ${esc(m.sexo || '—')}</div>
+          <div class="kv"><b>Esterilizado:</b> ${esterTxt}</div>
+          <div class="kv"><b>N° microchip:</b> ${esc(m.nro_microchip || '—')}</div>
           <div class="kv"><b>Fecha de nacimiento:</b> ${esc(m.fecha_nacimiento || '—')}</div>
           <div class="kv"><b>Edad:</b> ${edadTxt || '—'}</div>
           <div class="kv"><b>Peso:</b> ${m.peso_kg != null ? m.peso_kg + ' kg' : '—'}</div>
@@ -146,8 +150,9 @@ function renderHistorial(nombreMascota, items) {
     const tipo = (it.tipo || it.category || it.clase || 'Registro').toString();
     const fecha = fmt(it.fecha || it.created_at);
     const resumen = escTxt(it.resumen || it.diagnostico || it.descripcion || it.indicaciones || it.motivo || it.medicamentos || '');
+    // ← añadimos dataset con tipo e id para poder pedir detalle
     return `
-      <li class="hist-item">
+      <li class="hist-item hist-click" data-tipo="${esc(tipo)}" data-id="${it.id}">
         <div class="hist-dot"></div>
         <div class="hist-body">
           <div class="hist-top">
@@ -155,16 +160,18 @@ function renderHistorial(nombreMascota, items) {
             <span class="hist-date">${esc(fecha)}</span>
           </div>
           ${resumen ? `<div class="hist-txt">${esc(resumen)}</div>` : ''}
+          <div class="hint" style="margin-top:4px">Click para ver detalle</div>
         </div>
       </li>`;
   }).join('');
 
   return `
-    <div class="card">
+    <div class="card" id="histCard">
       <h3 style="margin:0 0 8px 0">Historial de ${esc(nombreMascota)}</h3>
       <ul class="hist-list">${rows}</ul>
     </div>`;
 }
+
 
 function showMascotaForm(root, API, title, m, onSubmit) {
   const v = m || {};
@@ -175,9 +182,31 @@ function showMascotaForm(root, API, title, m, onSubmit) {
     <div class="form-grid">
       <div><label>Nombre</label><input class="input" id="f_nombre" value="${esc(v.nombre || '')}" /></div>
       <div><label>N° Historial</label><input class="input" id="f_hist" value="${esc(v.n_historial || '')}" /></div>
-      <div><label>Especie</label><input class="input" id="f_especie" value="${esc(v.especie || '')}" placeholder="perro/gato" /></div>
+      <div>
+        <label>Especie</label>
+        <select class="input" id="f_especie">
+          <option value="">Seleccione…</option>
+          <option value="perro" ${(v.especie || '').toLowerCase() === 'perro' ? 'selected' : ''}>Perro</option>
+          <option value="gato"  ${(v.especie || '').toLowerCase() === 'gato' ? 'selected' : ''}>Gato</option>
+        </select>
+      </div>
       <div><label>Raza</label><input class="input" id="f_raza" value="${esc(v.raza || '')}" /></div>
-      <div><label>Sexo</label><input class="input" id="f_sexo" value="${esc(v.sexo || '')}" placeholder="macho/hembra" /></div>
+      <div>
+        <label>Sexo</label>
+        <select class="input" id="f_sexo">
+          <option value="">Seleccione…</option>
+          <option value="macho"  ${(v.sexo || '').toLowerCase() === 'macho' ? 'selected' : ''}>Macho</option>
+          <option value="hembra" ${(v.sexo || '').toLowerCase() === 'hembra' ? 'selected' : ''}>Hembra</option>
+        </select>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:8px">
+        <input id="f_ester" type="checkbox" ${(v.esterilizado === 1 || v.esterilizado === '1') ? 'checked' : ''} />
+        <label for="f_ester">Esterilizado</label>
+      </div>
+
+      <div><label>N° microchip</label><input class="input" id="f_chip" value="${esc(v.nro_microchip || '')}" /></div>
+
       <div><label>Fecha nacimiento</label><input class="input" id="f_fnac" type="date" value="${(v.fecha_nacimiento || '').slice(0, 10)}" /></div>
       <div><label>Peso (kg)</label><input class="input" id="f_peso" type="number" step="0.01" value="${v.peso_kg ?? ''}" /></div>
 
@@ -188,7 +217,7 @@ function showMascotaForm(root, API, title, m, onSubmit) {
             <input class="input" id="f_prop_search" placeholder="Buscar por nombre o RUT..." />
             <select class="input" id="f_prop_select" size="5" style="margin-top:6px;height:140px"></select>
           </div>
-          <button class="btn btn-outline" type="button" id="btnNewOwner">Nuevo</button>
+          <button class="btn-edit" type="button" id="btnNewOwner">Nuevo</button>
         </div>
         <small id="prop_hint" style="color:#64748b">Escribe para buscar. Selecciona un propietario.</small>
         <div id="newOwnerBox" style="display:none; margin-top:10px">
@@ -200,8 +229,8 @@ function showMascotaForm(root, API, title, m, onSubmit) {
             <div style="grid-column:1 / -1"><label>Dirección</label><input class="input" id="o_direccion"/></div>
           </div>
           <div style="margin-top:8px; display:flex; gap:8px">
-            <button class="btn btn-primary" id="o_guardar" type="button">Guardar propietario</button>
-            <button class="btn btn-outline" id="o_cancelar" type="button">Cancelar</button>
+            <button class="btn-hist" id="o_guardar" type="button">Guardar propietario</button>
+            <button class="btn-del" id="o_cancelar" type="button">Cancelar</button>
           </div>
         </div>
       </div>
@@ -219,8 +248,8 @@ function showMascotaForm(root, API, title, m, onSubmit) {
     </div>
 
     <div style="margin-top:14px; display:flex; gap:8px">
-      <button class="btn btn-primary" id="f_guardar">Guardar</button>
-      <button class="btn btn-outline" id="f_cancelar">Cancelar</button>
+      <button class="btn-hist" id="f_guardar">Guardar</button>
+      <button class="btn-del" id="f_cancelar">Cancelar</button>
     </div>
   `;
   root.prepend(form);
@@ -296,6 +325,8 @@ function showMascotaForm(root, API, title, m, onSubmit) {
       especie: val('#f_especie', form),
       raza: val('#f_raza', form),
       sexo: val('#f_sexo', form),
+      esterilizado: form.querySelector('#f_ester').checked ? 1 : 0,
+      nro_microchip: val('#f_chip', form),
       fecha_nacimiento: val('#f_fnac', form) || null,
       peso_kg: parseFloat(val('#f_peso', form)) || null,
       propietario_id: selectedOwnerId
@@ -304,7 +335,9 @@ function showMascotaForm(root, API, title, m, onSubmit) {
     if (!payload.propietario_id) { alert('Selecciona o crea un propietario.'); return; }
 
     const fd = new FormData();
-    Object.entries(payload).forEach(([k, v]) => { if (v !== null && v !== undefined && v !== '') fd.append(k, v); });
+    Object.entries(payload).forEach(([k, v]) => {
+      if (v !== null && v !== undefined && v !== '') fd.append(k, v);
+    });
     const f = fileInput.files?.[0];
     if (f) fd.append('foto', f);
 
@@ -312,6 +345,137 @@ function showMascotaForm(root, API, title, m, onSubmit) {
     form.remove();
   };
 }
+
+/* ----------Funciones auxiliares ----------- */
+function bindHistClicks(rootEl, API) {
+  rootEl.querySelectorAll('.hist-click').forEach(li => {
+    li.addEventListener('click', async () => {
+      const tipo = (li.dataset.tipo || '').toLowerCase();
+      const id = Number(li.dataset.id);
+      if (!id) return;
+
+      showModal('Detalle', '<div style="padding:12px">Cargando…</div>');
+
+      try {
+        const data = await fetchHistDetail(API, tipo, id);
+        const html = renderHistDetail(tipo, data);
+        showModal(capitalize(tipo), html);
+      } catch (e) {
+        showModal('Error', `<div style="padding:12px;color:#b91c1c">No se pudo cargar el detalle (${e?.message || e}).</div>`);
+      }
+    });
+  });
+}
+
+async function fetchHistDetail(API, tipo, id) {
+  // Receta tiene endpoint directo
+  if (tipo === 'receta' || tipo === 'recetas') {
+    const r = await fetch(`${API}/api/recetas/${id}`);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.json();
+  }
+
+  // Mapear etiquetas visibles a keys de /api/registros/:tipo
+  const map = {
+    consulta: 'consulta',
+    control: 'control',
+    cirugía: 'cirugia',
+    cirugia: 'cirugia',
+    vacuna: 'vacuna',
+    antiparasitario: 'antiparasitario',
+    antipulgas: 'antipulgas',
+    hospitalización: 'hospitalizacion',
+    hospitalizacion: 'hospitalizacion',
+    triaje: 'triaje',
+    profilaxis: 'profilaxis',
+    defunción: 'defuncion',
+    defuncion: 'defuncion',
+    dermatología: 'dermatologia',
+    dermatologia: 'dermatologia',
+    'orden de exámenes': 'orden_examen',
+    'orden de examenes': 'orden_examen',
+    oftalmología: 'oftalmologia',
+    oftalmologia: 'oftalmologia'
+  };
+  const key = map[tipo] || tipo;
+
+  // No existe GET /:id individual para registros, así que buscamos por id
+  const url = `${API}/api/registros/${key}?search=${encodeURIComponent(String(id))}`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  const list = await r.json();
+  const found = Array.isArray(list) ? list.find(x => Number(x.id) === Number(id)) : null;
+  if (!found) throw new Error('No se encontró el registro');
+  return found;
+}
+
+function renderHistDetail(tipo, d) {
+  const dt = s => s ? new Date(s).toLocaleString() : '';
+  const row = (k, v) => v == null || v === '' ? '' :
+    `<div class="kv"><b>${k}:</b> <span>${esc(String(v))}</span></div>`;
+
+  const t = tipo.toLowerCase();
+
+  if (t === 'receta' || t === 'recetas') {
+    return `
+      <div class="modal-body">
+        ${row('ID', d.id)}
+        ${row('Fecha', dt(d.fecha || d.created_at))}
+        ${row('Mascota', d.mascota_nombre)}
+        ${row('Propietario', d.propietario_nombre)}
+        ${row('Diagnóstico', d.diagnostico)}
+        ${row('Indicaciones', d.indicaciones)}
+        ${row('Medicamentos', d.medicamentos)}
+      </div>`;
+  }
+
+  // Campos más comunes en registros
+  return `
+    <div class="modal-body">
+      ${row('ID', d.id)}
+      ${row('Fecha', dt(d.fecha || d.fecha_ingreso || d.created_at))}
+      ${row('Mascota', d.mascota_nombre)}
+      ${row('Motivo', d.motivo)}
+      ${row('Diagnóstico', d.diagnostico)}
+      ${row('Indicaciones', d.indicaciones)}
+      ${row('Procedimiento', d.procedimiento)}
+      ${row('Vacuna', d.vacuna)}
+      ${row('Producto', d.producto)}
+      ${row('Vía', d.via)}
+      ${row('Dosis', d.dosis)}
+      ${row('Temperatura °C', d.temperatura_c)}
+      ${row('Peso kg', d.peso_kg)}
+      ${row('Estado', d.estado)}
+      ${row('Notas/Observaciones', d.notas || d.observaciones)}
+    </div>`;
+}
+
+/* ===== Modal ultra simple ===== */
+function showModal(title, html) {
+  let modal = document.getElementById('simpleModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'simpleModal';
+    modal.innerHTML = `
+      <div class="modal-backdrop" style="position:fixed;inset:0;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;z-index:1000">
+        <div class="modal-card card" style="min-width:320px;max-width:720px;max-height:80vh;overflow:auto">
+          <div class="modal-head" style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+            <h3 id="modalTitle" style="margin:0">Detalle</h3>
+            <button id="modalClose" class="btn-del">Cerrar</button>
+          </div>
+          <div id="modalBody" style="margin-top:8px"></div>
+        </div>
+      </div>`;
+    document.body.appendChild(modal);
+    modal.querySelector('#modalClose').addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', (e) => { if (e.target.classList.contains('modal-backdrop')) modal.remove(); });
+  }
+  modal.querySelector('#modalTitle').textContent = title || 'Detalle';
+  modal.querySelector('#modalBody').innerHTML = html || '';
+}
+
+function capitalize(s) { s = (s || '').toString(); return s ? s[0].toUpperCase() + s.slice(1) : s; }
+
 
 /* ---------- helpers ---------- */
 function val(sel, root = document) { return root.querySelector(sel).value?.trim(); }

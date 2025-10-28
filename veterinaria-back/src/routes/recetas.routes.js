@@ -2,6 +2,7 @@ import { Router } from 'express';
 import pool from '../db.js';
 
 const router = Router();
+function isNonEmptyArray(a) { return Array.isArray(a) && a.length > 0; }
 
 /* Helpers */
 function toNull(v) {
@@ -72,56 +73,81 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', /*authRequired,*/ async (req, res) => {
+    const conn = await pool.getConnection();
     try {
+        await conn.beginTransaction();
+
+        const body = req.body || {};
         const {
-            mascota_id,
-            propietario_id,
-            fecha,
-            diagnostico,
-            indicaciones,
-            medicamentos,
-            veterinario_id,
-            firmado_por
-        } = req.body || {};
+            mascota_id, fecha, diagnostico = null, indicaciones = null,
+            medicamentos = null, firmado_por = null,
+            veterinario_id = null,                  // <- por si lo quieres guardar
+            antibiotico_bool = 0,
+            antibioticos = []                       // [{antibiotico_id, dosis, duracion_dias, notas}]
+        } = body;
 
-        if (!mascota_id) return res.status(400).json({ error: 'mascota_id es obligatorio' });
-
-        let propId = toNull(propietario_id);
-        if (!propId) {
-            const [[pet]] = await pool.query('SELECT propietario_id FROM mascota WHERE id = ?', [Number(mascota_id)]);
-            if (!pet?.propietario_id) {
-                return res.status(400).json({ error: 'La mascota no tiene propietario asociado' });
-            }
-            propId = pet.propietario_id;
+        if (!mascota_id) {
+            await conn.rollback(); conn.release();
+            return res.status(400).json({ ok: false, msg: 'mascota_id es requerido' });
         }
 
-        const sql = `
-      INSERT INTO receta (
-        mascota_id, propietario_id, fecha,
-        diagnostico, indicaciones, medicamentos,
-        veterinario_id, firmado_por
-      ) VALUES (?, ?, COALESCE(?, NOW()), ?, ?, ?, ?, ?)
-    `;
-        const params = [
-            Number(mascota_id), Number(propId), toNull(fecha),
-            toNull(diagnostico), toNull(indicaciones), toNull(medicamentos),
-            toNull(veterinario_id), toNull(firmado_por)
-        ];
-        const [r] = await pool.query(sql, params);
-
-        const [rows] = await pool.query(
-            `SELECT r.*, m.nombre AS mascota_nombre, p.nombre AS propietario_nombre, p.movil AS propietario_movil
-       FROM receta r
-       JOIN mascota m ON m.id = r.mascota_id
-       JOIN propietario p ON p.id = r.propietario_id
-       WHERE r.id = ?`,
-            [r.insertId]
+        // 1) obtener propietario_id desde la mascota
+        const [[pet]] = await conn.query(
+            'SELECT propietario_id FROM mascota WHERE id = ?',
+            [Number(mascota_id)]
         );
-        res.status(201).json(rows[0] || { id: r.insertId });
-    } catch (err) {
-        console.error('POST /recetas error', err);
-        res.status(500).json({ error: 'No se pudo crear la receta' });
+        const propietario_id = pet?.propietario_id || null;
+
+        // Si tu columna receta.propietario_id es NOT NULL, valida:
+        if (!propietario_id) {
+            await conn.rollback(); conn.release();
+            return res.status(400).json({
+                ok: false,
+                msg: 'La mascota seleccionada no tiene propietario asociado; no se puede crear la receta.'
+            });
+        }
+
+        const fechaFinal = fecha ? new Date(fecha) : new Date();
+
+        // 2) Insert receta (ahora incluye propietario_id y opcionalmente veterinario_id)
+        const sqlRec = `
+      INSERT INTO receta
+        (mascota_id, propietario_id, fecha, diagnostico, indicaciones, medicamentos, firmado_por, veterinario_id, antibiotico_bool, created_at)
+      VALUES (?,?,?,?,?,?,?,?,?, NOW())
+    `;
+        const [rRec] = await conn.query(sqlRec, [
+            Number(mascota_id), Number(propietario_id), fechaFinal,
+            diagnostico, indicaciones, medicamentos, firmado_por,
+            veterinario_id ? Number(veterinario_id) : null,
+            (Array.isArray(antibioticos) && antibioticos.length) || Number(antibiotico_bool) === 1 ? 1 : 0
+        ]);
+        const recetaId = rRec.insertId;
+
+        // 3) Inserta usos de antibiótico (si vinieron)
+        if (Array.isArray(antibioticos) && antibioticos.length) {
+            const sqlUso = `
+        INSERT INTO receta_antibiotico
+          (receta_id, antibiotico_id, dosis, duracion_dias, notas, enviado_sag_bool, created_at)
+        VALUES (?,?,?,?,?,0, NOW())
+      `;
+            for (const it of antibioticos) {
+                if (!it || !it.antibiotico_id) continue;
+                const dosis = it.dosis ?? null;
+                const duracion = (it.duracion_dias != null && it.duracion_dias !== '') ? Number(it.duracion_dias) : null;
+                const notas = it.notas ?? null;
+                await conn.query(sqlUso, [recetaId, Number(it.antibiotico_id), dosis, duracion, notas]);
+            }
+        }
+
+        await conn.commit();
+        res.status(201).json({ ok: true, id: recetaId });
+    } catch (e) {
+        await conn.rollback();
+        console.error('POST /api/recetas', e);
+        res.status(500).json({ ok: false, msg: e.message });
+    } finally {
+        conn.release();
     }
 });
 

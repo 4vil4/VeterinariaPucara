@@ -108,8 +108,8 @@ export async function init({ root, API }) {
         <div><label>Móvil</label><input class="input" id="f_movil" value="${esc(v?.movil || '')}"></div>
       </div>
       <div style="margin-top:12px;display:flex;gap:8px">
-        <button id="f_guardar" class="btn btn-primary">Guardar</button>
-        <button id="f_cancelar" class="btn btn-outline">Cancelar</button>
+        <button id="f_guardar" class="btn btn-hist">Guardar</button>
+        <button id="f_cancelar" class="btn btn-del">Cancelar</button>
       </div>
       ${v ? '' : `
       <hr/>

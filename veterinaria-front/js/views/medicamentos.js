@@ -109,8 +109,8 @@ async function mountProducts(root, API, cfg) {
         </div>
       </div>
       <div style="margin-top:12px;display:flex;gap:8px">
-        <button class="btn btn-primary" id="f_guardar">Guardar</button>
-        <button class="btn btn-outline" id="f_cancelar">Cancelar</button>
+        <button class="btn btn-hist" id="f_guardar">Guardar</button>
+        <button class="btn btn-del" id="f_cancelar">Cancelar</button>
       </div>
     `;
     root.prepend(box);

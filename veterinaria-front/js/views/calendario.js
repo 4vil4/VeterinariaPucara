@@ -46,21 +46,30 @@ export async function init({ root, API }) {
     }
 
     function openDay(key, list) {
-        side.style.display = 'block';
-        const txt = new Date(key).toLocaleDateString('es-CL', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
-        side.innerHTML = `
-      <div class="side-title"><h3 style="margin:0">${txt}</h3>
-        <button class="btn btn-primary" id="sideNew">Nueva</button>
-      </div>
-      <div class="side-list">
-        ${list.length ? list.map(item => sideItem(item)).join('') : '<p>No hay citas.</p>'}
-      </div>
-    `;
-        side.querySelector('#sideNew').onclick = () => {
-            location.hash = `#/citas?new=1&date=${key}`;
-        };
-        side.querySelectorAll('.btn-edit').forEach(b => b.onclick = () => openForm(null, list.find(x => x.id == b.dataset.id)));
-        side.querySelectorAll('.btn-del').forEach(b => b.onclick = () => delCita(b.dataset.id));
+      side.style.display = 'block';
+      const txt = new Date(key).toLocaleDateString('es-CL', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+
+      side.innerHTML = `
+        <div class="side-title">
+          <h3 style="margin:0">${txt}</h3>
+        </div>
+        <div class="side-list">
+          ${list.length ? list.map(item => sideItem(item)).join('') : '<p>No hay citas.</p>'}
+        </div>
+      `;
+
+      // Crear nueva cita preseleccionando el día
+      side.querySelector('#sideNew')?.addEventListener('click', () => {
+        location.hash = `#/citas?new=1&date=${key}`;
+      });
+
+      // Handlers de editar / eliminar
+      side.querySelectorAll('.btn-edit').forEach(b => {
+        b.onclick = () => openForm(null, list.find(x => x.id == b.dataset.id));
+      });
+      side.querySelectorAll('.btn-del').forEach(b => {
+        b.onclick = () => delCita(b.dataset.id);
+      });
     }
 
     function sideItem(c) {
@@ -122,8 +131,8 @@ export async function init({ root, API }) {
         <div style="grid-column:1/-1"><label>Observaciones</label><textarea class="input" id="f_obs" rows="3">${editing ? esc(editing.observaciones || '') : ''}</textarea></div>
       </div>
       <div style="margin-top:12px;display:flex;gap:8px">
-        <button class="btn btn-primary" id="f_guardar">Guardar</button>
-        <button class="btn btn-outline" id="f_cancelar">Cancelar</button>
+        <button class="btn btn-hist" id="f_guardar">Guardar</button>
+        <button class="btn btn-del" id="f_cancelar">Cancelar</button>
       </div>
     `;
         side.after(wrap);

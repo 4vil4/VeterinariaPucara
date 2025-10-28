@@ -557,3 +557,47 @@ body {
     background-color: #043d7c;
     transform: translateY(-1px);
 }
+
+.btn-hist {
+    background: #03ce79;
+    color: #fff;
+    border: 0;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer
+}
+
+.btn-edit {
+    background: #03b6ce;
+    color: #fff;
+    border: 0;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer
+}
+
+.btn-del {
+    background: #ce2203;
+    color: #fff;
+    border: 0;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer
+}
+
+.btn-alt {
+    background: #003079;
+    color: #fff;
+    border: 0;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer
+} 

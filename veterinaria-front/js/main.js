@@ -53,6 +53,9 @@ function buildMenu() {
     { href: '#/mascotas', label: '🐾 Mascotas' },
     { href: '#/propietarios', label: '🧑 Propietarios' },
     { href: '#/registro/consulta', label: '📑 Registros' },
+    { href: '#/receta', label: '📝 Receta' },    
+    { href: '#/hospitalizacion', label: '🏥 Hospitalización' },
+    { href: '#/antibioticos', label: '🧫 Antibióticos' },
     { href: '#/citas', label: '🧭 Citas' },
     { href: '#/calendario', label: '🗓️ Calendario' },
     { href: '#/urgencias', label: '🚨 Urgencias' },
@@ -66,6 +69,7 @@ function buildMenu() {
     { href: '#/mascotas', label: '🐾 Mascotas' },
     { href: '#/propietarios', label: '🧑 Propietarios' },
     { href: '#/registro/consulta', label: '📑 Registros' },
+    { href: '#/hospitalizacion', label: '🏥 Hospitalización' },
     { href: '#/citas', label: '🧭 Citas' },
     { href: '#/calendario', label: '🗓️ Calendario' },
     { href: '#/urgencias', label: '🚨 Urgencias' },
@@ -76,14 +80,12 @@ function buildMenu() {
       📑<span>Registros</span><i class="i i-caret" aria-hidden="true"></i>
     </button>
     <div class="submenu" id="submenuRegistros">
-      <a href="#/receta" class="submenu__item text-submenu">📝 Receta</a>
       <a href="#/registro/consulta" class="submenu__item text-submenu">📝 Consulta</a>
       <a href="#/registro/control" class="submenu__item text-submenu">📝 Control</a>
       <a href="#/registro/cirugia" class="submenu__item text-submenu">📝 Cirugía</a>
       <a href="#/registro/vacuna" class="submenu__item text-submenu">📝 Vacuna</a>
       <a href="#/registro/antiparasitario" class="submenu__item text-submenu">📝 Antiparasitario</a>
       <a href="#/registro/antipulgas" class="submenu__item text-submenu">📝 Antipulgas</a>
-      <a href="#/registro/hospitalizacion" class="submenu__item text-submenu">📝 Hospitalización</a>
       <a href="#/registro/triaje" class="submenu__item text-submenu">📝 Triaje</a>
       <a href="#/registro/profilaxis" class="submenu__item text-submenu">📝 Profilaxis</a>
       <a href="#/registro/defuncion" class="submenu__item text-submenu">📝 Defunción</a>
@@ -137,6 +139,8 @@ const routes = {
   '/accesorios': () => mountView('accesorios'),
   '/ver/:tipo': (p) => mountView('catalogo', p),
   '/receta': () => mountView('receta'),
+  '/antibioticos': () => mountView('antibioticos'),
+  '/hospitalizacion': () => mountView('hospitalizacion'),
 };
 
 function parseHash() {
@@ -219,6 +223,8 @@ const viewCssDeps = {
   accesorios: ['../css/productos.css'],
   catalogo: ['../css/public.css', '../css/public-catalogo.css'],
   receta: ['../css/receta.css'],
+  antibioticos: ['../css/antibiotico.css'],
+  hospitalizacion: ['../css/registro-hosp.css'],
 };
 
 async function mountView(name, params = {}) {

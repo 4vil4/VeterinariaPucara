@@ -16,6 +16,8 @@ import alimentosRoutes from './src/routes/alimentos.routes.js';
 import medicamentosRoutes from './src/routes/medicamentos.routes.js';
 import accesoriosRoutes from './src/routes/accesorios.routes.js';
 import recetasRoutes from './src/routes/recetas.routes.js';
+import antibioticosRoutes from './src/routes/antibioticos.routes.js';
+import hospitalizacionRoutes from './src/routes/hospitalizacion.routes.js';
 
 const app = express();
 app.use(cors({ origin: true }));
@@ -35,6 +37,8 @@ app.use('/api/alimentos', alimentosRoutes);
 app.use('/api/medicamentos', medicamentosRoutes);
 app.use('/api/accesorios', accesoriosRoutes);
 app.use('/api/recetas', recetasRoutes);
+app.use('/api/antibioticos', antibioticosRoutes);
+app.use('/api/hospitalizacion', hospitalizacionRoutes);
 
 app.get('/api/health', (_, res) => res.json({ ok: true }));
 

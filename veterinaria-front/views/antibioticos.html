@@ -1,0 +1,28 @@
+<!-- views/antibioticos.html -->
+<div class="card">
+  <div class="reg-header">
+    <h2>Antibióticos</h2>
+    <div class="reg-actions">
+      <input id="abSearch" class="input" placeholder="Buscar en catálogo..." />
+      <button id="abNew" class="btn btn-alt">Nuevo</button>
+    </div>
+  </div>
+  <div id="abTabBar" style="margin-top: 8px; display: flex; gap: 8px">
+    <button class="btn btn-edit" data-tab="catalogo">Catálogo</button>
+    <button class="btn btn-edit" data-tab="usos">Usos / Envíos SAG</button>
+    <select
+      id="abFilterEnv"
+      class="input"
+      style="margin-left: auto; width: 220px; display: none"
+    >
+      <option value="todos">Todos</option>
+      <option value="0">No enviados</option>
+      <option value="1">Enviados</option>
+    </select>
+    <button id="abRefreshUsos" class="btn-edit" style="display: none">
+      Actualizar
+    </button>
+  </div>
+
+  <div id="abWrap" style="margin-top: 8px">Cargando...</div>
+</div>

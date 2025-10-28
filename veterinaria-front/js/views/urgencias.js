@@ -60,22 +60,28 @@ export async function init({ root, API }) {
     }
 
     function openDay(dayKey, list) {
-        side.style.display = 'block';
-        const titulo = new Date(dayKey).toLocaleDateString('es-CL', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+      side.style.display = 'block';
+      const titulo = new Date(dayKey).toLocaleDateString('es-CL', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
 
-        side.innerHTML = `
-      <div class="side-title">
-        <h3 style="margin:0">${titulo}</h3>
-      </div>
-      <div class="side-list">
-        ${list.length ? list.map(item => sideItem(item)).join('') : '<p>No hay urgencias.</p>'}
-      </div>
-    `;
+      side.innerHTML = `
+        <div class="side-title">
+          <h3 style="margin:0">${titulo}</h3>
+        </div>
+        <div class="side-list">
+          ${list.length ? list.map(item => sideItem(item)).join('') : '<p>No hay urgencias.</p>'}
+        </div>
+      `;
 
-        side.querySelector('#goCitas').onclick = () => { location.hash = `#/citas?from=${dayKey}&to=${dayKey}`; };
-        side.querySelectorAll('.btn-edit').forEach(b => b.onclick = () => editCita(b.dataset.id));
-        side.querySelectorAll('.btn-del').forEach(b => b.onclick = () => delCita(b.dataset.id));
+      // Ir a la vista de tabla de citas filtrando por el día
+      side.querySelector('#goCitas')?.addEventListener('click', () => {
+        location.hash = `#/citas?from=${dayKey}&to=${dayKey}`;
+      });
+
+      // Handlers de editar / eliminar
+      side.querySelectorAll('.btn-edit').forEach(b => b.onclick = () => editCita(b.dataset.id));
+      side.querySelectorAll('.btn-del').forEach(b => b.onclick = () => delCita(b.dataset.id));
     }
+
 
     function sideItem(c) {
         const rango = `${fmtTime(c.fecha_inicio)}${c.fecha_fin ? `–${fmtTime(c.fecha_fin)}` : ''}`;

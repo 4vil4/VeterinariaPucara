@@ -17,6 +17,7 @@ router.get('/', async (_req, res) => {
     const sql = `
     SELECT
       m.id, m.nombre, m.n_historial, m.especie, m.raza, m.sexo,
+      m.esterilizado, m.nro_microchip,
       m.fecha_nacimiento, m.peso_kg, m.propietario_id, m.updated_at,
       p.nombre AS propietario_nombre
     FROM mascota m
@@ -58,6 +59,7 @@ router.get('/:id/foto', async (req, res) => {
 router.post('/', upload.single('foto'), async (req, res) => {
     const {
         nombre, especie, raza, sexo,
+        esterilizado, nro_microchip,
         n_historial, fecha_nacimiento, peso_kg,
         propietario_id
     } = req.body || {};
@@ -70,14 +72,18 @@ router.post('/', upload.single('foto'), async (req, res) => {
 
     const sql = `
     INSERT INTO mascota
-    (nombre, especie, raza, sexo, n_historial, fecha_nacimiento, peso_kg, propietario_id,
+    (nombre, especie, raza, sexo, esterilizado, nro_microchip,
+     n_historial, fecha_nacimiento, peso_kg, propietario_id,
      foto, foto_tipo, foto_tamano, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
   `;
     const params = [
         nombre || null, especie || null, raza || null, sexo || null,
+        (esterilizado === '1' || esterilizado === 1) ? 1 : (esterilizado === '0' || esterilizado === 0 ? 0 : null),
+        nro_microchip || null,
         n_historial || null, fecha_nacimiento || null,
-        peso_kg ?? null, propietario_id ?? null,
+        (peso_kg !== undefined && peso_kg !== null && peso_kg !== '') ? Number(peso_kg) : null,
+        propietario_id ?? null,
         foto, foto_tipo, foto_tamano
     ];
     const [r] = await pool.execute(sql, params);
@@ -89,19 +95,25 @@ router.put('/:id', upload.single('foto'), async (req, res) => {
     const { id } = req.params;
     const {
         nombre, especie, raza, sexo,
+        esterilizado, nro_microchip,
         n_historial, fecha_nacimiento, peso_kg,
         propietario_id
     } = req.body || {};
 
     let sql = `
     UPDATE mascota
-       SET nombre=?, especie=?, raza=?, sexo=?, n_historial=?, fecha_nacimiento=?,
+       SET nombre=?, especie=?, raza=?, sexo=?,
+           esterilizado=?, nro_microchip=?,
+           n_historial=?, fecha_nacimiento=?,
            peso_kg=?, propietario_id=?, updated_at=NOW()
   `;
     const params = [
         nombre || null, especie || null, raza || null, sexo || null,
+        (esterilizado === '1' || esterilizado === 1) ? 1 : (esterilizado === '0' || esterilizado === 0 ? 0 : null),
+        nro_microchip || null,
         n_historial || null, fecha_nacimiento || null,
-        peso_kg ?? null, propietario_id ?? null
+        (peso_kg !== undefined && peso_kg !== null && peso_kg !== '') ? Number(peso_kg) : null,
+        propietario_id ?? null
     ];
 
     if (req.file) {
@@ -123,10 +135,10 @@ router.delete('/:id', async (req, res) => {
     res.json({ ok: true, affected: r.affectedRows });
 });
 
+/** HISTORIAL combinando fuentes (se mantiene igual) */
 router.get('/:id/historial', async (req, res) => {
     const mascotaId = Number(req.params.id);
     const LIM = Math.min(parseInt(req.query.limit || '500', 10) || 500, 2000);
-
     if (!mascotaId) return res.status(400).json({ error: 'mascota_id inválido' });
 
     const sources = [
@@ -189,7 +201,6 @@ router.get('/:id/historial', async (req, res) => {
     ];
 
     const all = [];
-
     for (const s of sources) {
         try {
             const sql = `
@@ -202,8 +213,7 @@ router.get('/:id/historial', async (req, res) => {
       `;
             const [rows] = await pool.query(sql, [mascotaId, LIM]);
             all.push(...rows);
-        } catch (e) {
-        }
+        } catch (_e) { }
     }
 
     all.sort((a, b) => new Date(b.fecha || 0) - new Date(a.fecha || 0) || (b.id - a.id));

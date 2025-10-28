@@ -27,7 +27,7 @@ export async function init({ root, API, params }) {
 
     btnNew.addEventListener('click', () => {
         showForm(root, API, cfg, isVet, myVetId, me, async (payload) => {
-            if (isVet) payload.veterinario_id = myVetId;        
+            if (isVet) payload.veterinario_id = myVetId;
             await apiPost(`${API}/api/registros/${tipo}`, payload);
             await loadAndRender(inputSearch.value.trim());
         });
@@ -40,7 +40,8 @@ export async function init({ root, API, params }) {
     }
 }
 
-/* ---------------- Config por tipo (con vet + monto y anestesia en consulta) ----------------- */
+const PESO_FIELD = { name: 'peso_kg', type: 'number', step: '0.01', label: 'Peso (kg)' };
+
 const CONFIG = {
     consulta: {
         title: 'Consulta',
@@ -54,6 +55,7 @@ const CONFIG = {
         form: [
             { name: 'mascota_id', type: 'pet', label: 'Mascota' },
             { name: 'fecha', type: 'datetime', label: 'Fecha' },
+            PESO_FIELD,
             { name: 'motivo', label: 'Motivo' },
             { name: 'diagnostico', label: 'Diagnóstico', type: 'textarea' },
             { name: 'indicaciones', label: 'Indicaciones', type: 'textarea' },
@@ -75,8 +77,8 @@ const CONFIG = {
         form: [
             { name: 'mascota_id', label: 'Mascota', type: 'pet' },
             { name: 'fecha', label: 'Fecha', type: 'datetime' },
+            PESO_FIELD,
             { name: 'motivo', label: 'Motivo' },
-            { name: 'peso_kg', label: 'Peso (kg)', type: 'number', step: '0.01' },
             { name: 'temperatura_c', label: 'Temperatura (°C)', type: 'number', step: '0.1' },
             { name: 'diagnostico', label: 'Diagnóstico', type: 'textarea' },
             { name: 'indicaciones', label: 'Indicaciones', type: 'textarea' },
@@ -96,6 +98,7 @@ const CONFIG = {
         form: [
             { name: 'mascota_id', type: 'pet', label: 'Mascota' },
             { name: 'fecha', type: 'datetime', label: 'Fecha' },
+            PESO_FIELD,
             { name: 'procedimiento', label: 'Procedimiento' },
             { name: 'asa', label: 'ASA' },
             { name: 'cirujano', label: 'Cirujano' },
@@ -118,6 +121,7 @@ const CONFIG = {
         form: [
             { name: 'mascota_id', type: 'pet', label: 'Mascota' },
             { name: 'fecha', type: 'datetime', label: 'Fecha' },
+            PESO_FIELD,
             { name: 'vacuna', label: 'Vacuna' },
             { name: 'lote', label: 'Lote' },
             { name: 'proxima_fecha', type: 'date', label: 'Próxima fecha' },
@@ -139,6 +143,7 @@ const CONFIG = {
         form: [
             { name: 'mascota_id', type: 'pet', label: 'Mascota' },
             { name: 'fecha', type: 'datetime', label: 'Fecha' },
+            PESO_FIELD,
             { name: 'producto', label: 'Producto' },
             { name: 'via', label: 'Vía (oral/tópico/inyectable)' },
             { name: 'dosis', type: 'number', step: '0.01', label: 'Dosis' },
@@ -162,29 +167,11 @@ const CONFIG = {
         form: [
             { name: 'mascota_id', type: 'pet', label: 'Mascota' },
             { name: 'fecha', type: 'datetime', label: 'Fecha' },
+            PESO_FIELD,
             { name: 'producto', label: 'Producto' },
             { name: 'via', label: 'Vía (tópico/oral)' },
             { name: 'dosis', type: 'number', step: '0.01', label: 'Dosis' },
             { name: 'proxima_fecha', type: 'date', label: 'Próxima fecha' },
-            { name: 'observaciones', label: 'Observaciones', type: 'textarea' },
-            { name: 'veterinario_id', type: 'vet', label: 'Veterinario' },
-            { name: 'monto_total', type: 'number', step: '100', label: 'Monto total (CLP)' },
-        ]
-    },
-    hospitalizacion: {
-        title: 'Hospitalización',
-        columns: [
-            { key: 'id', label: 'ID', w: 80 },
-            { key: 'fecha_ingreso', label: 'Ingreso' },
-            { key: 'mascota_nombre', label: 'Mascota' },
-            { key: 'motivo', label: 'Motivo' },
-            { key: 'estado', label: 'Estado' }
-        ],
-        form: [
-            { name: 'mascota_id', type: 'pet', label: 'Mascota' },
-            { name: 'fecha_ingreso', type: 'datetime', label: 'Fecha ingreso' },
-            { name: 'motivo', label: 'Motivo' },
-            { name: 'estado', label: 'Estado (en_curso/alta/derivada/fallecida)' },
             { name: 'observaciones', label: 'Observaciones', type: 'textarea' },
             { name: 'veterinario_id', type: 'vet', label: 'Veterinario' },
             { name: 'monto_total', type: 'number', step: '100', label: 'Monto total (CLP)' },
@@ -202,6 +189,7 @@ const CONFIG = {
         form: [
             { name: 'mascota_id', type: 'pet', label: 'Mascota' },
             { name: 'fecha', type: 'datetime', label: 'Fecha' },
+            PESO_FIELD,
             { name: 'nivel', label: 'Nivel (I-V)' },
             { name: 'notas', label: 'Notas', type: 'textarea' },
             { name: 'veterinario_id', type: 'vet', label: 'Veterinario' },
@@ -219,6 +207,7 @@ const CONFIG = {
         form: [
             { name: 'mascota_id', type: 'pet', label: 'Mascota' },
             { name: 'fecha', type: 'datetime', label: 'Fecha' },
+            PESO_FIELD,
             { name: 'tipo', label: 'Tipo (p.ej. dental)' },
             { name: 'procedimiento', label: 'Procedimiento', type: 'textarea' },
             { name: 'veterinario_id', type: 'vet', label: 'Veterinario' },
@@ -237,10 +226,10 @@ const CONFIG = {
         form: [
             { name: 'mascota_id', type: 'pet', label: 'Mascota' },
             { name: 'fecha', type: 'datetime', label: 'Fecha' },
+            PESO_FIELD,
             { name: 'tipo', label: 'Tipo (natural/eutanasia)' },
             { name: 'causa', label: 'Causa' },
             { name: 'certificado', label: 'Certificado (0/1)' },
-            { name: 'observaciones', label: 'Observaciones', type: 'textarea' },
             { name: 'veterinario_id', type: 'vet', label: 'Veterinario' },
             { name: 'monto_total', type: 'number', step: '100', label: 'Monto total (CLP)' },
         ]
@@ -257,6 +246,7 @@ const CONFIG = {
         form: [
             { name: 'mascota_id', type: 'pet', label: 'Mascota' },
             { name: 'fecha', type: 'datetime', label: 'Fecha' },
+            PESO_FIELD,
             { name: 'motivo', label: 'Motivo' },
             { name: 'diagnostico', label: 'Diagnóstico' },
             { name: 'tratamiento', label: 'Tratamiento', type: 'textarea' },
@@ -276,6 +266,7 @@ const CONFIG = {
         form: [
             { name: 'mascota_id', type: 'pet', label: 'Mascota' },
             { name: 'fecha', type: 'datetime', label: 'Fecha' },
+            PESO_FIELD,
             { name: 'tipo_examen', label: 'Tipo de examen' },
             { name: 'laboratorio', label: 'Laboratorio' },
             { name: 'estado', label: 'Estado (pendiente/enviado/recibido/informado)' },
@@ -296,6 +287,7 @@ const CONFIG = {
         form: [
             { name: 'mascota_id', type: 'pet', label: 'Mascota' },
             { name: 'fecha', type: 'datetime', label: 'Fecha' },
+            PESO_FIELD,
             { name: 'motivo', label: 'Motivo' },
             { name: 'diagnostico', label: 'Diagnóstico' },
             { name: 'tratamiento', label: 'Tratamiento', type: 'textarea' },
@@ -305,7 +297,6 @@ const CONFIG = {
     },
 };
 
-/* ----------------- UI helpers ----------------- */
 function buildTable(rows, cfg) {
     const head = `
     <thead><tr>
@@ -374,13 +365,12 @@ function showForm(root, API, cfg, isVet, myVetId, me, onSubmit) {
     <h3 style="margin-top:0">Nuevo ${cfg.title}</h3>
     <div class="form-grid">${fieldsHTML}</div>
     <div style="margin-top:14px;display:flex;gap:8px">
-      <button class="btn btn-primary" id="f_guardar">Guardar</button>
-      <button class="btn btn-outline" id="f_cancelar">Cancelar</button>
+      <button class="btn-hist" id="f_guardar">Guardar</button>
+      <button class="btn-del" id="f_cancelar">Cancelar</button>
     </div>
   `;
     root.prepend(wrap);
 
-    // --- mascotas ---
     const petSearch = wrap.querySelector('#pet_search');
     const petSelect = wrap.querySelector('#pet_select');
     let mascotas = [];
@@ -399,7 +389,6 @@ function showForm(root, API, cfg, isVet, myVetId, me, onSubmit) {
         petSelect.innerHTML = list.map(m => `<option value="${m.id}">${esc(m.nombre)} — ${esc(m.especie || '')}</option>`).join('');
     }
 
-    // --- veterinarios (solo si no es vet) ---
     const vetSearch = wrap.querySelector('#vet_search');
     const vetSelect = wrap.querySelector('#vet_select');
     let veterinarios = [];
@@ -440,7 +429,6 @@ function showForm(root, API, cfg, isVet, myVetId, me, onSubmit) {
     };
 }
 
-/* ---------------- utils ---------------- */
 function esc(s) { return (s ?? '').toString().replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])); }
 function getUser() { try { return JSON.parse(localStorage.getItem('auth_user') || 'null'); } catch { return null; } }
 function authHeaders() { const t = localStorage.getItem('auth_token'); return t ? { Authorization: `Bearer ${t}` } : {}; }

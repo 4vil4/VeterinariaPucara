@@ -118,8 +118,8 @@ export async function init({ root, API }) {
         <div style="grid-column:1/-1"><label>Observaciones</label><textarea class="input" id="f_obs" rows="3">${editing ? esc(editing.observaciones || '') : ''}</textarea></div>
       </div>
       <div style="margin-top:12px;display:flex;gap:8px">
-        <button class="btn btn-primary" id="f_guardar">Guardar</button>
-        <button class="btn btn-outline" id="f_cancelar">Cancelar</button>
+        <button class="btn btn-hist" id="f_guardar">Guardar</button>
+        <button class="btn btn-del" id="f_cancelar">Cancelar</button>
       </div>
     `;
     const estadoSel = wrap.querySelector('#f_estado');

@@ -41,12 +41,6 @@ const MAP = {
     insert: ['mascota_id', 'fecha', 'producto', 'via', 'dosis', 'unidad', 'proxima_fecha', 'observaciones', 'atendido_por', 'veterinario_id', 'monto_total']
   },
 
-  hospitalizacion: {
-    table: 'hospitalizacion', order: 'fecha_ingreso DESC',
-    select: ['id', 'mascota_id', 'fecha_ingreso', 'motivo', 'estado', 'fecha_alta', 'created_at'],
-    insert: ['mascota_id', 'fecha_ingreso', 'motivo', 'cuidados', 'medicacion_json', 'estado', 'fecha_alta', 'observaciones', 'atendido_por', 'veterinario_id', 'monto_total']
-  },
-
   triaje: {
     table: 'triaje', order: 'fecha DESC',
     select: ['id', 'mascota_id', 'fecha', 'nivel', 'notas', 'created_at'],
@@ -162,6 +156,7 @@ router.post('/:tipo', authRequired, async (req, res) => {
     if (body.monto_total !== undefined) body.monto_total = Number(body.monto_total) || 0;
     if (tipo === 'consulta') body.anestesia_bool = body.anestesia_bool ? 1 : 0;
 
+    // Inserta solo los campos definidos para la tabla de ese tipo
     const keys = c.insert.filter(k => body[k] !== undefined);
     if (keys.length === 0) {
       await conn.rollback(); conn.release();
@@ -173,6 +168,7 @@ router.post('/:tipo', authRequired, async (req, res) => {
     const params = keys.map(k => body[k]);
     const [r] = await conn.execute(sql, params);
 
+    // Comisión (si corresponde)
     await insertCommission(conn, {
       tipo,
       registro_id: r.insertId,
@@ -181,6 +177,16 @@ router.post('/:tipo', authRequired, async (req, res) => {
       fecha: body.fecha || body.fecha_ingreso || new Date(),
       anestesia_bool: body.anestesia_bool
     });
+
+    // <<< NUEVO: actualizar peso de la mascota si vino en el payload >>>
+    if (body.peso_kg !== undefined && body.peso_kg !== null && !Number.isNaN(Number(body.peso_kg))) {
+      const nuevoPeso = Number(body.peso_kg);
+      await conn.execute(
+        `UPDATE mascota SET peso_kg = ?, updated_at = NOW() WHERE id = ?`,
+        [nuevoPeso, body.mascota_id]
+      );
+    }
+    // <<< FIN NUEVO >>>
 
     await conn.commit();
     res.status(201).json({ ok: true, id: r.insertId });
@@ -192,6 +198,5 @@ router.post('/:tipo', authRequired, async (req, res) => {
     conn.release();
   }
 });
-
 
 export default router;
