@@ -53,12 +53,13 @@ function buildMenu() {
     { href: '#/mascotas', label: '🐾 Mascotas' },
     { href: '#/propietarios', label: '🧑 Propietarios' },
     { href: '#/registro/consulta', label: '📑 Registros' },
-    { href: '#/receta', label: '📝 Receta' },    
+    { href: '#/receta', label: '📝 Receta' },
     { href: '#/hospitalizacion', label: '🏥 Hospitalización' },
     { href: '#/antibioticos', label: '🧫 Antibióticos' },
     { href: '#/citas', label: '🧭 Citas' },
     { href: '#/calendario', label: '🗓️ Calendario' },
     { href: '#/urgencias', label: '🚨 Urgencias' },
+    { href: '#/certificados', label: '📄 Certificados' },
     { href: '#/historico', label: '📁 Historico' },
     { href: '#/personal', label: '🩺 Personal' },
     { href: '#/alimentos', label: '🍖 Alimentos' },
@@ -94,8 +95,20 @@ function buildMenu() {
       <a href="#/registro/oftalmologia" class="submenu__item text-submenu">📝 Oftalmología</a>
     </div>`;
 
+  const certificadosSubmenu = `
+    <button class="menu__item menu__item--btn text-menu" id="btnCertificados">
+      📄<span>Certificados</span><i class="i i-caret" aria-hidden="true"></i>
+    </button>
+    <div class="submenu" id="submenuCertificados">
+      <a href="#/certificados/salud-sag" class="submenu__item text-submenu">🧾 Cert Salud SAG</a>
+      <a href="#/certificados/salud-pucara" class="submenu__item text-submenu">🧾 Cert Salud Pucará</a>
+      <a href="#/certificados/epicrisis" class="submenu__item text-submenu">🧾 Cert Epicrisis</a>
+    </div>`;
+
   const items = (isVet ? vetMenu : adminMenu)
-    .map(i => (i.label.includes('Registros') ? registrosSubmenu : `<a href="${i.href}" class="menu__item text-menu"><span>${i.label}</span></a>`))
+    .map(i => (i.label.includes('Registros') ? registrosSubmenu
+      : i.label.includes('Certificados') ? certificadosSubmenu
+        : `<a href="${i.href}" class="menu__item text-menu"><span>${i.label}</span></a>`))
     .join('');
 
   const logoutBtn = `
@@ -108,6 +121,9 @@ function buildMenu() {
 
   document.getElementById('btnRegistros')?.addEventListener('click', () => {
     document.getElementById('submenuRegistros')?.classList.toggle('open');
+  });
+  document.getElementById('btnCertificados')?.addEventListener('click', () => {
+    document.getElementById('submenuCertificados')?.classList.toggle('open');
   });
   document.getElementById('btnLogout')?.addEventListener('click', () => {
     localStorage.removeItem('auth_token');
@@ -141,6 +157,15 @@ const routes = {
   '/receta': () => mountView('receta'),
   '/antibioticos': () => mountView('antibioticos'),
   '/hospitalizacion': () => mountView('hospitalizacion'),
+  '/certificados/:tipo': (p) => {
+    const map = {
+      'salud-sag': 'salud-sag',
+      'salud-pucara': 'salud-pucara',
+      'epicrisis': 'epicrisis',
+    };
+    const viewName = map[p.tipo] || 'salud-sag';
+    return mountView(viewName, p);
+  },
 };
 
 function parseHash() {
@@ -153,6 +178,10 @@ function parseHash() {
 
   if (parts[0] === 'ver' && parts[1]) {
     return { route: '/ver/:tipo', params: { tipo: parts[1] } };
+  }
+
+  if (parts[0] === 'certificados' && parts[1]) {
+    return { route: '/certificados/:tipo', params: { tipo: parts[1] } };
   }
 
   return { route: `/${parts[0] || ''}` };
@@ -225,6 +254,9 @@ const viewCssDeps = {
   receta: ['../css/receta.css'],
   antibioticos: ['../css/antibiotico.css'],
   hospitalizacion: ['../css/registro-hosp.css'],
+  'salud-sag': ['../css/certificados.css'],
+  'salud-pucara': ['../css/certificados.css'], 
+  'epicrisis': ['../css/certificados.css'],
 };
 
 async function mountView(name, params = {}) {
@@ -303,7 +335,7 @@ function updateWhatsFab() {
 ensureWhatsFab(); updateWhatsFab();
 
 /* ========== PetBot (Lottie) ========== */
-const PET_USE = 'dog'; 
+const PET_USE = 'dog';
 const PET_LOTTIE = PET_USE === 'cat' ? '../assets/lottie/a-cat.json' : '../assets/lottie/a-dog.json'; // relativo a /js/main.js
 let $petFab = null, $petPanel = null, $petBody = null, $petInput = null;
 let _lottieLoaded = false;

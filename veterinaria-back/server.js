@@ -18,6 +18,9 @@ import accesoriosRoutes from './src/routes/accesorios.routes.js';
 import recetasRoutes from './src/routes/recetas.routes.js';
 import antibioticosRoutes from './src/routes/antibioticos.routes.js';
 import hospitalizacionRoutes from './src/routes/hospitalizacion.routes.js';
+import certificadosSaludSAGRoutes from './src/routes/certificados.salud.sag.routes.js';
+import CertSaludPucara from './src/routes/certificados.salud.pucara.routes.js';
+import certificadosEpicrisisRoutes from './src/routes/certificados.epicrisis.routes.js';
 
 const app = express();
 app.use(cors({ origin: true }));
@@ -39,6 +42,9 @@ app.use('/api/accesorios', accesoriosRoutes);
 app.use('/api/recetas', recetasRoutes);
 app.use('/api/antibioticos', antibioticosRoutes);
 app.use('/api/hospitalizacion', hospitalizacionRoutes);
+app.use('/api/certificados/salud-sag', certificadosSaludSAGRoutes);
+app.use('/api/certificados/salud-pucara', CertSaludPucara);
+app.use('/api/certificados/epicrisis', certificadosEpicrisisRoutes);
 
 app.get('/api/health', (_, res) => res.json({ ok: true }));
 

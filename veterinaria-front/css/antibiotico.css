@@ -107,4 +107,35 @@
     font-weight: bold;
     font-size: 1rem;
     cursor: pointer
-} 
+}
+
+.estado-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    font-weight: 800;
+    color: #fff;
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.badge-success {
+    background: #10b981;
+}
+
+.badge-danger {
+    background: #ef4444;
+}
+
+.estado-fecha {
+    font-size: 1rem;
+    color: #6b7280;
+    margin-left: 2px;
+}

@@ -26,13 +26,16 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Obtener 1 (usado para calcular “día N”)
+// Obtener 1 (usado para calcular “día N” y título con mascota)
 router.get('/:id', async (req, res) => {
     try {
         const id = Number(req.params.id);
         const [rows] = await pool.query(
-            `SELECT id, mascota_id, fecha_ingreso, motivo, estado, fecha_alta
-       FROM hospitalizacion WHERE id=?`, [id]
+            `SELECT h.id, h.mascota_id, h.fecha_ingreso, h.motivo, h.estado, h.fecha_alta,
+              m.nombre AS mascota_nombre
+       FROM hospitalizacion h
+       JOIN mascota m ON m.id = h.mascota_id
+       WHERE h.id=?`, [id]
         );
         if (!rows.length) return res.status(404).json({ ok: false, msg: 'no encontrado' });
         res.json(rows[0]);
@@ -60,7 +63,7 @@ router.post('/', authRequired, async (req, res) => {
         const allowed = [
             'mascota_id', 'fecha_ingreso', 'motivo', 'estado', 'observaciones',
             'veterinario_id', 'monto_total', 'cuidados', 'medicacion_json',
-            'fecha_alta', 'atendido_por' 
+            'fecha_alta', 'atendido_por'
         ];
         const cols = allowed.filter(k => b[k] !== undefined);
         const placeholders = cols.map(() => '?').join(',');
@@ -78,6 +81,38 @@ router.post('/', authRequired, async (req, res) => {
         res.status(201).json({ ok: true, id: r.insertId });
     } catch (e) {
         console.error('POST /api/hospitalizacion error:', e);
+        res.status(500).json({ ok: false, msg: e.message });
+    }
+});
+
+// Dar alta: estado='alta' y fecha_alta = NOW()
+router.patch('/:id/alta', authRequired, async (req, res) => {
+    try {
+        const id = Number(req.params.id);
+        await pool.query(
+            `UPDATE hospitalizacion
+       SET estado='alta', fecha_alta=IFNULL(fecha_alta, NOW())
+       WHERE id=?`, [id]
+        );
+        res.json({ ok: true });
+    } catch (e) {
+        console.error('PATCH /hospitalizacion/:id/alta error:', e);
+        res.status(500).json({ ok: false, msg: e.message });
+    }
+});
+
+// Reabrir: vuelve a en_curso y limpia fecha_alta
+router.patch('/:id/reabrir', authRequired, async (req, res) => {
+    try {
+        const id = Number(req.params.id);
+        await pool.query(
+            `UPDATE hospitalizacion
+       SET estado='en_curso', fecha_alta=NULL
+       WHERE id=?`, [id]
+        );
+        res.json({ ok: true });
+    } catch (e) {
+        console.error('PATCH /hospitalizacion/:id/reabrir error:', e);
         res.status(500).json({ ok: false, msg: e.message });
     }
 });

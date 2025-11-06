@@ -1,0 +1,62 @@
+.cert-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center
+}
+
+.cert-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center
+}
+
+.tbl .pill {
+    padding: 2px 6px;
+    border-radius: 8px;
+    background: #e2e8f0;
+    font-size: 12px
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px
+}
+
+.form-grid .full {
+    grid-column: 1/-1
+}
+
+.small-note {
+    color: #64748b;
+    font-size: 12px
+}
+
+.actions {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end
+}
+
+.btn-wa {
+    background: #25D366;
+    color: #fff
+}
+
+.grid-table .input--sm {
+    padding: 6px 8px;
+    font-size: 13px;
+}
+
+.grid-table td,
+.grid-table th {
+    vertical-align: middle;
+}
+
+.rich-editor {
+    min-height: 260px;
+    line-height: 1.5;
+    overflow: auto;
+    white-space: normal;
+}
