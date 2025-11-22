@@ -1,31 +1,9 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Servidor: 127.0.0.1
--- Tiempo de generación: 23-11-2025 a las 00:34:59
--- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.2.12
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Base de datos: `clinica_pucara`
---
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `accesorios`
---
+-- Base de datos Clinica Pucara (estructura sin datos)
+DROP DATABASE IF EXISTS `clinica_pucara`;
+CREATE DATABASE IF NOT EXISTS `clinica_pucara`
+  DEFAULT CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+USE `clinica_pucara`;
 
 CREATE TABLE `accesorios` (
   `id` bigint(20) NOT NULL,
@@ -85,232 +63,17 @@ CREATE TABLE `antibiotico` (
 --
 
 CREATE TABLE `antiparasitario` (
-  `id` bigint(20) NOT NULL,
-  `mascota_id` bigint(20) NOT NULL,
-  `fecha` datetime NOT NULL,
-  `producto` varchar(120) DEFAULT NULL,
-  `via` varchar(50) DEFAULT NULL,
-  `dosis` decimal(8,2) DEFAULT NULL,
-  `unidad` varchar(20) DEFAULT NULL,
-  `peso_referencia` decimal(6,2) DEFAULT NULL,
-  `proxima_fecha` date DEFAULT NULL,
-  `observaciones` text DEFAULT NULL,
-  `atendido_por` varchar(100) DEFAULT NULL,
-  `veterinario_id` bigint(20) DEFAULT NULL,
-  `monto_total` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `created_at` datetime DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `antipulgas`
---
-
-CREATE TABLE `antipulgas` (
-  `id` bigint(20) NOT NULL,
-  `mascota_id` bigint(20) NOT NULL,
-  `fecha` datetime NOT NULL,
-  `producto` varchar(120) DEFAULT NULL,
-  `via` varchar(50) DEFAULT NULL,
-  `dosis` decimal(8,2) DEFAULT NULL,
-  `unidad` varchar(20) DEFAULT NULL,
-  `proxima_fecha` date DEFAULT NULL,
-  `observaciones` text DEFAULT NULL,
-  `atendido_por` varchar(100) DEFAULT NULL,
-  `veterinario_id` bigint(20) DEFAULT NULL,
-  `monto_total` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `created_at` datetime DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `certificado`
---
-
-CREATE TABLE `certificado` (
-  `id` bigint(20) NOT NULL,
-  `tipo` enum('salud_sag') NOT NULL,
-  `fecha_emision` datetime NOT NULL DEFAULT current_timestamp(),
-  `mascota_id` bigint(20) NOT NULL,
-  `propietario_id` bigint(20) NOT NULL,
-  `veterinario_id` bigint(20) DEFAULT NULL,
-  `data_json` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`data_json`)),
-  `file_path` varchar(255) DEFAULT NULL,
-  `file_mime` varchar(64) DEFAULT NULL,
-  `file_size` int(10) UNSIGNED DEFAULT NULL,
-  `version` tinyint(3) UNSIGNED NOT NULL DEFAULT 1,
-  `created_by` bigint(20) DEFAULT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `certificados_autorizacion_cirugia`
---
-
-CREATE TABLE `certificados_autorizacion_cirugia` (
-  `id` bigint(20) NOT NULL,
-  `mascota_id` bigint(20) NOT NULL,
-  `propietario_id` bigint(20) NOT NULL,
-  `veterinario_id` bigint(20) NOT NULL,
-  `prop_nombre` varchar(255) NOT NULL,
-  `prop_rut` varchar(50) DEFAULT NULL,
-  `prop_movil` varchar(50) DEFAULT NULL,
-  `prop_direccion` varchar(255) DEFAULT NULL,
-  `prop_correo` varchar(150) DEFAULT NULL,
-  `mas_nombre` varchar(255) NOT NULL,
-  `mas_especie` varchar(100) DEFAULT NULL,
-  `mas_raza` varchar(150) DEFAULT NULL,
-  `mas_fecha_nacimiento` datetime DEFAULT NULL,
-  `mas_peso_kg` decimal(8,2) DEFAULT NULL,
-  `mas_sexo` varchar(20) DEFAULT NULL,
-  `color` varchar(100) DEFAULT NULL,
-  `fecha_autorizacion` date NOT NULL,
-  `procedimientos` varchar(500) DEFAULT NULL,
-  `examenes_pre` enum('SI','NO') DEFAULT 'NO',
-  `aranceles` varchar(100) DEFAULT NULL,
-  `fecha_cert` date NOT NULL,
-  `vet_nombre` varchar(255) NOT NULL,
-  `vet_rut` varchar(50) DEFAULT NULL,
+  `id` int(11) NOT NULL,
+  `nombre` varchar(120) NOT NULL,
+  `tipo` varchar(60) DEFAULT NULL,
+  `especie` varchar(40) DEFAULT NULL,
+  `dosis` varchar(60) DEFAULT NULL,
+  `via` varchar(40) DEFAULT NULL,
+  `frecuencia` varchar(60) DEFAULT NULL,
+  `activo_bool` tinyint(1) NOT NULL DEFAULT 1,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `certificados_defuncion`
---
-
-CREATE TABLE `certificados_defuncion` (
-  `id` bigint(20) NOT NULL,
-  `mascota_id` bigint(20) NOT NULL,
-  `propietario_id` bigint(20) NOT NULL,
-  `veterinario_id` bigint(20) NOT NULL,
-  `prop_nombre` varchar(255) NOT NULL,
-  `prop_rut` varchar(50) DEFAULT NULL,
-  `prop_movil` varchar(50) DEFAULT NULL,
-  `prop_direccion` varchar(255) DEFAULT NULL,
-  `mas_nombre` varchar(255) NOT NULL,
-  `mas_especie` varchar(100) DEFAULT NULL,
-  `mas_fecha_nacimiento` datetime DEFAULT NULL,
-  `mas_raza` varchar(150) DEFAULT NULL,
-  `mas_peso_kg` decimal(8,2) DEFAULT NULL,
-  `mas_sexo` varchar(20) DEFAULT NULL,
-  `color` varchar(100) DEFAULT NULL,
-  `fecha_defuncion` date NOT NULL,
-  `lugar_defuncion` varchar(255) DEFAULT NULL,
-  `motivo_defuncion` text DEFAULT NULL,
-  `fecha_cert` date NOT NULL,
-  `vet_nombre` varchar(255) NOT NULL,
-  `vet_rut` varchar(50) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `certificado_epicrisis`
---
-
-CREATE TABLE `certificado_epicrisis` (
-  `id` bigint(20) NOT NULL,
-  `mascota_id` bigint(20) NOT NULL,
-  `propietario_id` bigint(20) NOT NULL,
-  `veterinario_id` bigint(20) NOT NULL,
-  `mas_nombre` varchar(120) NOT NULL,
-  `mas_especie` varchar(30) DEFAULT NULL,
-  `mas_raza` varchar(80) DEFAULT NULL,
-  `mas_sexo` varchar(20) DEFAULT NULL,
-  `mas_edad_anios` decimal(6,3) DEFAULT NULL,
-  `mas_peso_kg` decimal(6,2) DEFAULT NULL,
-  `prop_nombre` varchar(120) NOT NULL,
-  `prop_rut` varchar(30) DEFAULT NULL,
-  `prop_movil` varchar(30) DEFAULT NULL,
-  `prop_direccion` varchar(200) DEFAULT NULL,
-  `vet_nombre` varchar(120) NOT NULL,
-  `vet_rut` varchar(30) DEFAULT NULL,
-  `fecha_ingreso` date NOT NULL,
-  `fecha_egreso` date NOT NULL,
-  `sintomas` text DEFAULT NULL,
-  `diagnostico_ingreso` text DEFAULT NULL,
-  `diagnostico_egreso` text DEFAULT NULL,
-  `causa_egreso` enum('alta_medica','alta_relativa','alta_solicitada') DEFAULT NULL,
-  `examenes` text DEFAULT NULL,
-  `tratamiento_realizado` text DEFAULT NULL,
-  `tratamiento_seguir` text DEFAULT NULL,
-  `recomendaciones` text DEFAULT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp()
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `certificado_salud_pucara`
---
-
-CREATE TABLE `certificado_salud_pucara` (
-  `id` bigint(20) NOT NULL,
-  `mascota_id` bigint(20) NOT NULL,
-  `propietario_id` bigint(20) NOT NULL,
-  `veterinario_id` bigint(20) NOT NULL,
-  `mas_nombre` varchar(120) NOT NULL,
-  `mas_especie` varchar(40) DEFAULT NULL,
-  `mas_raza` varchar(120) DEFAULT NULL,
-  `mas_sexo` varchar(20) DEFAULT NULL,
-  `mas_edad_anios` decimal(5,2) DEFAULT NULL,
-  `mas_peso_kg` decimal(6,2) DEFAULT NULL,
-  `prop_nombre` varchar(120) NOT NULL,
-  `prop_movil` varchar(40) DEFAULT NULL,
-  `prop_direccion` varchar(180) DEFAULT NULL,
-  `fecha_cert` date NOT NULL,
-  `relato_html` mediumtext DEFAULT NULL,
-  `vet_nombre` varchar(120) NOT NULL,
-  `vet_rut` varchar(30) DEFAULT NULL,
-  `created_at` datetime DEFAULT current_timestamp(),
-  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `certificado_salud_sag`
---
-
-CREATE TABLE `certificado_salud_sag` (
-  `id` bigint(20) NOT NULL,
-  `mascota_id` bigint(20) NOT NULL,
-  `propietario_id` bigint(20) NOT NULL,
-  `veterinario_id` bigint(20) NOT NULL,
-  `mas_nombre` varchar(120) NOT NULL,
-  `mas_raza` varchar(120) DEFAULT NULL,
-  `mas_peso_kg` decimal(6,2) DEFAULT NULL,
-  `mas_especie` varchar(40) DEFAULT NULL,
-  `mas_edad_anios` decimal(5,2) DEFAULT NULL,
-  `mas_color` varchar(60) DEFAULT NULL,
-  `mas_sexo` varchar(20) DEFAULT NULL,
-  `mas_microchip` varchar(80) DEFAULT NULL,
-  `chip_fecha` date DEFAULT NULL,
-  `chip_sitio` varchar(60) DEFAULT NULL,
-  `prop_nombre` varchar(120) NOT NULL,
-  `prop_rut` varchar(30) DEFAULT NULL,
-  `prop_direccion` varchar(180) DEFAULT NULL,
-  `prop_fono` varchar(40) DEFAULT NULL,
-  `fecha_cert` date NOT NULL,
-  `fecha_inspeccion` date NOT NULL,
-  `vet_nombre` varchar(120) NOT NULL,
-  `vet_rut` varchar(30) DEFAULT NULL,
-  `vet_fono` varchar(40) DEFAULT NULL,
-  `vet_direccion` varchar(180) DEFAULT NULL,
-  `vacunacion_json` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`vacunacion_json`)),
-  `desparasitacion_json` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`desparasitacion_json`)),
-  `created_at` datetime DEFAULT current_timestamp(),
-  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -321,19 +84,50 @@ CREATE TABLE `certificado_salud_sag` (
 CREATE TABLE `cirugia` (
   `id` bigint(20) NOT NULL,
   `mascota_id` bigint(20) NOT NULL,
+  `propietario_id` bigint(20) NOT NULL,
+  `veterinario_id` bigint(20) NOT NULL,
   `fecha` datetime NOT NULL,
-  `procedimiento` varchar(255) DEFAULT NULL,
-  `cirujano` varchar(100) DEFAULT NULL,
-  `anestesia` varchar(100) DEFAULT NULL,
-  `asa` varchar(10) DEFAULT NULL,
+  `tipo_cirugia` varchar(150) DEFAULT NULL,
+  `diagnostico_preoperatorio` text DEFAULT NULL,
+  `diagnostico_postoperatorio` text DEFAULT NULL,
+  `procedimiento` text DEFAULT NULL,
+  `observaciones` text DEFAULT NULL,
+  `estado` varchar(50) DEFAULT 'Programada',
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `cirugia_detalle`
+--
+
+CREATE TABLE `cirugia_detalle` (
+  `id` bigint(20) NOT NULL,
+  `cirugia_id` bigint(20) NOT NULL,
+  `descripcion` text DEFAULT NULL,
   `materiales` text DEFAULT NULL,
-  `complicaciones` text DEFAULT NULL,
-  `notas` text DEFAULT NULL,
-  `consent_firmado` tinyint(1) DEFAULT NULL,
-  `atendido_por` varchar(100) DEFAULT NULL,
-  `veterinario_id` bigint(20) DEFAULT NULL,
-  `monto_total` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `created_at` datetime DEFAULT current_timestamp()
+  `costo` decimal(10,2) DEFAULT 0.00,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `cirugia_recuperacion`
+--
+
+CREATE TABLE `cirugia_recuperacion` (
+  `id` bigint(20) NOT NULL,
+  `cirugia_id` bigint(20) NOT NULL,
+  `fecha_control` datetime NOT NULL,
+  `estado` varchar(100) DEFAULT NULL,
+  `indicaciones` text DEFAULT NULL,
+  `observaciones` text DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -344,128 +138,210 @@ CREATE TABLE `cirugia` (
 
 CREATE TABLE `cita` (
   `id` bigint(20) NOT NULL,
-  `fecha_inicio` datetime(3) NOT NULL,
-  `fecha_fin` datetime(3) DEFAULT NULL,
-  `tipo` varchar(60) DEFAULT NULL,
-  `urgencia` tinyint(1) NOT NULL DEFAULT 0,
-  `estado` enum('programada','confirmada','atendida','cancelada','no_asiste') NOT NULL DEFAULT 'programada',
-  `observaciones` varchar(191) DEFAULT NULL,
+  `mascota_id` bigint(20) NOT NULL,
+  `propietario_id` bigint(20) NOT NULL,
+  `veterinario_id` bigint(20) NOT NULL,
+  `fecha` datetime NOT NULL,
+  `motivo` varchar(255) DEFAULT NULL,
+  `estado` varchar(50) NOT NULL DEFAULT 'Pendiente',
+  `tipo` varchar(50) DEFAULT NULL,
+  `notas` text DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `es_urgencia` tinyint(1) NOT NULL DEFAULT 0,
+  `hospitalizacion_id` bigint(20) DEFAULT NULL,
+  `recordatorio_enviado` tinyint(1) NOT NULL DEFAULT 0,
+  `fecha_recordatorio` datetime DEFAULT NULL,
+  `duracion_minutos` int(11) NOT NULL DEFAULT 30
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `comisiones`
+--
+
+CREATE TABLE `comisiones` (
+  `id` bigint(20) NOT NULL,
+  `veterinario_id` bigint(20) NOT NULL,
+  `porcentaje` decimal(5,2) NOT NULL DEFAULT 0.00,
+  `descripcion` varchar(255) DEFAULT NULL,
+  `activo` tinyint(1) NOT NULL DEFAULT 1,
+  `fecha_inicio` date DEFAULT NULL,
+  `fecha_fin` date DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `configuracion_clinica`
+--
+
+CREATE TABLE `configuracion_clinica` (
+  `id` int(11) NOT NULL,
+  `nombre_clinica` varchar(255) DEFAULT NULL,
+  `direccion` varchar(255) DEFAULT NULL,
+  `telefono` varchar(50) DEFAULT NULL,
+  `email` varchar(150) DEFAULT NULL,
+  `horario_atencion` varchar(255) DEFAULT NULL,
+  `logo_mime` varchar(100) DEFAULT NULL,
+  `logo_blob` longblob DEFAULT NULL,
+  `config_json` json DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `consultas`
+--
+
+CREATE TABLE `consultas` (
+  `id` bigint(20) NOT NULL,
+  `mascota_id` bigint(20) DEFAULT NULL,
   `propietario_id` bigint(20) DEFAULT NULL,
-  `created_by` varchar(120) DEFAULT NULL,
-  `created_at` datetime(3) NOT NULL DEFAULT current_timestamp(3),
-  `updated_at` datetime(3) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `citamascota`
---
-
-CREATE TABLE `citamascota` (
-  `cita_id` bigint(20) NOT NULL,
-  `mascota_id` bigint(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `consulta`
---
-
-CREATE TABLE `consulta` (
-  `id` bigint(20) NOT NULL,
-  `mascota_id` bigint(20) NOT NULL,
-  `fecha` datetime NOT NULL,
-  `motivo` varchar(255) DEFAULT NULL,
-  `diagnostico` text DEFAULT NULL,
-  `indicaciones` text DEFAULT NULL,
-  `atendido_por` varchar(100) DEFAULT NULL,
   `veterinario_id` bigint(20) DEFAULT NULL,
-  `monto_total` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `anestesia_bool` tinyint(1) NOT NULL DEFAULT 0,
-  `created_at` datetime DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `control`
---
-
-CREATE TABLE `control` (
-  `id` bigint(20) NOT NULL,
-  `mascota_id` bigint(20) NOT NULL,
-  `fecha` datetime(3) NOT NULL,
-  `peso_kg` decimal(5,2) DEFAULT NULL,
-  `temperatura_c` decimal(4,1) DEFAULT NULL,
-  `fc` int(11) DEFAULT NULL,
-  `fr` int(11) DEFAULT NULL,
-  `motivo` varchar(200) DEFAULT NULL,
-  `examen_fisico` varchar(191) DEFAULT NULL,
-  `diagnostico` varchar(191) DEFAULT NULL,
-  `indicaciones` varchar(191) DEFAULT NULL,
-  `atendido_por` varchar(120) DEFAULT NULL,
-  `veterinario_id` bigint(20) DEFAULT NULL,
-  `monto_total` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `created_at` datetime(3) NOT NULL DEFAULT current_timestamp(3)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `defuncion`
---
-
-CREATE TABLE `defuncion` (
-  `id` bigint(20) NOT NULL,
-  `mascota_id` bigint(20) NOT NULL,
-  `fecha` datetime NOT NULL,
-  `tipo` enum('natural','eutanasia') DEFAULT 'natural',
-  `causa` varchar(255) DEFAULT NULL,
-  `responsable` varchar(100) DEFAULT NULL,
-  `certificado` tinyint(1) DEFAULT 0,
-  `observaciones` text DEFAULT NULL,
-  `created_at` datetime DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `dermatologia`
---
-
-CREATE TABLE `dermatologia` (
-  `id` bigint(20) NOT NULL,
-  `mascota_id` bigint(20) NOT NULL,
-  `fecha` datetime NOT NULL,
-  `motivo` varchar(255) DEFAULT NULL,
-  `lesiones` text DEFAULT NULL,
-  `pruebas` text DEFAULT NULL,
+  `fecha_consulta` datetime NOT NULL,
+  `motivo` text DEFAULT NULL,
   `diagnostico` text DEFAULT NULL,
   `tratamiento` text DEFAULT NULL,
-  `fecha_control` date DEFAULT NULL,
-  `atendido_por` varchar(100) DEFAULT NULL,
-  `veterinario_id` bigint(20) DEFAULT NULL,
-  `monto_total` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `created_at` datetime DEFAULT current_timestamp()
+  `observaciones` text DEFAULT NULL,
+  `peso` decimal(5,2) DEFAULT NULL,
+  `temperatura` decimal(4,1) DEFAULT NULL,
+  `frecuencia_cardiaca` int(11) DEFAULT NULL,
+  `frecuencia_respiratoria` int(11) DEFAULT NULL,
+  `estado_general` varchar(100) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `proxima_cita` datetime DEFAULT NULL,
+  `tipo_consulta` varchar(50) DEFAULT NULL,
+  `es_urgencia` tinyint(1) NOT NULL DEFAULT 0,
+  `hospitalizacion_id` bigint(20) DEFAULT NULL,
+  `triage` varchar(50) DEFAULT NULL,
+  `notas_triage` text DEFAULT NULL,
+  `signos_vitales_json` json DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `documento`
+-- Estructura de tabla para la tabla `consultas_archivos`
 --
 
-CREATE TABLE `documento` (
-  `id_documento` int(11) NOT NULL,
-  `nombre_documento` varchar(255) NOT NULL,
-  `formato` varchar(45) NOT NULL,
-  `id_solicitud` int(11) NOT NULL,
-  `id_tipo_documento` int(11) NOT NULL,
-  `archivo` longblob NOT NULL,
-  `mime_type` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+CREATE TABLE `consultas_archivos` (
+  `id` bigint(20) NOT NULL,
+  `consulta_id` bigint(20) NOT NULL,
+  `nombre_archivo` varchar(255) NOT NULL,
+  `mime_type` varchar(100) NOT NULL,
+  `archivo_blob` longblob NOT NULL,
+  `tipo` varchar(50) DEFAULT NULL,
+  `descripcion` text DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `consultas_tratamientos`
+--
+
+CREATE TABLE `consultas_tratamientos` (
+  `id` bigint(20) NOT NULL,
+  `consulta_id` bigint(20) NOT NULL,
+  `medicamento` varchar(255) DEFAULT NULL,
+  `dosis` varchar(255) DEFAULT NULL,
+  `frecuencia` varchar(255) DEFAULT NULL,
+  `duracion` varchar(255) DEFAULT NULL,
+  `instrucciones` text DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `examenes`
+--
+
+CREATE TABLE `examenes` (
+  `id` bigint(20) NOT NULL,
+  `mascota_id` bigint(20) DEFAULT NULL,
+  `propietario_id` bigint(20) DEFAULT NULL,
+  `veterinario_id` bigint(20) DEFAULT NULL,
+  `consulta_id` bigint(20) DEFAULT NULL,
+  `tipo_examen` varchar(150) NOT NULL,
+  `descripcion` text DEFAULT NULL,
+  `resultado` text DEFAULT NULL,
+  `fecha_examen` datetime NOT NULL,
+  `observaciones` text DEFAULT NULL,
+  `estado` varchar(50) DEFAULT NULL,
+  `archivo_mime` varchar(100) DEFAULT NULL,
+  `archivo_blob` longblob DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `laboratorio_externo` varchar(150) DEFAULT NULL,
+  `costo` decimal(10,2) DEFAULT 0.00
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `examenes_tipo`
+--
+
+CREATE TABLE `examenes_tipo` (
+  `id` int(11) NOT NULL,
+  `nombre` varchar(150) NOT NULL,
+  `descripcion` text DEFAULT NULL,
+  `activo` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ficha_medica`
+--
+
+CREATE TABLE `ficha_medica` (
+  `id` bigint(20) NOT NULL,
+  `mascota_id` bigint(20) NOT NULL,
+  `propietario_id` bigint(20) NOT NULL,
+  `fecha_creacion` datetime NOT NULL DEFAULT current_timestamp(),
+  `estado` varchar(50) DEFAULT 'Activa',
+  `antecedentes` text DEFAULT NULL,
+  `alergias` text DEFAULT NULL,
+  `enfermedades_cronicas` text DEFAULT NULL,
+  `cirugias_previas` text DEFAULT NULL,
+  `observaciones_generales` text DEFAULT NULL,
+  `ultimo_control` datetime DEFAULT NULL,
+  `proximo_control` datetime DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ficha_medica_historial`
+--
+
+CREATE TABLE `ficha_medica_historial` (
+  `id` bigint(20) NOT NULL,
+  `ficha_medica_id` bigint(20) NOT NULL,
+  `tipo_evento` varchar(100) NOT NULL,
+  `descripcion` text DEFAULT NULL,
+  `fecha_evento` datetime NOT NULL,
+  `veterinario_id` bigint(20) DEFAULT NULL,
+  `notas` text DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -476,167 +352,89 @@ CREATE TABLE `documento` (
 CREATE TABLE `hospitalizacion` (
   `id` bigint(20) NOT NULL,
   `mascota_id` bigint(20) NOT NULL,
-  `fecha_ingreso` datetime NOT NULL,
-  `motivo` varchar(255) DEFAULT NULL,
-  `cuidados` text DEFAULT NULL,
-  `medicacion_json` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`medicacion_json`)),
-  `estado` enum('en_curso','alta','derivada','fallecida') DEFAULT 'en_curso',
-  `fecha_alta` datetime DEFAULT NULL,
-  `observaciones` text DEFAULT NULL,
-  `atendido_por` varchar(100) DEFAULT NULL,
-  `veterinario_id` bigint(20) DEFAULT NULL,
-  `monto_total` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `created_at` datetime DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `hospitalizacion_monitoreo`
---
-
-CREATE TABLE `hospitalizacion_monitoreo` (
-  `id` bigint(20) NOT NULL,
-  `hospitalizacion_id` bigint(20) NOT NULL,
-  `fecha` date NOT NULL,
-  `hora` time NOT NULL,
-  `temperatura_c` decimal(4,1) DEFAULT NULL,
-  `lpm` int(11) DEFAULT NULL,
-  `fr` int(11) DEFAULT NULL,
-  `peso_kg` decimal(6,2) DEFAULT NULL,
-  `deshidratacion` varchar(50) DEFAULT NULL,
-  `tlc_seg` decimal(3,1) DEFAULT NULL,
-  `pa` varchar(20) DEFAULT NULL,
-  `pas` int(11) DEFAULT NULL,
-  `pad` int(11) DEFAULT NULL,
-  `pam` int(11) DEFAULT NULL,
-  `notas` text DEFAULT NULL,
-  `created_at` datetime DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `hospitalizacion_observacion`
---
-
-CREATE TABLE `hospitalizacion_observacion` (
-  `id` bigint(20) NOT NULL,
-  `hospitalizacion_id` bigint(20) NOT NULL,
-  `fecha` date NOT NULL,
-  `texto` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `mascota`
---
-
-CREATE TABLE `mascota` (
-  `id` bigint(20) NOT NULL,
   `propietario_id` bigint(20) NOT NULL,
-  `nombre` varchar(191) NOT NULL,
-  `n_historial` varchar(50) DEFAULT NULL,
-  `especie` enum('perro','gato') NOT NULL,
-  `raza` varchar(120) DEFAULT NULL,
-  `sexo` enum('macho','hembra','desconocido') NOT NULL DEFAULT 'desconocido',
-  `esterilizado` tinyint(1) DEFAULT NULL,
-  `nro_microchip` varchar(50) DEFAULT NULL,
-  `fecha_nacimiento` datetime(3) DEFAULT NULL,
-  `edad_anios` decimal(4,1) DEFAULT NULL,
-  `peso_kg` decimal(5,2) DEFAULT NULL,
-  `foto` longblob DEFAULT NULL,
-  `foto_nombre` varchar(255) DEFAULT NULL,
-  `foto_tipo` varchar(100) DEFAULT NULL,
-  `foto_tamano` int(11) DEFAULT NULL,
-  `created_at` datetime(3) NOT NULL DEFAULT current_timestamp(3),
-  `updated_at` datetime(3) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `medicamentos`
---
-
-CREATE TABLE `medicamentos` (
-  `id` bigint(20) NOT NULL,
-  `nombre` varchar(150) NOT NULL,
-  `descripcion` text DEFAULT NULL,
-  `precio` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `stock` int(11) NOT NULL DEFAULT 0,
-  `foto_mime` varchar(100) DEFAULT NULL,
-  `foto_blob` longblob DEFAULT NULL,
-  `requiere_rx` tinyint(1) NOT NULL DEFAULT 0,
-  `activo` tinyint(1) NOT NULL DEFAULT 1,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `oftalmologia`
---
-
-CREATE TABLE `oftalmologia` (
-  `id` bigint(20) NOT NULL,
-  `mascota_id` bigint(20) NOT NULL,
-  `fecha` datetime NOT NULL,
-  `motivo` varchar(255) DEFAULT NULL,
-  `test_schirmer_mm` int(11) DEFAULT NULL,
-  `fluoresceina` tinyint(1) DEFAULT NULL,
-  `pio_mmHg` decimal(4,1) DEFAULT NULL,
-  `hallazgos` text DEFAULT NULL,
+  `veterinario_id` bigint(20) NOT NULL,
+  `fecha_ingreso` datetime NOT NULL,
+  `fecha_egreso` datetime DEFAULT NULL,
+  `motivo` text DEFAULT NULL,
   `diagnostico` text DEFAULT NULL,
   `tratamiento` text DEFAULT NULL,
-  `atendido_por` varchar(100) DEFAULT NULL,
-  `veterinario_id` bigint(20) DEFAULT NULL,
-  `monto_total` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `created_at` datetime DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `orden_examen`
---
-
-CREATE TABLE `orden_examen` (
-  `id` bigint(20) NOT NULL,
-  `mascota_id` bigint(20) NOT NULL,
-  `fecha` datetime NOT NULL,
-  `tipo_examen` varchar(120) DEFAULT NULL,
-  `laboratorio` varchar(120) DEFAULT NULL,
-  `muestras` text DEFAULT NULL,
-  `estado` enum('pendiente','enviado','recibido','informado') DEFAULT 'pendiente',
-  `resultados_url` varchar(255) DEFAULT NULL,
+  `estado` varchar(50) DEFAULT 'En curso',
   `observaciones` text DEFAULT NULL,
-  `veterinario_id` bigint(20) DEFAULT NULL,
-  `monto_total` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `created_at` datetime DEFAULT current_timestamp()
+  `cama` varchar(50) DEFAULT NULL,
+  `alimentacion` text DEFAULT NULL,
+  `signos_vitales_json` json DEFAULT NULL,
+  `indicaciones_especiales` text DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `costo_estimado` decimal(10,2) DEFAULT 0.00,
+  `costo_final` decimal(10,2) DEFAULT 0.00,
+  `es_urgencia` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `profilaxis`
+-- Estructura de tabla para la tabla `hospitalizacion_evolucion`
 --
 
-CREATE TABLE `profilaxis` (
+CREATE TABLE `hospitalizacion_evolucion` (
   `id` bigint(20) NOT NULL,
-  `mascota_id` bigint(20) NOT NULL,
-  `fecha` datetime NOT NULL,
-  `tipo` varchar(100) DEFAULT NULL,
-  `hallazgos` text DEFAULT NULL,
-  `procedimiento` text DEFAULT NULL,
-  `anestesia` varchar(100) DEFAULT NULL,
-  `recomendaciones` text DEFAULT NULL,
-  `atendido_por` varchar(100) DEFAULT NULL,
+  `hospitalizacion_id` bigint(20) NOT NULL,
+  `fecha_registro` datetime NOT NULL,
   `veterinario_id` bigint(20) DEFAULT NULL,
-  `monto_total` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `created_at` datetime DEFAULT current_timestamp()
+  `descripcion` text DEFAULT NULL,
+  `signos_vitales` json DEFAULT NULL,
+  `alimentacion` text DEFAULT NULL,
+  `eliminaciones` text DEFAULT NULL,
+  `peso` decimal(5,2) DEFAULT NULL,
+  `temperatura` decimal(4,1) DEFAULT NULL,
+  `frecuencia_cardiaca` int(11) DEFAULT NULL,
+  `frecuencia_respiratoria` int(11) DEFAULT NULL,
+  `observaciones` text DEFAULT NULL,
+  `estado_general` varchar(100) DEFAULT NULL,
+  `medicamentos` text DEFAULT NULL,
+  `procedimientos` text DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `hospitalizacion_files`
+--
+
+CREATE TABLE `hospitalizacion_files` (
+  `id` bigint(20) NOT NULL,
+  `hospitalizacion_id` bigint(20) NOT NULL,
+  `nombre_archivo` varchar(255) NOT NULL,
+  `mime_type` varchar(100) NOT NULL,
+  `archivo_blob` longblob NOT NULL,
+  `tipo` varchar(50) DEFAULT NULL,
+  `descripcion` text DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `notas`
+--
+
+CREATE TABLE `notas` (
+  `id` bigint(20) NOT NULL,
+  `titulo` varchar(255) NOT NULL,
+  `contenido` text NOT NULL,
+  `tipo` varchar(50) DEFAULT NULL,
+  `prioridad` varchar(50) DEFAULT NULL,
+  `estado` varchar(50) DEFAULT NULL,
+  `fecha` datetime NOT NULL DEFAULT current_timestamp(),
+  `recordatorio` datetime DEFAULT NULL,
+  `usuario_id` bigint(20) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -647,13 +445,29 @@ CREATE TABLE `profilaxis` (
 
 CREATE TABLE `propietario` (
   `id` bigint(20) NOT NULL,
-  `nombre` varchar(191) NOT NULL,
-  `correo` varchar(160) DEFAULT NULL,
-  `movil` varchar(40) DEFAULT NULL,
-  `rut` varchar(20) DEFAULT NULL,
-  `direccion` varchar(200) DEFAULT NULL,
-  `created_at` datetime(3) NOT NULL DEFAULT current_timestamp(3),
-  `updated_at` datetime(3) NOT NULL
+  `rut` varchar(12) NOT NULL,
+  `nombre` varchar(150) NOT NULL,
+  `telefono` varchar(50) DEFAULT NULL,
+  `email` varchar(150) DEFAULT NULL,
+  `direccion` varchar(255) DEFAULT NULL,
+  `comuna` varchar(100) DEFAULT NULL,
+  `ciudad` varchar(100) DEFAULT NULL,
+  `activo` tinyint(1) NOT NULL DEFAULT 1,
+  `observaciones` text DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `user_id` bigint(20) DEFAULT NULL,
+  `numero_direccion` varchar(50) DEFAULT NULL,
+  `departamento` varchar(50) DEFAULT NULL,
+  `referencia` varchar(255) DEFAULT NULL,
+  `es_usuario` tinyint(1) NOT NULL DEFAULT 0,
+  `fecha_nacimiento` date DEFAULT NULL,
+  `sexo` varchar(20) DEFAULT NULL,
+  `estado_civil` varchar(50) DEFAULT NULL,
+  `profesion` varchar(100) DEFAULT NULL,
+  `telefono_secundario` varchar(50) DEFAULT NULL,
+  `whatsapp` varchar(50) DEFAULT NULL,
+  `acepta_comunicaciones` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -666,15 +480,20 @@ CREATE TABLE `receta` (
   `id` bigint(20) NOT NULL,
   `mascota_id` bigint(20) NOT NULL,
   `propietario_id` bigint(20) NOT NULL,
-  `fecha` datetime NOT NULL DEFAULT current_timestamp(),
+  `veterinario_id` bigint(20) NOT NULL,
+  `fecha` datetime NOT NULL,
   `diagnostico` text DEFAULT NULL,
-  `indicaciones` text DEFAULT NULL,
-  `medicamentos` text DEFAULT NULL,
-  `veterinario_id` bigint(20) DEFAULT NULL,
-  `firmado_por` varchar(120) DEFAULT NULL,
+  `indicaciones_generales` text DEFAULT NULL,
+  `observaciones` text DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `antibiotico_bool` tinyint(1) NOT NULL DEFAULT 0
+  `tipo_receta` varchar(50) DEFAULT NULL,
+  `validez_dias` int(11) DEFAULT NULL,
+  `numero_receta` varchar(100) DEFAULT NULL,
+  `firma_digital` longblob DEFAULT NULL,
+  `hash_documento` varchar(255) DEFAULT NULL,
+  `es_receta_controlada` tinyint(1) NOT NULL DEFAULT 0,
+  `estado` varchar(50) DEFAULT 'Activa'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -687,14 +506,14 @@ CREATE TABLE `receta_antibiotico` (
   `id` bigint(20) NOT NULL,
   `receta_id` bigint(20) NOT NULL,
   `antibiotico_id` int(11) NOT NULL,
-  `dosis` varchar(80) DEFAULT NULL,
-  `duracion_dias` int(11) DEFAULT NULL,
-  `notas` text DEFAULT NULL,
-  `enviado_sag_bool` tinyint(1) NOT NULL DEFAULT 0,
-  `enviado_at` datetime DEFAULT NULL,
+  `dosis` varchar(100) DEFAULT NULL,
+  `frecuencia` varchar(100) DEFAULT NULL,
+  `duracion` varchar(100) DEFAULT NULL,
+  `via_administracion` varchar(100) DEFAULT NULL,
+  `observaciones` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -704,13 +523,64 @@ CREATE TABLE `receta_antibiotico` (
 
 CREATE TABLE `registro_comision` (
   `id` bigint(20) NOT NULL,
-  `tipo` varchar(40) NOT NULL,
-  `registro_id` bigint(20) NOT NULL,
   `veterinario_id` bigint(20) NOT NULL,
-  `porcentaje` decimal(5,2) NOT NULL,
-  `base_monto` decimal(10,2) NOT NULL,
-  `comision_monto` decimal(10,2) NOT NULL,
   `fecha` date NOT NULL,
+  `monto_bruto` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `porcentaje` decimal(5,2) NOT NULL DEFAULT 0.00,
+  `monto_comision` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `detalle` text DEFAULT NULL,
+  `estado` varchar(50) DEFAULT 'Pendiente',
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `mes` int(11) DEFAULT NULL,
+  `anio` int(11) DEFAULT NULL,
+  `observaciones` text DEFAULT NULL,
+  `tipo_comision` varchar(50) DEFAULT NULL,
+  `origen` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `servicios`
+--
+
+CREATE TABLE `servicios` (
+  `id` bigint(20) NOT NULL,
+  `nombre` varchar(150) NOT NULL,
+  `descripcion` text DEFAULT NULL,
+  `precio` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `tipo` varchar(50) DEFAULT NULL,
+  `duracion_minutos` int(11) DEFAULT NULL,
+  `activo` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `requiere_cita` tinyint(1) NOT NULL DEFAULT 1,
+  `es_urgencia` tinyint(1) NOT NULL DEFAULT 0,
+  `categoria` varchar(100) DEFAULT NULL,
+  `subcategoria` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `stock_historial`
+--
+
+CREATE TABLE `stock_historial` (
+  `id` bigint(20) NOT NULL,
+  `tipo_item` varchar(50) NOT NULL,
+  `item_id` bigint(20) NOT NULL,
+  `cantidad` int(11) NOT NULL,
+  `tipo_movimiento` varchar(50) NOT NULL,
+  `motivo` varchar(255) DEFAULT NULL,
+  `fecha_movimiento` datetime NOT NULL DEFAULT current_timestamp(),
+  `usuario_id` bigint(20) DEFAULT NULL,
+  `stock_anterior` int(11) DEFAULT NULL,
+  `stock_nuevo` int(11) DEFAULT NULL,
+  `observaciones` text DEFAULT NULL,
+  `origen` varchar(50) DEFAULT NULL,
+  `referencia_id` bigint(20) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -723,14 +593,19 @@ CREATE TABLE `registro_comision` (
 CREATE TABLE `triaje` (
   `id` bigint(20) NOT NULL,
   `mascota_id` bigint(20) NOT NULL,
-  `fecha` datetime NOT NULL,
-  `nivel` varchar(10) DEFAULT NULL,
-  `signos_vitales` text DEFAULT NULL,
-  `notas` text DEFAULT NULL,
-  `atendido_por` varchar(100) DEFAULT NULL,
+  `propietario_id` bigint(20) NOT NULL,
   `veterinario_id` bigint(20) DEFAULT NULL,
-  `monto_total` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `created_at` datetime DEFAULT current_timestamp()
+  `fecha` datetime NOT NULL,
+  `motivo_consulta` text DEFAULT NULL,
+  `signos_vitales` json DEFAULT NULL,
+  `nivel_prioridad` varchar(50) DEFAULT NULL,
+  `observaciones` text DEFAULT NULL,
+  `estado` varchar(50) DEFAULT 'En espera',
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `tipo_triaje` varchar(50) DEFAULT NULL,
+  `origen` varchar(50) DEFAULT NULL,
+  `cita_id` bigint(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -741,15 +616,16 @@ CREATE TABLE `triaje` (
 
 CREATE TABLE `user` (
   `id` bigint(20) NOT NULL,
-  `nombre` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `password_hash` varchar(255) NOT NULL,
-  `role` enum('user','admin','vet') NOT NULL DEFAULT 'user',
-  `reset_token` varchar(255) DEFAULT NULL,
-  `reset_expires` datetime DEFAULT NULL,
+  `nombre` varchar(150) NOT NULL,
+  `email` varchar(150) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `rol` varchar(50) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `reset_token` varchar(255) DEFAULT NULL,
+  `reset_token_expires` datetime DEFAULT NULL,
+  `activo` tinyint(1) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -760,17 +636,19 @@ CREATE TABLE `user` (
 CREATE TABLE `vacuna` (
   `id` bigint(20) NOT NULL,
   `mascota_id` bigint(20) NOT NULL,
-  `fecha` datetime(3) NOT NULL,
-  `vacuna` varchar(191) NOT NULL,
-  `lote` varchar(80) DEFAULT NULL,
-  `fabricante` varchar(120) DEFAULT NULL,
-  `fecha_venc` datetime(3) DEFAULT NULL,
-  `proxima_fecha` datetime(3) DEFAULT NULL,
-  `observaciones` varchar(191) DEFAULT NULL,
-  `atendido_por` varchar(120) DEFAULT NULL,
-  `veterinario_id` bigint(20) DEFAULT NULL,
-  `monto_total` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `created_at` datetime(3) NOT NULL DEFAULT current_timestamp(3)
+  `veterinario_id` bigint(20) NOT NULL,
+  `fecha` datetime NOT NULL,
+  `tipo_vacuna` varchar(150) NOT NULL,
+  `lote` varchar(100) DEFAULT NULL,
+  `laboratorio` varchar(150) DEFAULT NULL,
+  `proxima_dosis` datetime DEFAULT NULL,
+  `observaciones` text DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `via_administracion` varchar(50) DEFAULT NULL,
+  `sitio_aplicacion` varchar(100) DEFAULT NULL,
+  `reacciones` text DEFAULT NULL,
+  `tarjeta_vacuna_emitida` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -781,37 +659,19 @@ CREATE TABLE `vacuna` (
 
 CREATE TABLE `veterinario` (
   `id` bigint(20) NOT NULL,
-  `nombre` varchar(191) NOT NULL,
-  `rut` varchar(20) DEFAULT NULL,
-  `correo` varchar(160) DEFAULT NULL,
-  `movil` varchar(40) DEFAULT NULL,
   `user_id` bigint(20) DEFAULT NULL,
+  `nombre` varchar(150) NOT NULL,
+  `rut` varchar(12) DEFAULT NULL,
+  `especialidad` varchar(150) DEFAULT NULL,
+  `registro_profesional` varchar(100) DEFAULT NULL,
+  `telefono` varchar(50) DEFAULT NULL,
+  `email` varchar(150) DEFAULT NULL,
+  `firma_mime` varchar(100) DEFAULT NULL,
+  `firma_blob` longblob DEFAULT NULL,
   `activo` tinyint(1) NOT NULL DEFAULT 1,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp()
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura Stand-in para la vista `v_comision_mensual_vet`
--- (Véase abajo para la vista actual)
---
-CREATE TABLE `v_comision_mensual_vet` (
-`veterinario_id` bigint(20)
-,`mes` varchar(7)
-,`cantidad_registros` bigint(21)
-,`total_bruto` decimal(32,2)
-,`total_comision` decimal(32,2)
-);
-
--- --------------------------------------------------------
-
---
--- Estructura para la vista `v_comision_mensual_vet`
---
-DROP TABLE IF EXISTS `v_comision_mensual_vet`;
-
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_comision_mensual_vet`  AS SELECT `rc`.`veterinario_id` AS `veterinario_id`, date_format(`rc`.`fecha`,'%Y-%m') AS `mes`, count(0) AS `cantidad_registros`, sum(`rc`.`base_monto`) AS `total_bruto`, sum(`rc`.`comision_monto`) AS `total_comision` FROM `registro_comision` AS `rc` GROUP BY `rc`.`veterinario_id`, date_format(`rc`.`fecha`,'%Y-%m') ;
 
 --
 -- Índices para tablas volcadas
@@ -833,77 +693,13 @@ ALTER TABLE `alimentos`
 -- Indices de la tabla `antibiotico`
 --
 ALTER TABLE `antibiotico`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_ant_nombre` (`nombre`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `antiparasitario`
 --
 ALTER TABLE `antiparasitario`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `mascota_id` (`mascota_id`),
-  ADD KEY `fk_antiparasitario_veterinario` (`veterinario_id`);
-
---
--- Indices de la tabla `antipulgas`
---
-ALTER TABLE `antipulgas`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `mascota_id` (`mascota_id`),
-  ADD KEY `fk_antipulgas_veterinario` (`veterinario_id`);
-
---
--- Indices de la tabla `certificado`
---
-ALTER TABLE `certificado`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_cert_mascota` (`mascota_id`),
-  ADD KEY `idx_cert_propietario` (`propietario_id`);
-
---
--- Indices de la tabla `certificados_autorizacion_cirugia`
---
-ALTER TABLE `certificados_autorizacion_cirugia`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_aut_cirg_mascota` (`mascota_id`),
-  ADD KEY `fk_aut_cirg_propietario` (`propietario_id`),
-  ADD KEY `fk_aut_cirg_veterinario` (`veterinario_id`);
-
---
--- Indices de la tabla `certificados_defuncion`
---
-ALTER TABLE `certificados_defuncion`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_def_mascota` (`mascota_id`),
-  ADD KEY `fk_def_propietario` (`propietario_id`),
-  ADD KEY `fk_def_veterinario` (`veterinario_id`);
-
---
--- Indices de la tabla `certificado_epicrisis`
---
-ALTER TABLE `certificado_epicrisis`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_ce_m` (`mascota_id`),
-  ADD KEY `fk_ce_p` (`propietario_id`),
-  ADD KEY `fk_ce_v` (`veterinario_id`);
-
---
--- Indices de la tabla `certificado_salud_pucara`
---
-ALTER TABLE `certificado_salud_pucara`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_puc_mascota` (`mascota_id`),
-  ADD KEY `fk_puc_propietario` (`propietario_id`),
-  ADD KEY `fk_puc_veterinario` (`veterinario_id`);
-
---
--- Indices de la tabla `certificado_salud_sag`
---
-ALTER TABLE `certificado_salud_sag`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `ix_cert_mascota` (`mascota_id`),
-  ADD KEY `ix_cert_propietario` (`propietario_id`),
-  ADD KEY `ix_cert_veterinario` (`veterinario_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `cirugia`
@@ -911,59 +707,102 @@ ALTER TABLE `certificado_salud_sag`
 ALTER TABLE `cirugia`
   ADD PRIMARY KEY (`id`),
   ADD KEY `mascota_id` (`mascota_id`),
-  ADD KEY `fk_cirugia_veterinario` (`veterinario_id`);
+  ADD KEY `propietario_id` (`propietario_id`),
+  ADD KEY `veterinario_id` (`veterinario_id`);
+
+--
+-- Indices de la tabla `cirugia_detalle`
+--
+ALTER TABLE `cirugia_detalle`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `cirugia_id` (`cirugia_id`);
+
+--
+-- Indices de la tabla `cirugia_recuperacion`
+--
+ALTER TABLE `cirugia_recuperacion`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `cirugia_id` (`cirugia_id`);
 
 --
 -- Indices de la tabla `cita`
 --
 ALTER TABLE `cita`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `mascota_id` (`mascota_id`),
+  ADD KEY `propietario_id` (`propietario_id`),
+  ADD KEY `veterinario_id` (`veterinario_id`),
+  ADD KEY `hospitalizacion_id` (`hospitalizacion_id`);
+
+--
+-- Indices de la tabla `comisiones`
+--
+ALTER TABLE `comisiones`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `veterinario_id` (`veterinario_id`);
+
+--
+-- Indices de la tabla `configuracion_clinica`
+--
+ALTER TABLE `configuracion_clinica`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `citamascota`
+-- Indices de la tabla `consultas`
 --
-ALTER TABLE `citamascota`
-  ADD PRIMARY KEY (`cita_id`,`mascota_id`),
-  ADD KEY `CitaMascota_mascota_id_fkey` (`mascota_id`);
-
---
--- Indices de la tabla `consulta`
---
-ALTER TABLE `consulta`
+ALTER TABLE `consultas`
   ADD PRIMARY KEY (`id`),
   ADD KEY `mascota_id` (`mascota_id`),
-  ADD KEY `fk_consulta_veterinario` (`veterinario_id`);
+  ADD KEY `propietario_id` (`propietario_id`),
+  ADD KEY `veterinario_id` (`veterinario_id`),
+  ADD KEY `consulta_id` (`consulta_id`),
+  ADD KEY `hospitalizacion_id` (`hospitalizacion_id`);
 
 --
--- Indices de la tabla `control`
+-- Indices de la tabla `consultas_archivos`
 --
-ALTER TABLE `control`
+ALTER TABLE `consultas_archivos`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `Control_mascota_id_fecha_idx` (`mascota_id`,`fecha`),
-  ADD KEY `fk_control_veterinario` (`veterinario_id`);
+  ADD KEY `consulta_id` (`consulta_id`);
 
 --
--- Indices de la tabla `defuncion`
+-- Indices de la tabla `consultas_tratamientos`
 --
-ALTER TABLE `defuncion`
+ALTER TABLE `consultas_tratamientos`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `mascota_id` (`mascota_id`);
+  ADD KEY `consulta_id` (`consulta_id`);
 
 --
--- Indices de la tabla `dermatologia`
+-- Indices de la tabla `examenes`
 --
-ALTER TABLE `dermatologia`
+ALTER TABLE `examenes`
   ADD PRIMARY KEY (`id`),
   ADD KEY `mascota_id` (`mascota_id`),
-  ADD KEY `fk_dermatologia_veterinario` (`veterinario_id`);
+  ADD KEY `propietario_id` (`propietario_id`),
+  ADD KEY `veterinario_id` (`veterinario_id`),
+  ADD KEY `consulta_id` (`consulta_id`);
 
 --
--- Indices de la tabla `documento`
+-- Indices de la tabla `examenes_tipo`
 --
-ALTER TABLE `documento`
-  ADD PRIMARY KEY (`id_documento`),
-  ADD KEY `fk_Documento_Solicitud1_idx` (`id_solicitud`),
-  ADD KEY `fk_Documento_Tipo_documento1_idx` (`id_tipo_documento`);
+ALTER TABLE `examenes_tipo`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `ficha_medica`
+--
+ALTER TABLE `ficha_medica`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `mascota_id` (`mascota_id`),
+  ADD KEY `propietario_id` (`propietario_id`);
+
+--
+-- Indices de la tabla `ficha_medica_historial`
+--
+ALTER TABLE `ficha_medica_historial`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `ficha_medica_id` (`ficha_medica_id`),
+  ADD KEY `veterinario_id` (`veterinario_id`);
 
 --
 -- Indices de la tabla `hospitalizacion`
@@ -971,89 +810,76 @@ ALTER TABLE `documento`
 ALTER TABLE `hospitalizacion`
   ADD PRIMARY KEY (`id`),
   ADD KEY `mascota_id` (`mascota_id`),
-  ADD KEY `fk_hospitalizacion_veterinario` (`veterinario_id`);
+  ADD KEY `propietario_id` (`propietario_id`),
+  ADD KEY `veterinario_id` (`veterinario_id`);
 
 --
--- Indices de la tabla `hospitalizacion_monitoreo`
+-- Indices de la tabla `hospitalizacion_evolucion`
 --
-ALTER TABLE `hospitalizacion_monitoreo`
+ALTER TABLE `hospitalizacion_evolucion`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uq_hosp_fecha_hora` (`hospitalizacion_id`,`fecha`,`hora`);
+  ADD KEY `hospitalizacion_id` (`hospitalizacion_id`),
+  ADD KEY `veterinario_id` (`veterinario_id`);
 
 --
--- Indices de la tabla `hospitalizacion_observacion`
+-- Indices de la tabla `hospitalizacion_files`
 --
-ALTER TABLE `hospitalizacion_observacion`
+ALTER TABLE `hospitalizacion_files`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uq_obs` (`hospitalizacion_id`,`fecha`);
+  ADD KEY `hospitalizacion_id` (`hospitalizacion_id`);
 
 --
--- Indices de la tabla `mascota`
+-- Indices de la tabla `notas`
 --
-ALTER TABLE `mascota`
+ALTER TABLE `notas`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `Mascota_propietario_id_fkey` (`propietario_id`);
-
---
--- Indices de la tabla `medicamentos`
---
-ALTER TABLE `medicamentos`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `oftalmologia`
---
-ALTER TABLE `oftalmologia`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `mascota_id` (`mascota_id`),
-  ADD KEY `fk_oftalmologia_veterinario` (`veterinario_id`);
-
---
--- Indices de la tabla `orden_examen`
---
-ALTER TABLE `orden_examen`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `mascota_id` (`mascota_id`),
-  ADD KEY `fk_orden_examen_veterinario` (`veterinario_id`);
-
---
--- Indices de la tabla `profilaxis`
---
-ALTER TABLE `profilaxis`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `mascota_id` (`mascota_id`),
-  ADD KEY `fk_profilaxis_veterinario` (`veterinario_id`);
+  ADD KEY `usuario_id` (`usuario_id`);
 
 --
 -- Indices de la tabla `propietario`
 --
 ALTER TABLE `propietario`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `rut` (`rut`),
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indices de la tabla `receta`
 --
 ALTER TABLE `receta`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_receta_vet` (`veterinario_id`),
-  ADD KEY `idx_receta_fecha` (`fecha`),
-  ADD KEY `idx_receta_mascota` (`mascota_id`),
-  ADD KEY `idx_receta_propietario` (`propietario_id`);
+  ADD KEY `mascota_id` (`mascota_id`),
+  ADD KEY `propietario_id` (`propietario_id`),
+  ADD KEY `veterinario_id` (`veterinario_id`);
 
 --
 -- Indices de la tabla `receta_antibiotico`
 --
 ALTER TABLE `receta_antibiotico`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_ra_receta` (`receta_id`),
-  ADD KEY `idx_ra_antib` (`antibiotico_id`);
+  ADD KEY `receta_id` (`receta_id`),
+  ADD KEY `antibiotico_id` (`antibiotico_id`);
 
 --
 -- Indices de la tabla `registro_comision`
 --
 ALTER TABLE `registro_comision`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_vet_fecha` (`veterinario_id`,`fecha`);
+  ADD KEY `veterinario_id` (`veterinario_id`);
+
+--
+-- Indices de la tabla `servicios`
+--
+ALTER TABLE `servicios`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `stock_historial`
+--
+ALTER TABLE `stock_historial`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `item_id` (`item_id`),
+  ADD KEY `usuario_id` (`usuario_id`);
 
 --
 -- Indices de la tabla `triaje`
@@ -1061,7 +887,9 @@ ALTER TABLE `registro_comision`
 ALTER TABLE `triaje`
   ADD PRIMARY KEY (`id`),
   ADD KEY `mascota_id` (`mascota_id`),
-  ADD KEY `fk_triaje_veterinario` (`veterinario_id`);
+  ADD KEY `propietario_id` (`propietario_id`),
+  ADD KEY `veterinario_id` (`veterinario_id`),
+  ADD KEY `cita_id` (`cita_id`);
 
 --
 -- Indices de la tabla `user`
@@ -1075,15 +903,16 @@ ALTER TABLE `user`
 --
 ALTER TABLE `vacuna`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `Vacuna_mascota_id_fecha_idx` (`mascota_id`,`fecha`),
-  ADD KEY `fk_vacuna_veterinario` (`veterinario_id`);
+  ADD KEY `mascota_id` (`mascota_id`),
+  ADD KEY `veterinario_id` (`veterinario_id`);
 
 --
 -- Indices de la tabla `veterinario`
 --
 ALTER TABLE `veterinario`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uk_veterinario_user` (`user_id`);
+  ADD UNIQUE KEY `rut` (`rut`),
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -1111,54 +940,24 @@ ALTER TABLE `antibiotico`
 -- AUTO_INCREMENT de la tabla `antiparasitario`
 --
 ALTER TABLE `antiparasitario`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `antipulgas`
---
-ALTER TABLE `antipulgas`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `certificado`
---
-ALTER TABLE `certificado`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `certificados_autorizacion_cirugia`
---
-ALTER TABLE `certificados_autorizacion_cirugia`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `certificados_defuncion`
---
-ALTER TABLE `certificados_defuncion`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `certificado_epicrisis`
---
-ALTER TABLE `certificado_epicrisis`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `certificado_salud_pucara`
---
-ALTER TABLE `certificado_salud_pucara`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `certificado_salud_sag`
---
-ALTER TABLE `certificado_salud_sag`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `cirugia`
 --
 ALTER TABLE `cirugia`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `cirugia_detalle`
+--
+ALTER TABLE `cirugia_detalle`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `cirugia_recuperacion`
+--
+ALTER TABLE `cirugia_recuperacion`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
@@ -1168,34 +967,58 @@ ALTER TABLE `cita`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `consulta`
+-- AUTO_INCREMENT de la tabla `comisiones`
 --
-ALTER TABLE `consulta`
+ALTER TABLE `comisiones`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `control`
+-- AUTO_INCREMENT de la tabla `configuracion_clinica`
 --
-ALTER TABLE `control`
+ALTER TABLE `configuracion_clinica`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `consultas`
+--
+ALTER TABLE `consultas`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `defuncion`
+-- AUTO_INCREMENT de la tabla `consultas_archivos`
 --
-ALTER TABLE `defuncion`
+ALTER TABLE `consultas_archivos`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `dermatologia`
+-- AUTO_INCREMENT de la tabla `consultas_tratamientos`
 --
-ALTER TABLE `dermatologia`
+ALTER TABLE `consultas_tratamientos`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `documento`
+-- AUTO_INCREMENT de la tabla `examenes`
 --
-ALTER TABLE `documento`
-  MODIFY `id_documento` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `examenes`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `examenes_tipo`
+--
+ALTER TABLE `examenes_tipo`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `ficha_medica`
+--
+ALTER TABLE `ficha_medica`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `ficha_medica_historial`
+--
+ALTER TABLE `ficha_medica_historial`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `hospitalizacion`
@@ -1204,45 +1027,21 @@ ALTER TABLE `hospitalizacion`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `hospitalizacion_monitoreo`
+-- AUTO_INCREMENT de la tabla `hospitalizacion_evolucion`
 --
-ALTER TABLE `hospitalizacion_monitoreo`
+ALTER TABLE `hospitalizacion_evolucion`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `hospitalizacion_observacion`
+-- AUTO_INCREMENT de la tabla `hospitalizacion_files`
 --
-ALTER TABLE `hospitalizacion_observacion`
+ALTER TABLE `hospitalizacion_files`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `mascota`
+-- AUTO_INCREMENT de la tabla `notas`
 --
-ALTER TABLE `mascota`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `medicamentos`
---
-ALTER TABLE `medicamentos`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `oftalmologia`
---
-ALTER TABLE `oftalmologia`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `orden_examen`
---
-ALTER TABLE `orden_examen`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `profilaxis`
---
-ALTER TABLE `profilaxis`
+ALTER TABLE `notas`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
@@ -1267,6 +1066,18 @@ ALTER TABLE `receta_antibiotico`
 -- AUTO_INCREMENT de la tabla `registro_comision`
 --
 ALTER TABLE `registro_comision`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `servicios`
+--
+ALTER TABLE `servicios`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `stock_historial`
+--
+ALTER TABLE `stock_historial`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
@@ -1298,165 +1109,122 @@ ALTER TABLE `veterinario`
 --
 
 --
--- Filtros para la tabla `antiparasitario`
---
-ALTER TABLE `antiparasitario`
-  ADD CONSTRAINT `antiparasitario_ibfk_1` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`),
-  ADD CONSTRAINT `fk_antiparasitario_veterinario` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`);
-
---
--- Filtros para la tabla `antipulgas`
---
-ALTER TABLE `antipulgas`
-  ADD CONSTRAINT `antipulgas_ibfk_1` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`),
-  ADD CONSTRAINT `fk_antipulgas_veterinario` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`);
-
---
--- Filtros para la tabla `certificado`
---
-ALTER TABLE `certificado`
-  ADD CONSTRAINT `fk_cert_mascota` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_cert_propietario` FOREIGN KEY (`propietario_id`) REFERENCES `propietario` (`id`) ON UPDATE CASCADE;
-
---
--- Filtros para la tabla `certificados_autorizacion_cirugia`
---
-ALTER TABLE `certificados_autorizacion_cirugia`
-  ADD CONSTRAINT `fk_aut_cirg_mascota` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`),
-  ADD CONSTRAINT `fk_aut_cirg_propietario` FOREIGN KEY (`propietario_id`) REFERENCES `propietario` (`id`),
-  ADD CONSTRAINT `fk_aut_cirg_veterinario` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`);
-
---
--- Filtros para la tabla `certificados_defuncion`
---
-ALTER TABLE `certificados_defuncion`
-  ADD CONSTRAINT `fk_def_mascota` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`),
-  ADD CONSTRAINT `fk_def_propietario` FOREIGN KEY (`propietario_id`) REFERENCES `propietario` (`id`),
-  ADD CONSTRAINT `fk_def_veterinario` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`);
-
---
--- Filtros para la tabla `certificado_epicrisis`
---
-ALTER TABLE `certificado_epicrisis`
-  ADD CONSTRAINT `fk_ce_m` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`),
-  ADD CONSTRAINT `fk_ce_p` FOREIGN KEY (`propietario_id`) REFERENCES `propietario` (`id`),
-  ADD CONSTRAINT `fk_ce_v` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`);
-
---
--- Filtros para la tabla `certificado_salud_pucara`
---
-ALTER TABLE `certificado_salud_pucara`
-  ADD CONSTRAINT `fk_puc_mascota` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`),
-  ADD CONSTRAINT `fk_puc_propietario` FOREIGN KEY (`propietario_id`) REFERENCES `propietario` (`id`),
-  ADD CONSTRAINT `fk_puc_veterinario` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`);
-
---
--- Filtros para la tabla `certificado_salud_sag`
---
-ALTER TABLE `certificado_salud_sag`
-  ADD CONSTRAINT `fk_cert_sag__mascota` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_cert_sag__propietario` FOREIGN KEY (`propietario_id`) REFERENCES `propietario` (`id`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_cert_sag__veterinario` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`) ON UPDATE CASCADE;
-
---
 -- Filtros para la tabla `cirugia`
 --
 ALTER TABLE `cirugia`
   ADD CONSTRAINT `cirugia_ibfk_1` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`),
-  ADD CONSTRAINT `fk_cirugia_veterinario` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`);
+  ADD CONSTRAINT `cirugia_ibfk_2` FOREIGN KEY (`propietario_id`) REFERENCES `propietario` (`id`),
+  ADD CONSTRAINT `cirugia_ibfk_3` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`);
 
 --
--- Filtros para la tabla `citamascota`
+-- Filtros para la tabla `cirugia_detalle`
 --
-ALTER TABLE `citamascota`
-  ADD CONSTRAINT `CitaMascota_cita_id_fkey` FOREIGN KEY (`cita_id`) REFERENCES `cita` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `CitaMascota_mascota_id_fkey` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`) ON UPDATE CASCADE;
+ALTER TABLE `cirugia_detalle`
+  ADD CONSTRAINT `cirugia_detalle_ibfk_1` FOREIGN KEY (`cirugia_id`) REFERENCES `cirugia` (`id`);
 
 --
--- Filtros para la tabla `consulta`
+-- Filtros para la tabla `cirugia_recuperacion`
 --
-ALTER TABLE `consulta`
-  ADD CONSTRAINT `consulta_ibfk_1` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`),
-  ADD CONSTRAINT `fk_consulta_veterinario` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`);
+ALTER TABLE `cirugia_recuperacion`
+  ADD CONSTRAINT `cirugia_recuperacion_ibfk_1` FOREIGN KEY (`cirugia_id`) REFERENCES `cirugia` (`id`);
 
 --
--- Filtros para la tabla `control`
+-- Filtros para la tabla `cita`
 --
-ALTER TABLE `control`
-  ADD CONSTRAINT `Control_mascota_id_fkey` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_control_veterinario` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`);
+ALTER TABLE `cita`
+  ADD CONSTRAINT `cita_ibfk_1` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`),
+  ADD CONSTRAINT `cita_ibfk_2` FOREIGN KEY (`propietario_id`) REFERENCES `propietario` (`id`),
+  ADD CONSTRAINT `cita_ibfk_3` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`),
+  ADD CONSTRAINT `fk_cita_hosp` FOREIGN KEY (`hospitalizacion_id`) REFERENCES `hospitalizacion` (`id`) ON DELETE SET NULL;
 
 --
--- Filtros para la tabla `defuncion`
+-- Filtros para la tabla `comisiones`
 --
-ALTER TABLE `defuncion`
-  ADD CONSTRAINT `defuncion_ibfk_1` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`);
+ALTER TABLE `comisiones`
+  ADD CONSTRAINT `comisiones_ibfk_1` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`);
 
 --
--- Filtros para la tabla `dermatologia`
+-- Filtros para la tabla `consultas`
 --
-ALTER TABLE `dermatologia`
-  ADD CONSTRAINT `dermatologia_ibfk_1` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`),
-  ADD CONSTRAINT `fk_dermatologia_veterinario` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`);
+ALTER TABLE `consultas`
+  ADD CONSTRAINT `consultas_ibfk_1` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`),
+  ADD CONSTRAINT `consultas_ibfk_2` FOREIGN KEY (`propietario_id`) REFERENCES `propietario` (`id`),
+  ADD CONSTRAINT `consultas_ibfk_3` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`),
+  ADD CONSTRAINT `fk_consulta_hosp` FOREIGN KEY (`hospitalizacion_id`) REFERENCES `hospitalizacion` (`id`) ON DELETE SET NULL;
 
 --
--- Filtros para la tabla `documento`
+-- Filtros para la tabla `consultas_archivos`
 --
-ALTER TABLE `documento`
-  ADD CONSTRAINT `fk_Documento_Solicitud1` FOREIGN KEY (`id_solicitud`) REFERENCES `solicitud` (`id_solicitud`),
-  ADD CONSTRAINT `fk_Documento_Tipo_documento1` FOREIGN KEY (`id_tipo_documento`) REFERENCES `tipo_documento` (`id_tipo_documento`);
+ALTER TABLE `consultas_archivos`
+  ADD CONSTRAINT `consultas_archivos_ibfk_1` FOREIGN KEY (`consulta_id`) REFERENCES `consultas` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `consultas_tratamientos`
+--
+ALTER TABLE `consultas_tratamientos`
+  ADD CONSTRAINT `consultas_tratamientos_ibfk_1` FOREIGN KEY (`consulta_id`) REFERENCES `consultas` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `examenes`
+--
+ALTER TABLE `examenes`
+  ADD CONSTRAINT `examenes_ibfk_1` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`),
+  ADD CONSTRAINT `examenes_ibfk_2` FOREIGN KEY (`propietario_id`) REFERENCES `propietario` (`id`),
+  ADD CONSTRAINT `examenes_ibfk_3` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`),
+  ADD CONSTRAINT `examenes_ibfk_4` FOREIGN KEY (`consulta_id`) REFERENCES `consultas` (`id`);
+
+--
+-- Filtros para la tabla `ficha_medica`
+--
+ALTER TABLE `ficha_medica`
+  ADD CONSTRAINT `ficha_medica_ibfk_1` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`),
+  ADD CONSTRAINT `ficha_medica_ibfk_2` FOREIGN KEY (`propietario_id`) REFERENCES `propietario` (`id`);
+
+--
+-- Filtros para la tabla `ficha_medica_historial`
+--
+ALTER TABLE `ficha_medica_historial`
+  ADD CONSTRAINT `ficha_medica_historial_ibfk_1` FOREIGN KEY (`ficha_medica_id`) REFERENCES `ficha_medica` (`id`),
+  ADD CONSTRAINT `ficha_medica_historial_ibfk_2` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`);
 
 --
 -- Filtros para la tabla `hospitalizacion`
 --
 ALTER TABLE `hospitalizacion`
-  ADD CONSTRAINT `fk_hospitalizacion_veterinario` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`),
-  ADD CONSTRAINT `hospitalizacion_ibfk_1` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`);
+  ADD CONSTRAINT `hospitalizacion_ibfk_1` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`),
+  ADD CONSTRAINT `hospitalizacion_ibfk_2` FOREIGN KEY (`propietario_id`) REFERENCES `propietario` (`id`),
+  ADD CONSTRAINT `hospitalizacion_ibfk_3` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`);
 
 --
--- Filtros para la tabla `hospitalizacion_monitoreo`
+-- Filtros para la tabla `hospitalizacion_evolucion`
 --
-ALTER TABLE `hospitalizacion_monitoreo`
-  ADD CONSTRAINT `fk_hosp_mon_hosp` FOREIGN KEY (`hospitalizacion_id`) REFERENCES `hospitalizacion` (`id`);
+ALTER TABLE `hospitalizacion_evolucion`
+  ADD CONSTRAINT `hospitalizacion_evolucion_ibfk_1` FOREIGN KEY (`hospitalizacion_id`) REFERENCES `hospitalizacion` (`id`),
+  ADD CONSTRAINT `hospitalizacion_evolucion_ibfk_2` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`);
 
 --
--- Filtros para la tabla `hospitalizacion_observacion`
+-- Filtros para la tabla `hospitalizacion_files`
 --
-ALTER TABLE `hospitalizacion_observacion`
-  ADD CONSTRAINT `hospitalizacion_observacion_ibfk_1` FOREIGN KEY (`hospitalizacion_id`) REFERENCES `hospitalizacion` (`id`);
+ALTER TABLE `hospitalizacion_files`
+  ADD CONSTRAINT `hospitalizacion_files_ibfk_1` FOREIGN KEY (`hospitalizacion_id`) REFERENCES `hospitalizacion` (`id`) ON DELETE CASCADE;
 
 --
--- Filtros para la tabla `mascota`
+-- Filtros para la tabla `notas`
 --
-ALTER TABLE `mascota`
-  ADD CONSTRAINT `Mascota_propietario_id_fkey` FOREIGN KEY (`propietario_id`) REFERENCES `propietario` (`id`) ON UPDATE CASCADE;
+ALTER TABLE `notas`
+  ADD CONSTRAINT `notas_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `user` (`id`);
 
 --
--- Filtros para la tabla `oftalmologia`
+-- Filtros para la tabla `propietario`
 --
-ALTER TABLE `oftalmologia`
-  ADD CONSTRAINT `fk_oftalmologia_veterinario` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`),
-  ADD CONSTRAINT `oftalmologia_ibfk_1` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`);
-
---
--- Filtros para la tabla `orden_examen`
---
-ALTER TABLE `orden_examen`
-  ADD CONSTRAINT `fk_orden_examen_veterinario` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`),
-  ADD CONSTRAINT `orden_examen_ibfk_1` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`);
-
---
--- Filtros para la tabla `profilaxis`
---
-ALTER TABLE `profilaxis`
-  ADD CONSTRAINT `fk_profilaxis_veterinario` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`),
-  ADD CONSTRAINT `profilaxis_ibfk_1` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`);
+ALTER TABLE `propietario`
+  ADD CONSTRAINT `propietario_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`);
 
 --
 -- Filtros para la tabla `receta`
 --
 ALTER TABLE `receta`
-  ADD CONSTRAINT `fk_receta_mascota` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`),
+  ADD CONSTRAINT `Receta_mascota_id_fkey` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`) ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_receta_propietario` FOREIGN KEY (`propietario_id`) REFERENCES `propietario` (`id`),
   ADD CONSTRAINT `fk_receta_vet` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`);
 
@@ -1492,8 +1260,3 @@ ALTER TABLE `vacuna`
 --
 ALTER TABLE `veterinario`
   ADD CONSTRAINT `fk_veterinario_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`);
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
