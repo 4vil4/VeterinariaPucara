@@ -1,16 +1,20 @@
-.citas-head {
+/* Vista Propietarios */
+.prop-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 12px;
-    margin-bottom: 12px
+    margin-bottom: 10px
 }
 
-.citas-actions {
+.prop-actions {
     display: flex;
     gap: 8px;
-    align-items: center;
-    flex-wrap: wrap
+    align-items: center
+}
+
+#propSearch {
+    max-width: 320px
 }
 
 .tbl {
@@ -39,21 +43,10 @@
     background: #f9fbff
 }
 
-.badge-urg {
-    background: #fee2e2;
-    border-radius: 999px;
-    padding: 2px 8px;
-    font-size: .75rem
-}
-
-.state {
-    font-size: .85rem;
-    color: #475569
-}
-
 .actions {
     display: flex;
-    gap: 6px
+    gap: 8px;
+    justify-content: flex-end
 }
 
 .iconbtn {
@@ -66,10 +59,6 @@
 
 .iconbtn:hover {
     background: #f8fafc
-}
-
-.form-card {
-    margin-top: 12px
 }
 
 .btn-hist {
@@ -114,27 +103,4 @@
     font-weight: bold;
     font-size: 1rem;
     cursor: pointer
-}
-
-/* ==== Alert bonito para errores de citas ==== */
-
-.citas-alert {
-    margin-top: 10px;
-    padding: 10px 12px;
-    border-radius: 10px;
-    font-size: .9rem;
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-}
-
-.citas-alert-error {
-    background: #fef2f2;
-    border: 1px solid #fecaca;
-    color: #b91c1c;
-}
-
-.citas-alert-icon {
-    font-size: 1.2rem;
-    line-height: 1;
-}
+} 

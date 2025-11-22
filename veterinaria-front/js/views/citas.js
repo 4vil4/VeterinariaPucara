@@ -1,4 +1,4 @@
-export async function init({ root, API }) {
+export async function init({ root, API, authHeaders }) {
   const tableWrap = root.querySelector('#citasTableWrap');
   const qInput = root.querySelector('#citasSearch');
   const fromInput = root.querySelector('#citasFrom');
@@ -6,10 +6,24 @@ export async function init({ root, API }) {
   const btnFiltrar = root.querySelector('#btnCitasFiltrar');
   const btnNuevo = root.querySelector('#btnNuevaCitaTabla');
 
+  // ---- Usuario actual y modo cliente ----
+  const me = getCurrentUser();
+  const isClient = !!me && me.role === 'user';
+
   let data = [];
+
+  // id/nombre de propietario resuelto para el usuario tipo "user"
+  let clientOwnerId = me && me.propietario_id ? Number(me.propietario_id) : null;
+  let clientOwnerName = (me && (me.nombre || me.full_name || me.email)) || '';
+
   const today = new Date();
   fromInput.value = isoDate(new Date(today.getFullYear(), today.getMonth(), 1));
   toInput.value = isoDate(new Date(today.getFullYear(), today.getMonth() + 1, 1));
+
+  // si es user y no tenemos propietario_id aún, lo buscamos en la tabla de propietarios
+  if (isClient && !clientOwnerId) {
+    await resolveClientOwner();
+  }
 
   await load();
 
@@ -27,7 +41,15 @@ export async function init({ root, API }) {
 
   async function load() {
     const url = `${API}/api/citas?from=${fromInput.value}&to=${toInput.value}&search=${encodeURIComponent(qInput.value.trim())}`;
-    data = await fetchJSON(url);
+    let res = await fetchJSON(url);
+    data = Array.isArray(res) ? res : [];
+
+    // Si es usuario tipo "user", solo mostramos sus propias citas (por propietario)
+    if (isClient && clientOwnerId) {
+      const pid = Number(clientOwnerId);
+      data = data.filter(c => Number(c.propietario_id) === pid);
+    }
+
     render();
   }
 
@@ -50,14 +72,14 @@ export async function init({ root, API }) {
         <tbody>
           ${rows.map(r => `
             <tr data-id="${r.id}">
-              <td>${fmtDT(r.fecha_inicio)}</td>
-              <td>${r.fecha_fin ? fmtDT(r.fecha_fin) : '—'}</td>
-              <td>${esc(r.propietario_nombre || '—')}</td>
-              <td>${esc(r.tipo || '—')}</td>
-              <td><span class="state">${esc(r.estado || 'programada')}</span></td>
-              <td>${r.urgencia ? '<span class="badge-urg">URGENTE</span>' : '—'}</td>
-              <td>${esc((r.observaciones || '').slice(0, 40))}</td>
-              <td>
+              <td data-label="Inicio">${fmtDT(r.fecha_inicio)}</td>
+              <td data-label="Fin">${r.fecha_fin ? fmtDT(r.fecha_fin) : '—'}</td>
+              <td data-label="Propietario">${esc(r.propietario_nombre || '—')}</td>
+              <td data-label="Tipo">${esc(r.tipo || '—')}</td>
+              <td data-label="Estado"><span class="state">${esc(r.estado || 'programada')}</span></td>
+              <td data-label="Urgencia">${r.urgencia ? '<span class="badge-urg">URGENTE</span>' : '—'}</td>
+              <td data-label="Obs.">${esc((r.observaciones || '').slice(0, 40))}</td>
+              <td data-label="Acciones">
                 <div class="actions">
                   <button class="iconbtn btn-edit" data-id="${r.id}">✏️</button>
                   <button class="iconbtn btn-del" data-id="${r.id}">🗑️</button>
@@ -88,13 +110,29 @@ export async function init({ root, API }) {
       prefillISO ? prefillISO.slice(0, 16) : new Date().toISOString().slice(0, 16);
     const dtEnd = editing && editing.fecha_fin ? editing.fecha_fin.slice(0, 16).replace(' ', 'T') : '';
 
+    // nombre del propietario fijo para user (usamos el resuelto si lo tenemos)
+    const fixedOwnerName = (isClient && me)
+      ? (clientOwnerName || me.nombre || me.full_name || me.email || '')
+      : '';
+
     wrap.innerHTML = `
       <h3 style="margin-top:0">${editing ? 'Editar' : 'Nueva'} cita</h3>
+
+      <div id="citasAlert" class="citas-alert citas-alert-error" style="display:none">
+        <span class="citas-alert-icon">⚠️</span>
+        <span class="citas-alert-text"></span>
+      </div>
+
       <div class="form-grid">
         <div>
           <label>Propietario</label>
+          ${isClient
+        ? `<input class="input" id="own_fixed" value="${esc(fixedOwnerName)}" disabled>`
+        : `
           <input class="input" id="own_search" placeholder="Buscar propietario..." />
           <select class="input" id="own_select" size="5" style="margin-top:6px;height:140px"></select>
+              `
+      }
         </div>
         <div><label>Inicio</label><input class="input" id="f_ini" type="datetime-local" value="${dtStart}"></div>
         <div><label>Fin (opcional)</label><input class="input" id="f_fin" type="datetime-local" value="${dtEnd}"></div>
@@ -122,53 +160,166 @@ export async function init({ root, API }) {
         <button class="btn btn-del" id="f_cancelar">Cancelar</button>
       </div>
     `;
+
     const estadoSel = wrap.querySelector('#f_estado');
     estadoSel.value = editing ? (editing.estado || 'programada') : 'programada';
     tableWrap.parentElement.after(wrap);
 
     const ownSelect = wrap.querySelector('#own_select');
     const ownSearch = wrap.querySelector('#own_search');
-    let owners = await fetchJSON(`${API}/api/propietarios`);
-    function renderOwners(q = '') {
-      const n = s => (s || '').toLowerCase();
-      const list = owners.filter(o => !q || n(o.nombre).includes(n(q)) || n(o.rut || '').includes(n(q)));
-      ownSelect.innerHTML = list.map(o => `<option value="${o.id}">${esc(o.nombre)}${o.rut ? ` — ${esc(o.rut)}` : ''}</option>`).join('');
-      if (editing && editing.propietario_id) ownSelect.value = String(editing.propietario_id);
+
+    const alertBox = wrap.querySelector('#citasAlert');
+    const alertText = wrap.querySelector('.citas-alert-text');
+
+    function showError(msg) {
+      if (!alertBox || !alertText) {
+        window.alert(msg);
+        return;
+      }
+      alertText.textContent = msg;
+      alertBox.style.display = 'flex';
     }
-    renderOwners();
-    let t2; ownSearch.addEventListener('input', () => { clearTimeout(t2); t2 = setTimeout(() => renderOwners(ownSearch.value.trim()), 200); });
+
+    function clearError() {
+      if (alertBox && alertText) {
+        alertBox.style.display = 'none';
+        alertText.textContent = '';
+      }
+    }
+
+    // Solo cargamos propietarios si NO es cliente
+    if (!isClient) {
+      let owners = await fetchJSON(`${API}/api/propietarios`);
+      function renderOwners(q = '') {
+        const n = s => (s || '').toLowerCase();
+        const list = owners.filter(o => !q || n(o.nombre).includes(n(q)) || n(o.rut || '').includes(n(q)));
+        ownSelect.innerHTML = list.map(o => `<option value="${o.id}">${esc(o.nombre)}${o.rut ? ` — ${esc(o.rut)}` : ''}</option>`).join('');
+        if (editing && editing.propietario_id) ownSelect.value = String(editing.propietario_id);
+      }
+      renderOwners();
+      let t2; ownSearch.addEventListener('input', () => { clearTimeout(t2); t2 = setTimeout(() => renderOwners(ownSearch.value.trim()), 200); });
+    }
 
     wrap.querySelector('#f_cancelar').onclick = () => wrap.remove();
     wrap.querySelector('#f_guardar').onclick = async () => {
-      const propietario_id = Number(ownSelect.value);
+      clearError();
+
+      // propietario_id según el tipo de usuario
+      let propietario_id = null;
+      if (isClient) {
+        propietario_id = clientOwnerId || (me?.propietario_id ? Number(me.propietario_id) : null);
+      } else {
+        propietario_id = Number(ownSelect.value);
+      }
+
       const estadoVal = (wrap.querySelector('#f_estado').value || '').trim();
 
       const payload = {
-        ...(Number.isFinite(propietario_id) && propietario_id > 0 ? { propietario_id } : {}),
+        ...(Number.isFinite(propietario_id) && propietario_id > 0 ? { propietario_id: Number(propietario_id) } : {}),
         fecha_inicio: wrap.querySelector('#f_ini').value || undefined,
-        fecha_fin: wrap.querySelector('#f_fin').value, 
+        fecha_fin: wrap.querySelector('#f_fin').value,
         tipo: (wrap.querySelector('#f_tipo').value || '').trim() || undefined,
         estado: estadoVal || undefined,
         urgencia: Number(wrap.querySelector('#f_urg').value),
         observaciones: wrap.querySelector('#f_obs').value
       };
 
-      if (!payload.fecha_inicio || !payload.tipo) { alert('Inicio y tipo son obligatorios'); return; }
+      if (!payload.fecha_inicio || !payload.tipo) {
+        showError('La fecha de inicio y el tipo de cita son obligatorios.');
+        return;
+      }
 
       try {
-        if (editing) await fetchJSON(`${API}/api/citas/${editing.id}`, { method: 'PUT', body: payload });
-        else await fetchJSON(`${API}/api/citas`, { method: 'POST', body: payload });
+        if (editing) {
+          await fetchJSON(`${API}/api/citas/${editing.id}`, { method: 'PUT', body: payload });
+        } else {
+          await fetchJSON(`${API}/api/citas`, { method: 'POST', body: payload });
+        }
         wrap.remove();
         await load();
       } catch (err) {
-        alert('No se pudo guardar: ' + (err.message || err));
+        // aquí va a llegar el mensaje del backend, por ejemplo:
+        // "Ya existe una cita en el rango de 1 hora para ese horario."
+        showError(err.message || 'No se pudo guardar la cita.');
       }
     };
   }
 
+  // --- resolver propietario del usuario (solo para role=user) ---
+  async function resolveClientOwner() {
+    try {
+      const owners = await fetchJSON(`${API}/api/propietarios`);
+      const email = (me?.email || '').toLowerCase();
+      const nombre = (me?.nombre || '').toLowerCase();
+      const found = owners.find(o =>
+        (o.correo && o.correo.toLowerCase() === email) ||
+        (o.nombre && o.nombre.toLowerCase() === nombre)
+      );
+      if (found) {
+        clientOwnerId = Number(found.id);
+        clientOwnerName = found.nombre || clientOwnerName;
+      }
+    } catch (e) {
+      console.error('No se pudo resolver el propietario del usuario', e);
+    }
+  }
+
   // ------- helpers -------
-  function fmtDT(iso) { const d = new Date(iso); return d.toLocaleDateString('es-CL', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }); }
+  function fmtDT(iso) {
+    const d = new Date(iso);
+    return d.toLocaleDateString('es-CL', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    }) + ' ' + d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+  }
+
   function isoDate(d) { return d.toISOString().slice(0, 10); }
-  async function fetchJSON(url, opt = {}) { const o = { ...opt }; if (o.body && typeof o.body === 'object') { o.headers = { 'Content-Type': 'application/json', ...(o.headers || {}) }; o.body = JSON.stringify(o.body); } const r = await fetch(url, o); if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
-  function esc(s) { return (s ?? '').toString().replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])); }
+
+  async function fetchJSON(url, opt = {}) {
+    const o = { ...opt };
+    const baseHeaders = authHeaders ? authHeaders() : {};
+
+    if (o.body && typeof o.body === 'object') {
+      o.headers = {
+        'Content-Type': 'application/json',
+        ...baseHeaders,
+        ...(o.headers || {}),
+      };
+      o.body = JSON.stringify(o.body);
+    } else {
+      o.headers = {
+        ...baseHeaders,
+        ...(o.headers || {}),
+      };
+    }
+
+    const r = await fetch(url, o);
+
+    let data = null;
+    try {
+      data = await r.json();
+    } catch {
+      data = null;
+    }
+
+    if (!r.ok) {
+      const msg = data && (data.msg || data.error || data.message);
+      throw new Error(msg || `Error HTTP ${r.status}`);
+    }
+
+    return data;
+  }
+
+  function esc(s) {
+    return (s ?? '').toString().replace(/[&<>"']/g, m => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;',
+      '"': '&quot;', "'": '&#39;'
+    }[m]));
+  }
+
+  function getCurrentUser() {
+    try { return JSON.parse(localStorage.getItem('auth_user') || 'null'); }
+    catch { return null; }
+  }
 }

@@ -3,6 +3,35 @@ import pool from '../db.js';
 
 const router = Router();
 
+/**
+ * Verifica si ya existe una cita en un rango de 1 hora
+ * respecto a `fecha_inicio`. Opcionalmente excluye la cita `excluirId`
+ * (para cuando actualizamos una cita existente).
+ */
+async function hayCruceDeCitas(fecha_inicio, excluirId = null) {
+  // Normalizamos por si viene con "T" desde el front
+  const fechaNorm = (typeof fecha_inicio === 'string' && fecha_inicio)
+    ? fecha_inicio.replace('T', ' ')
+    : fecha_inicio;
+
+  let sql = `
+    SELECT COUNT(*) AS total
+    FROM cita
+    WHERE estado <> 'cancelada'
+      AND ABS(TIMESTAMPDIFF(MINUTE, fecha_inicio, ?)) < 60
+  `;
+  const params = [fechaNorm];
+
+  if (excluirId != null) {
+    sql += ' AND id <> ?';
+    params.push(excluirId);
+  }
+
+  const [rows] = await pool.query(sql, params);
+  const row = rows[0];
+  return (row && row.total > 0);
+}
+
 /** GET /api/citas */
 router.get('/', async (req, res) => {
   try {
@@ -75,10 +104,22 @@ router.post('/', async (req, res) => {
     if (!fecha_inicio || !tipo)
       return res.status(400).json({ ok: false, msg: 'fecha_inicio y tipo son requeridos' });
 
+    // Normalizamos fecha_inicio para MySQL
+    const fechaInicioNorm = (typeof fecha_inicio === 'string' && fecha_inicio)
+      ? fecha_inicio.replace('T', ' ')
+      : fecha_inicio;
+
+    // --- VALIDACIÓN: evitar solapamiento en rango de 1 hora ---
+    if (await hayCruceDeCitas(fechaInicioNorm)) {
+      return res
+        .status(409)
+        .json({ ok: false, msg: 'Ya existe una cita en el rango de 1 hora para ese horario.' });
+    }
+
     const [r] = await pool.execute(
       `INSERT INTO cita (propietario_id, fecha_inicio, fecha_fin, tipo, estado, urgencia, observaciones, created_by)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [propietario_id, fecha_inicio, fecha_fin, tipo, estado, urgencia ? 1 : 0, observaciones, created_by]
+      [propietario_id, fechaInicioNorm, fecha_fin, tipo, estado, urgencia ? 1 : 0, observaciones, created_by]
     );
 
     res.status(201).json({ ok: true, id: r.insertId });
@@ -109,6 +150,16 @@ router.put('/:id', async (req, res) => {
     const keys = Object.keys(allowed).filter(k => allowed[k] !== undefined);
     if (!keys.length) return res.status(400).json({ ok: false, msg: 'Sin campos para actualizar' });
 
+    // --- VALIDACIÓN: evitar solapamiento en rango de 1 hora al cambiar fecha_inicio ---
+    if (allowed.fecha_inicio) {
+      const hayChoque = await hayCruceDeCitas(allowed.fecha_inicio, id);
+      if (hayChoque) {
+        return res
+          .status(409)
+          .json({ ok: false, msg: 'Ya existe una cita en el rango de 1 hora para ese horario.' });
+      }
+    }
+
     const setSQL = keys.map(k => `\`${k}\` = ?`).join(', ') + ', `updated_at` = NOW()';
     const params = keys.map(k => allowed[k]); params.push(id);
 
@@ -136,6 +187,5 @@ router.delete('/:id', async (req, res) => {
     res.status(500).json({ ok: false, msg: e.message });
   }
 });
-
 
 export default router;

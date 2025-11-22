@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import multer from 'multer';
 import pool from '../db.js';
+import jwt from 'jsonwebtoken';
 
 const router = Router();
 const upload = multer({
@@ -11,6 +12,27 @@ const upload = multer({
         cb(ok ? null : new Error('Tipo de imagen no permitido (jpeg/png/webp)'), ok);
     }
 });
+// Devuelve el usuario de la tabla `user` a partir del token JWT
+async function getCurrentUser(req) {
+    const h = req.headers.authorization || '';
+    const token = h.startsWith('Bearer ') ? h.slice(7) : null;
+    if (!token) throw new Error('Token requerido');
+
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    // En nuestros tokens usamos { sub: id, role }
+    const userId = payload.sub || payload.id;
+
+    if (!userId) throw new Error('Token sin id de usuario');
+
+    const [[user]] = await pool.query(
+        'SELECT id, nombre, email, role FROM `user` WHERE id = ? LIMIT 1',
+        [userId]
+    );
+
+    if (!user) throw new Error('Usuario no encontrado');
+    return user; // { id, nombre, email, role }
+}
+
 
 /** LISTA */
 router.get('/', async (_req, res) => {
@@ -28,6 +50,46 @@ router.get('/', async (_req, res) => {
     const [rows] = await pool.query(sql);
     res.json(rows);
 });
+
+/** LISTA MIS MASCOTAS (usuario dueño) */
+router.get('/mias', async (req, res) => {
+    try {
+        const user = await getCurrentUser(req); // trae email desde tabla `user`
+
+        // buscamos propietario cuyo correo coincida con el del usuario
+        const [owners] = await pool.query(
+            'SELECT id FROM propietario WHERE correo = ? LIMIT 1',
+            [user.email]
+        );
+
+        if (!owners.length) {
+            // el usuario aún no tiene propietario asociado
+            return res.json([]);
+        }
+
+        const propietarioId = owners[0].id;
+
+        const sql = `
+        SELECT
+            m.id, m.nombre, m.n_historial, m.especie, m.raza, m.sexo,
+            m.esterilizado, m.nro_microchip,
+            m.fecha_nacimiento, m.peso_kg, m.propietario_id, m.updated_at,
+            p.nombre AS propietario_nombre
+        FROM mascota m
+        LEFT JOIN propietario p ON p.id = m.propietario_id
+        WHERE m.propietario_id = ?
+        ORDER BY m.id DESC
+        LIMIT 500
+        `;
+        const [rows] = await pool.query(sql, [propietarioId]);
+        res.json(rows);
+    } catch (e) {
+        console.error('GET /mascotas/mias error:', e);
+        res.status(401).json({ ok: false, msg: 'No autorizado' });
+    }
+});
+
+
 
 /** DETALLE */
 router.get('/:id', async (req, res) => {
@@ -50,7 +112,7 @@ router.get('/:id/foto', async (req, res) => {
         `SELECT foto, foto_tipo FROM mascota WHERE id = ?`,
         [id]
     );
-    if (!rows.length || !rows[0].foto) return res.status(404).end();
+    if (!rows.length || !rows[0].foto) return res.status(204).end();
     res.setHeader('Content-Type', rows[0].foto_tipo || 'image/jpeg');
     res.send(rows[0].foto);
 });
@@ -89,6 +151,74 @@ router.post('/', upload.single('foto'), async (req, res) => {
     const [r] = await pool.execute(sql, params);
     res.status(201).json({ ok: true, id: r.insertId });
 });
+
+/** CREAR MASCOTA PARA USUARIO LOGUEADO */
+router.post('/mias', upload.single('foto'), async (req, res) => {
+  try {
+    const user = await getCurrentUser(req); // { id, nombre, email, role }
+
+    // 1) buscamos propietario por correo
+    const [owners] = await pool.query(
+      'SELECT id FROM propietario WHERE correo = ? LIMIT 1',
+      [user.email]
+    );
+
+    let propietario_id;
+
+    if (owners.length) {
+      propietario_id = owners[0].id;
+    } else {
+      // 2) si no existe, lo creamos automáticamente
+      const nombreProp = user.nombre || user.email;
+      const [ins] = await pool.execute(
+        `INSERT INTO propietario (nombre, rut, correo, movil, direccion, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, NOW(), NOW())`,
+        [nombreProp, null, user.email, null, null]
+      );
+      propietario_id = ins.insertId;
+      console.log('Propietario auto-creado para', user.email, ' -> id =', propietario_id);
+    }
+
+    const {
+      nombre, especie, raza, sexo,
+      esterilizado, nro_microchip,
+      n_historial, fecha_nacimiento, peso_kg
+    } = req.body || {};
+
+    if (!nombre) {
+      return res.status(400).json({ ok: false, msg: 'nombre es requerido' });
+    }
+
+    const foto = req.file?.buffer || null;
+    const foto_tipo = req.file?.mimetype || null;
+    const foto_tamano = req.file?.size || null;
+
+    const sql = `
+      INSERT INTO mascota
+      (nombre, especie, raza, sexo, esterilizado, nro_microchip,
+       n_historial, fecha_nacimiento, peso_kg, propietario_id,
+       foto, foto_tipo, foto_tamano, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+    `;
+    const params = [
+      nombre || null, especie || null, raza || null, sexo || null,
+      (esterilizado === '1' || esterilizado === 1) ? 1 :
+      (esterilizado === '0' || esterilizado === 0 ? 0 : null),
+      nro_microchip || null,
+      n_historial || null, fecha_nacimiento || null,
+      (peso_kg !== undefined && peso_kg !== null && peso_kg !== '') ? Number(peso_kg) : null,
+      propietario_id,
+      foto, foto_tipo, foto_tamano
+    ];
+
+    const [r] = await pool.execute(sql, params);
+    res.status(201).json({ ok: true, id: r.insertId });
+  } catch (e) {
+    console.error('POST /mascotas/mias error:', e);
+    res.status(401).json({ ok: false, msg: 'No autorizado' });
+  }
+});
+
 
 /** EDITAR */
 router.put('/:id', upload.single('foto'), async (req, res) => {

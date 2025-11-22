@@ -155,3 +155,36 @@
     font-size: 1rem;
     cursor: pointer
 } 
+
+/* ===== Calendario responsive solo usuario "user" ===== */
+@media (max-width: 768px) {
+  body.role-user .cal-wrap {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  body.role-user .cal-main {
+    width: 100%;
+  }
+
+  body.role-user .cal-side {
+    width: 100%;
+    position: static;
+    margin-top: 4px;
+    max-height: 260px;
+    overflow: auto;
+  }
+
+  /* grilla de días más simple en mobile */
+  body.role-user #calDays,
+  body.role-user .cal-days {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  body.role-user #calDays,
+  body.role-user .cal-days {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+}

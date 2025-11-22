@@ -2,12 +2,9 @@
     --bg: #002050;
     --card: #ffffff;
     --primary: #0b57d0;
-    /* azul Google-ish */
     --primary-600: #0847ad;
     --text: #0f172a;
-    /* slate-900 */
     --muted: #64748b;
-    /* slate-500 */
     --border: #e5e7eb;
     --ring: rgba(11, 87, 208, 0.25);
     --shadow: 0 10px 30px rgba(2, 6, 23, 0.08);
@@ -15,28 +12,35 @@
 }
 
 * {
-    box-sizing: border-box
+    box-sizing: border-box;
 }
 
 html,
 body {
-    height: 100%
+    height: 100%;
 }
 
 body.auth-page {
     margin: 0;
-    background: radial-gradient(1200px 1200px at 85% -10%, rgba(11, 87, 208, 0.12), transparent 60%), var(--bg);
-    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    background:
+        radial-gradient(1200px 1200px at 85% -10%, rgba(11, 87, 208, 0.12), transparent 60%),
+        var(--bg);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans",
+        "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+        "Noto Color Emoji";
     color: var(--text);
 }
 
 .logo {
     height: 240px;
+    max-width: 100%;
+    width: auto;
     margin-bottom: 12px;
 }
 
 .auth-wrap {
-    min-height: 100%;
+    min-height: 100vh;
     display: grid;
     place-items: center;
     padding: clamp(24px, 4vw, 48px);
@@ -64,10 +68,9 @@ body.auth-page {
 
 .brand .subtitle {
     margin: 0;
-    color: var(--muted);
+    color: #f5b506;
     font-size: 2.8rem;
     font-weight: bold;
-    color: #f5b506;
 }
 
 .tabs {
@@ -75,6 +78,7 @@ body.auth-page {
     gap: 10px;
     justify-content: center;
     margin: 8px 0 18px;
+    flex-wrap: wrap;
 }
 
 .tabs button {
@@ -104,7 +108,8 @@ body.auth-page {
 
 label {
     display: block;
-    font-size: 13px;
+    font-size: 15px;
+    font-weight: 600;
     margin: 12px 0 6px;
     color: #111827;
 }
@@ -164,8 +169,10 @@ label {
 
 .help {
     margin: 8px 0 0;
-    color: var(--muted);
-    font-size: 13px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.12);
 }
 
 .small {
@@ -179,19 +186,198 @@ footer {
     margin-top: 14px;
 }
 
-/* Responsive tweaks */
-@media (max-width: 420px) {
+/* ===== Pasos del formulario de registro (multi-step) ===== */
+
+.step-pane {
+    display: none;
+}
+
+.step-pane.active {
+    display: block;
+}
+
+.steps {
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: #111827;
+}
+
+.step-ind {
+    opacity: 0.5;
+}
+
+.step-ind.active {
+    opacity: 1;
+    font-weight: 600;
+}
+
+/* Círculos de pasos */
+
+.steps-circles {
+    display: flex;
+    justify-content: center;
+    gap: 22px;
+    margin: 18px 0 28px;
+}
+
+.step-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 3px solid #ddd;
+    background: #eee;
+    color: #555;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    transition: 0.25s;
+}
+
+.step-circle.active {
+    border-color: #f5b506;
+    background: #f5b506;
+    color: #002050;
+    transform: scale(1.12);
+}
+
+.step-circle.done {
+    border-color: #4ade80;
+    background: #4ade80;
+    color: #064e3b;
+    transform: scale(1.12);
+}
+
+/* Botones de navegación registro */
+
+.reg-actions {
+    margin-top: 14px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.reg-actions .btn {
+    flex: 1;
+}
+
+.btn-outline {
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    color: #111827;
+    margin-top: 14px;
+    width: 100%;
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 15px;
+}
+
+.btn-outline:hover {
+    background: #e2e8f0;
+}
+
+/* ===== Responsivo ===== */
+
+/* Tablets / pantallas medianas */
+@media (max-width: 768px) {
+    .auth-wrap {
+        padding: 24px 16px;
+    }
+
     .auth-card {
-        padding: 18px;
+        width: 100%;
+        max-width: 440px;
+        padding: 22px 18px;
+        border-radius: 14px;
+    }
+
+    .logo {
+        height: 180px;
+    }
+
+    .brand .subtitle {
+        font-size: 2.1rem;
+    }
+}
+
+/* Móviles */
+@media (max-width: 480px) {
+    body.auth-page {
+        background:
+            radial-gradient(800px 800px at 80% -10%, rgba(11, 87, 208, 0.18), transparent 60%),
+            var(--bg);
+    }
+
+    .auth-wrap {
+        padding: 16px 10px;
+    }
+
+    .auth-card {
+        max-width: 100%;
+        padding: 18px 14px;
         border-radius: 12px;
+    }
+
+    .logo {
+        height: 120px;
+        margin-bottom: 8px;
+    }
+
+    .brand .subtitle {
+        font-size: 1.6rem;
     }
 
     .tabs {
         gap: 6px;
+        margin-bottom: 14px;
     }
 
     .tabs button {
-        padding: 7px 10px;
+        flex: 1 1 30%;
+        padding: 7px 8px;
         font-size: 13px;
+        text-align: center;
+    }
+
+    label {
+        font-size: 14px;
+        margin-top: 10px;
+    }
+
+    .input {
+        font-size: 14px;
+        padding: 9px 10px;
+    }
+
+    .steps-circles {
+        gap: 14px;
+        margin: 12px 0 20px;
+    }
+
+    .step-circle {
+        width: 30px;
+        height: 30px;
+        font-size: 14px;
+        border-width: 2px;
+    }
+
+    .reg-actions {
+        flex-direction: column;
+    }
+
+    .reg-actions .btn {
+        width: 100%;
+    }
+
+    .btn,
+    .btn-primary,
+    .btn-outline {
+        font-size: 14px;
+        padding: 9px 12px;
+    }
+
+    footer.small {
+        font-size: 1.2rem;
     }
 }

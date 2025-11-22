@@ -1,4 +1,4 @@
-export async function init({ root, API }) {
+export async function init({ root, API, authHeaders }) {
   root.classList.add('receta');
   root.innerHTML = `
     <div class="toolbar">
@@ -101,6 +101,10 @@ export async function init({ root, API }) {
   function getUserId() { const u = getUser() || {}; return u.id || u.user_id || u.veterinario_id || null; }
   function getUserName() { const u = getUser() || {}; return u.nombre || u.fullName || u.displayName || u.name || ''; }
 
+  function getAuthHeaders() {
+    return typeof authHeaders === 'function' ? authHeaders() : {};
+  }
+
   const role = getRole();
 
   // ---- DOM refs
@@ -153,7 +157,24 @@ export async function init({ root, API }) {
       `\n*Clínica Veterinaria Pucará*`
     ).trim();
   }
-  async function fetchJSON(url) { const r = await fetch(url, { headers: { 'Accept': 'application/json' } }); if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
+
+  async function fetchJSON(url, options = {}) {
+    const baseHeaders = {
+      Accept: 'application/json',
+      ...getAuthHeaders(),
+      ...(options.headers || {}),
+    };
+    const o = { ...options, headers: baseHeaders };
+
+    if (o.body && typeof o.body === 'object' && !(o.body instanceof FormData)) {
+      o.headers['Content-Type'] = 'application/json';
+      o.body = JSON.stringify(o.body);
+    }
+
+    const r = await fetch(url, o);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.json();
+  }
 
   // ---- UI builders
   function renderVetBlock() {
@@ -231,16 +252,13 @@ export async function init({ root, API }) {
     $tbl.querySelectorAll('.btn-del').forEach(b => b.addEventListener('click', async () => {
       const id = Number(b.dataset.id);
       if (!confirm('¿Eliminar esta receta?')) return;
-      const res = await fetch(`${API}/api/recetas/${id}`, { method: 'DELETE' });
-      if (!res.ok) { alert('No se pudo eliminar'); return; }
+      await fetchJSON(`${API}/api/recetas/${id}`, { method: 'DELETE' });
       await loadList();
     }));
   }
 
   async function loadMascotas() {
-    const r = await fetch(`${API}/api/mascotas`, { headers: { 'Accept': 'application/json' } });
-    if (!r.ok) throw new Error('No se pudieron cargar mascotas');
-    mascotas = await r.json();
+    mascotas = await fetchJSON(`${API}/api/mascotas`);
     root.querySelector('#mascota_id').innerHTML =
       `<option value="" disabled selected>Selecciona…</option>` +
       mascotas.map(m => `<option value="${m.id}">${esc(m.nombre)} — ${esc(m.propietario_nombre || '')}</option>`).join('');
@@ -254,15 +272,12 @@ export async function init({ root, API }) {
     ];
     for (const u of urls) {
       try {
-        const r = await fetch(u, { headers: { 'Accept': 'application/json' } });
-        if (r.ok) {
-          const data = await r.json();
-          vets = (Array.isArray(data) ? data : data.items || []).map(x => ({
-            id: x.id || x.veterinario_id || x.user_id || x.persona_id,
-            nombre: x.nombre || x.fullName || x.displayName || `${x.nombres || ''} ${x.apellidos || ''}`.trim()
-          })).filter(v => v.id && v.nombre);
-          break;
-        }
+        const data = await fetchJSON(u);
+        vets = (Array.isArray(data) ? data : data.items || []).map(x => ({
+          id: x.id || x.veterinario_id || x.user_id || x.persona_id,
+          nombre: x.nombre || x.fullName || x.displayName || `${x.nombres || ''} ${x.apellidos || ''}`.trim()
+        })).filter(v => v.id && v.nombre);
+        if (vets.length) break;
       } catch { }
     }
   }
@@ -271,9 +286,7 @@ export async function init({ root, API }) {
     const s = $q.value?.trim();
     const url = new URL(`${API}/api/recetas`);
     if (s) url.searchParams.set('search', s);
-    const r = await fetch(url, { headers: { 'Accept': 'application/json' } });
-    if (!r.ok) throw new Error('No se pudo listar recetas');
-    rows = await r.json();
+    rows = await fetchJSON(url.toString());
     renderTable(rows);
   }
 
@@ -325,7 +338,7 @@ export async function init({ root, API }) {
 
   function renderAbList() {
     if (!abUsos.length) { abListDiv.innerHTML = '<p class="hint">Sin antibióticos agregados.</p>'; return; }
-    const rows = abUsos.map((x, i) => `
+    const rowsHtml = abUsos.map((x, i) => `
       <tr>
         <td>${esc(x.nombre)}</td>
         <td>${esc(x.dosis || '')}</td>
@@ -336,7 +349,7 @@ export async function init({ root, API }) {
     abListDiv.innerHTML = `
       <table class="tbl">
         <thead><tr><th>Antibiótico</th><th>Dosis</th><th>Días</th><th>Notas</th><th></th></tr></thead>
-        <tbody>${rows}</tbody>
+        <tbody>${rowsHtml}</tbody>
       </table>`;
     abListDiv.querySelectorAll('button[data-i]').forEach(b => {
       b.addEventListener('click', () => {
@@ -381,11 +394,7 @@ export async function init({ root, API }) {
       })) : []
     };
 
-    const r = await fetch(`${API}/api/recetas`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    if (!r.ok) { alert('No se pudo guardar'); return; }
+    await fetchJSON(`${API}/api/recetas`, { method: 'POST', body: payload });
     $form.reset();
     abUsos = []; renderAbList(); abBox.style.display = 'none';
     renderVetBlock();

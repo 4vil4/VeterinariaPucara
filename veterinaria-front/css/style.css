@@ -56,10 +56,59 @@ body {
     color: #fff;
 }
 
+/* NUEVO: botón hamburguesa */
+.topbar__menuToggle {
+    display: none;
+    /* solo se muestra en móvil */
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    border: 0;
+    background: #ffffff20;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.topbar__menuToggle span,
+.topbar__menuToggle span::before,
+.topbar__menuToggle span::after {
+    display: block;
+    width: 18px;
+    height: 2px;
+    background: #fff;
+    border-radius: 999px;
+    position: relative;
+}
+
+.topbar__menuToggle span::before,
+.topbar__menuToggle span::after {
+    content: '';
+    position: absolute;
+    left: 0;
+}
+
+.topbar__menuToggle span::before {
+    top: -5px;
+}
+
+.topbar__menuToggle span::after {
+    top: 5px;
+}
+
 .topbar__left {
     display: flex;
     align-items: center;
     gap: 12px
+}
+
+/* Overlay para el sidebar en móvil */
+.sidebar-overlay {
+    display: none;
+}
+.sidebar-overlay.is-visible {
+    display: block;
 }
 
 .logo {
@@ -213,7 +262,7 @@ body {
     margin-bottom: 18px;
 }
 
-/* responsive */
+/* responsive sidebar */
 @media (max-width: 980px) {
     :root {
         --sidebar-w: 84px;
@@ -333,7 +382,7 @@ body {
     border-radius: 10px
 }
 
-/* WhatsApp FAB */
+/* WhatsApp FAB base (escritorio) */
 .whats-fab {
     position: fixed;
     right: 28px;
@@ -341,7 +390,7 @@ body {
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background: #25D366;
+    background: #0da846;
     color: #fff;
     display: flex;
     align-items: center;
@@ -363,42 +412,28 @@ body {
     fill: currentColor;
 }
 
-
 /* ===== Mascota virtual (PetBot con Lottie) ===== */
 .petbot-fab {
     position: fixed;
-    right: 38px;
+    right: 10px;
     bottom: 120px;
-    width: 72px;
-    height: 72px;
-    border-radius: 50%;
-    background: #fff;
-    color: #1f2937;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 8px 18px rgba(0, 0, 0, .22);
+    z-index: 10000;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+    width: auto;
+    height: auto;
     cursor: pointer;
-    z-index: 9998;
-    transition: transform .15s ease, filter .15s ease;
-}
-
-.petbot-fab:hover {
-    transform: translateY(-1px);
-    filter: brightness(1.04);
-}
-
-.petbot-lottie {
-    width: 64px;
-    height: 64px;
 }
 
 .petbot-panel {
     position: fixed;
     right: 18px;
-    bottom: 206px;
+    bottom: 260px;
     width: 320px;
-    max-height: 60vh;
+    max-height: 70vh;
     background: #ffffff;
     border-radius: 16px;
     overflow: hidden;
@@ -410,6 +445,35 @@ body {
 
 .petbot-panel.open {
     display: flex;
+}
+
+/* Tamaño base en ESCRITORIO (web) */
+.petbot-lottie {
+    width: 120px;
+    height: 120px;
+    pointer-events: none;
+}
+
+/* Solo usuario tipo user + gato en ESCRITORIO:
+   agrandamos un poco el cuadro del gato */
+body.role-user .petbot-lottie.is-cat {
+    width: 180px;
+    height: 180px;
+}
+
+/* ===== MÓVIL ===== */
+@media (max-width: 520px) {
+    /* tamaño base móvil (perro u otros roles) */
+    .petbot-lottie {
+        width: 80px;
+        height: 80px;
+    }
+
+    /* SOLO user + gato + móvil: un poco más grande */
+    body.role-user .petbot-lottie.is-cat {
+        width: 100px;
+        height: 100px;
+    }
 }
 
 .petbot-header {
@@ -501,47 +565,7 @@ body {
     cursor: pointer;
 }
 
-/* Responsive */
-@media (max-width: 480px) {
-    .petbot-panel {
-        right: 12px;
-        left: 12px;
-        width: auto;
-        bottom: 190px;
-    }
-
-    .petbot-fab {
-        right: 12px;
-        bottom: 120px;
-    }
-}
-
-/* === PetBot === */
-.petbot-fab {
-    position: fixed !important;
-    right: 10px !important;
-    bottom: 120px !important;
-    z-index: 10000 !important;
-    background: transparent !important;
-    border: 0 !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    width: auto !important;
-    height: auto !important;
-    opacity: 1 !important;
-}
-
-.petbot-lottie {
-    width: 120px !important;
-    height: 120px !important;
-    pointer-events: none !important;
-}
-
-.whats-fab {
-    z-index: 9999 !important;
-}
-
+/* Botón volver desde público */
 #btnBackPublic {
     background-color: #0250a3;
     color: #fff;
@@ -558,8 +582,9 @@ body {
     transform: translateY(-1px);
 }
 
+/* Botones comunes */
 .btn-hist {
-    background: #03ce79;
+    background: #029658;
     color: #fff;
     border: 0;
     border-radius: 10px;
@@ -600,4 +625,159 @@ body {
     font-weight: bold;
     font-size: 1rem;
     cursor: pointer
-} 
+}
+
+/* ===========================
+   RESPONSIVE - MÓVIL
+   =========================== */
+@media (max-width: 520px) {
+
+    /* WhatsApp más pequeño */
+    .whats-fab {
+        right: 16px;
+        bottom: 16px;
+        width: 60px;
+        height: 60px;
+        box-shadow: 0 6px 14px rgba(0, 0, 0, .22);
+    }
+
+    .whats-fab svg {
+        width: 40px;
+        height: 40px;
+    }
+
+    /* PetBot más pequeño y más arriba */
+    .petbot-fab {
+        right: 16px;
+        bottom: 92px;
+    }
+
+    .petbot-lottie {
+        width: 80px;
+        height: 80px;
+    }
+
+    /* Panel del PetBot adaptado al ancho del móvil */
+    .petbot-panel {
+        right: 10px;
+        left: 10px;
+        bottom: 180px;
+        width: auto;
+        max-width: none;
+    }
+
+    .content {
+        padding: 16px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ===== RESPONSIVE LAYOUT PARA LOGUEADOS ===== */
+@media (max-width: 768px) {
+
+    .topbar__menuToggle {
+        display: flex;
+    }
+
+    .brand {
+        font-size: 1.5rem;
+    }
+
+    .layout {
+        grid-template-columns: 1fr; /* el contenido ocupa todo, el sidebar pasa a overlay */
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 70px;                  /* altura aprox de la topbar */
+        left: 0;
+        bottom: 0;
+        width: 260px;
+        max-width: 80%;
+        transform: translateX(-100%);
+        transition: transform .2s ease;
+        z-index: 40;
+    }
+
+    .sidebar.is-open {
+        transform: translateX(0);
+    }
+
+    .sidebar-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, .45);
+        z-index: 30;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .2s ease;
+    }
+
+    .sidebar-overlay.is-visible {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .content {
+        padding: 16px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* ===== Tablas responsive solo para usuarios "user" ===== */
+@media (max-width: 768px) {
+  body.role-user .tbl {
+    border: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+  }
+
+  body.role-user .tbl thead {
+    display: none;
+  }
+
+  body.role-user .tbl tbody tr {
+    display: block;
+    margin-bottom: 12px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  }
+
+  body.role-user .tbl tbody td {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 4px 0;
+    border: 0;
+    font-size: 0.9rem;
+  }
+
+  body.role-user .tbl tbody td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #64748b;
+  }
+
+  body.role-user .tbl tbody td:last-child {
+    margin-top: 6px;
+    justify-content: flex-start;
+  }
+
+  body.role-user .tbl tbody td:last-child .actions {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: flex-start;
+  }
+}

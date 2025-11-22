@@ -1,4 +1,4 @@
-export async function init({ root, API, params }) {
+export async function init({ root, API, params, authHeaders }) {
     root.querySelector('#btnBackPublic')?.addEventListener('click', () => {
         if (history.length > 1) history.back();
         else location.hash = '#/public';
@@ -73,8 +73,10 @@ function card(r, base) {
 }
 
 async function fetchJSON(url) {
-    const r = await fetch(url);
+    const headers = authHeaders ? authHeaders() : {};
+    const r = await fetch(url, { headers });
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     return r.json();
 }
+
 function esc(s) { return (s ?? '').toString().replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])); }

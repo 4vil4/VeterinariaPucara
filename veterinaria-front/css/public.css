@@ -149,7 +149,6 @@
     color: #64748b;
 }
 
-
 body.public-mode aside.sidebar,
 body.public-mode #sidebar,
 body.public-mode .sidebar {
@@ -200,10 +199,13 @@ body.public-mode .public__container {
     padding: 16px !important;
 }
 
+/* Banners catálogo: cada uno a todo el ancho */
 .public__banners {
-    display: grid;
+    display: flex;
+    flex-direction: column;
     gap: 14px;
     margin-top: 18px;
+    width: 100%;
 }
 
 .banner {
@@ -237,6 +239,7 @@ body.public-mode .public__container {
     font-weight: 700;
 }
 
+/* Botones */
 .btn-hist {
     background: #03ce79;
     color: #fff;
@@ -245,7 +248,7 @@ body.public-mode .public__container {
     padding: 10px 14px;
     font-weight: bold;
     font-size: 1rem;
-    cursor: pointer
+    cursor: pointer;
 }
 
 .btn-edit {
@@ -256,7 +259,7 @@ body.public-mode .public__container {
     padding: 10px 14px;
     font-weight: bold;
     font-size: 1rem;
-    cursor: pointer
+    cursor: pointer;
 }
 
 .btn-del {
@@ -267,16 +270,111 @@ body.public-mode .public__container {
     padding: 10px 14px;
     font-weight: bold;
     font-size: 1rem;
-    cursor: pointer
+    cursor: pointer;
 }
 
-.btn-alt {
-    background: #003079;
+/* Botón iniciar sesión (usa .btn-alt) */
+.btn-alt,
+.public__loginBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #0f69c4, #0b4e9b);
     color: #fff;
     border: 0;
-    border-radius: 10px;
-    padding: 10px 14px;
-    font-weight: bold;
+    border-radius: 999px;
+    padding: 12px 28px;
+    font-weight: 600;
     font-size: 1rem;
-    cursor: pointer
-} 
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, .35);
+    transition:
+        transform .12s ease,
+        box-shadow .12s ease,
+        background .12s ease,
+        opacity .12s ease;
+    text-decoration: none;
+}
+
+.btn-alt:hover,
+.public__loginBtn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, .45);
+    opacity: 0.95;
+}
+
+.btn-alt:active,
+.public__loginBtn:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 14px rgba(15, 23, 42, .3);
+    opacity: 0.9;
+}
+
+.btn-alt:focus-visible,
+.public__loginBtn:focus-visible {
+    outline: 2px solid #bfdbfe;
+    outline-offset: 2px;
+}
+
+/* -------- Responsivo -------- */
+
+@media (max-width: 900px) {
+    .public__container {
+        padding: 12px;
+    }
+
+    .public__hero {
+        padding: 22px 0;
+    }
+
+    .public__heroTitle {
+        font-size: 24px;
+    }
+
+    .public__heroSubtitle {
+        font-size: 14px;
+    }
+
+    .public__header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .banner__cta {
+        inset: auto 10px 10px auto;
+        padding: 8px 10px;
+    }
+
+    .banner__cta h3 {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .public__hero {
+        text-align: center;
+    }
+
+    .public__heroTitle {
+        font-size: 22px;
+    }
+
+    .public__heroSubtitle {
+        font-size: 13px;
+    }
+
+    .banner__cta {
+        inset: auto 8px 8px 8px;
+        justify-content: space-between;
+    }
+
+    .banner__cta h3 {
+        font-size: 0.95rem;
+    }
+
+    .public__loginBtn {
+        width: 100%;
+        justify-content: center;
+    }
+}

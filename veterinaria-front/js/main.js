@@ -12,6 +12,9 @@ const $sidebar = document.querySelector('aside.sidebar');
 const $menu = document.querySelector('aside.sidebar .menu');
 const $btnHeaderLogin = document.getElementById('btnHeaderLogin');
 
+let $menuToggle = null;
+let $sidebarOverlay = null;
+
 // === Config FAQ PetBot ===
 const PETBOT_FAQS = [
   { q: '¿Horario de atención?', a: 'Atendemos de Lunes a Sábado de 09:00 a 19:00 hrs.', kw: ['horario', 'hora', 'abren', 'cierran'] },
@@ -38,15 +41,66 @@ function setPublicUI(isPublic) {
     sidebar.style.display = isPublic ? 'none' : '';
     const shell = sidebar.parentElement;
     if (shell) shell.classList.toggle('public-no-sidebar', isPublic);
+    if (isPublic) {
+      sidebar.classList.remove('is-open');
+    }
   }
 
   if (btnHeaderLogin) btnHeaderLogin.style.display = isPublic ? '' : 'none';
   document.body.classList.toggle('public-mode', isPublic);
+
+  // toggle hamburguesa + overlay
+  ensureMenuToggle();
+  ensureSidebarOverlay();
+  if ($menuToggle) $menuToggle.style.display = isPublic ? 'none' : '';
+  if ($sidebarOverlay) $sidebarOverlay.classList.remove('is-visible');
 }
+
+
+function ensureSidebarOverlay() {
+  if ($sidebarOverlay) return $sidebarOverlay;
+  const div = document.createElement('div');
+  div.className = 'sidebar-overlay';
+  div.addEventListener('click', () => {
+    if ($sidebar) $sidebar.classList.remove('is-open');
+    div.classList.remove('is-visible');
+  });
+  document.body.appendChild(div);
+  $sidebarOverlay = div;
+  return div;
+}
+
+function ensureMenuToggle() {
+  if ($menuToggle) return $menuToggle;
+  const topbar = document.querySelector('.topbar');
+  if (!topbar) return null;
+
+  const left = topbar.querySelector('.topbar__left') || topbar;
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'topbar__menuToggle';
+  btn.setAttribute('aria-label', 'Menú principal');
+  btn.innerHTML = '<span></span>';
+
+  left.insertBefore(btn, left.firstChild);
+
+  btn.addEventListener('click', () => {
+    if (!$sidebar) return;
+    ensureSidebarOverlay();
+    const open = !$sidebar.classList.contains('is-open');
+    $sidebar.classList.toggle('is-open', open);
+    if ($sidebarOverlay) $sidebarOverlay.classList.toggle('is-visible', open);
+  });
+
+  $menuToggle = btn;
+  return btn;
+}
+
 
 function buildMenu() {
   const me = getUser();
   const isVet = me?.role === 'vet';
+  const isUser = me?.role === 'user';
   if (!$menu) return;
 
   const adminMenu = [
@@ -75,6 +129,13 @@ function buildMenu() {
     { href: '#/calendario', label: '🗓️ Calendario' },
     { href: '#/urgencias', label: '🚨 Urgencias' },
   ];
+  const userMenu = [
+    { href: '#/u-home', label: '🏠 Inicio' },
+    { href: '#/u-mascotas', label: '🐾 Mis mascotas' },
+    { href: '#/citas', label: '🧭 Citas' },
+    { href: '#/calendario', label: '🗓️ Calendario' },
+    { href: '#/urgencias', label: '🚨 Urgencias' },
+  ]
 
   const registrosSubmenu = `
     <button class="menu__item menu__item--btn text-menu" id="btnRegistros">
@@ -103,9 +164,13 @@ function buildMenu() {
       <a href="#/certificados/salud-sag" class="submenu__item text-submenu">🧾 Cert Salud SAG</a>
       <a href="#/certificados/salud-pucara" class="submenu__item text-submenu">🧾 Cert Salud Pucará</a>
       <a href="#/certificados/epicrisis" class="submenu__item text-submenu">🧾 Cert Epicrisis</a>
+      <a href="#/certificados/defuncion" class="submenu__item text-submenu">🧾 Cert Defunción</a>
+      <a href="#/certificados/autorizacion-cirugia-anestesia" class="submenu__item text-submenu">🧾 Aut Cirugía / Anestesia</a>
     </div>`;
 
-  const items = (isVet ? vetMenu : adminMenu)
+  const baseMenu = isUser ? userMenu : (isVet ? vetMenu : adminMenu);
+
+  const items = baseMenu
     .map(i => (i.label.includes('Registros') ? registrosSubmenu
       : i.label.includes('Certificados') ? certificadosSubmenu
         : `<a href="${i.href}" class="menu__item text-menu"><span>${i.label}</span></a>`))
@@ -142,7 +207,9 @@ function buildMenu() {
 const app = document.getElementById('app');
 const routes = {
   '/public': () => mountView('public'),
+  '/u-home': () => mountView('public'),
   '/mascotas': () => mountView('mascotas'),
+  '/u-mascotas': () => mountView('mascotas', { client: true }),
   '/propietarios': () => mountView('propietarios'),
   '/citas': () => mountView('citas'),
   '/calendario': () => mountView('calendario'),
@@ -162,6 +229,8 @@ const routes = {
       'salud-sag': 'salud-sag',
       'salud-pucara': 'salud-pucara',
       'epicrisis': 'epicrisis',
+      'defuncion': 'defuncion',
+      'autorizacion-cirugia-anestesia': 'autorizacion-cirugia-anestesia',
     };
     const viewName = map[p.tipo] || 'salud-sag';
     return mountView(viewName, p);
@@ -200,9 +269,14 @@ async function router() {
   const { route, params } = parseHash();
 
   if (!isLoggedIn()) {
+    // 🔹 modo público: nos aseguramos de quitar la clase role-user
+    document.body.classList.remove('role-user');
+
     setPublicUI(true);
     updateWhatsFab();
-    ensurePetBotUI(); updatePetBot(); await mountPetLottie();
+    ensurePetBotUI();
+    updatePetBot();
+    await mountPetLottie();
 
     const PUBLIC_ROUTES = ['/public', '/ver/:tipo'];
 
@@ -215,22 +289,44 @@ async function router() {
     return;
   }
 
+  const me = getUser();
+
+  document.body.classList.toggle('role-user', me?.role === 'user');
+  document.body.classList.toggle('role-vet', me?.role === 'vet');
+  document.body.classList.toggle('role-admin', !me || (me.role !== 'user' && me.role !== 'vet'));
+
+  // Si ya está logueado y viene a /public:
+  // - user  → Inicio (u-home)
+  // - vet/admin → Mascotas
   if (route === '/public') {
-    location.hash = '#/mascotas';
+    if (me?.role === 'user') {
+      location.hash = '#/u-home';
+    } else {
+      location.hash = '#/mascotas';
+    }
     return;
   }
 
   setPublicUI(false);
   buildMenu();
   updateWhatsFab();
-  ensurePetBotUI(); updatePetBot(); await mountPetLottie();
+
+  // 🔹 marcamos el rol user en el body (solo aquí)
+  document.body.classList.toggle('role-user', me?.role === 'user');
+
+  // Primero definimos si el pet es perro o gato
+  await setPetUseFromFirstMascota();
+
+  // Luego montamos el UI del PetBot con el Lottie correcto
+  ensurePetBotUI();
+  updatePetBot();
+  await mountPetLottie();
 
   if (!guardRoute(route)) return;
 
   if (routes[route]) routes[route](params || {});
   else app.innerHTML = `<div class="card"><h2>Panel</h2><p>Selecciona una opción del menú.</p></div>`;
 }
-
 
 window.addEventListener('hashchange', router);
 window.addEventListener('load', router);
@@ -253,10 +349,13 @@ const viewCssDeps = {
   catalogo: ['../css/public.css', '../css/public-catalogo.css'],
   receta: ['../css/receta.css'],
   antibioticos: ['../css/antibiotico.css'],
+  personal: ['../css/propietarios.css'],
   hospitalizacion: ['../css/registro-hosp.css'],
   'salud-sag': ['../css/certificados.css'],
-  'salud-pucara': ['../css/certificados.css'], 
+  'salud-pucara': ['../css/certificados.css'],
   'epicrisis': ['../css/certificados.css'],
+  'defuncion': ['../css/certificados.css'],
+  'autorizacion-cirugia-anestesia': ['../css/certificados.css'],
 };
 
 async function mountView(name, params = {}) {
@@ -275,7 +374,15 @@ async function mountView(name, params = {}) {
       app.insertAdjacentHTML('beforeend', `<p style="color:#b91c1c">La vista "${name}" no exporta <code>init</code>.</p>`);
       return;
     }
-    await mod.init({ root: app, API, params });
+
+    await mod.init({
+      root: app,
+      API,
+      params,
+      authHeaders,
+      getUser,
+      isLoggedIn,
+    });
   } catch (e) {
     app.innerHTML = `<div class="card"><h2>${name}</h2><p style="color:#b91c1c">Error: ${e?.message || e}</p></div>`;
     console.error(e);
@@ -335,8 +442,65 @@ function updateWhatsFab() {
 ensureWhatsFab(); updateWhatsFab();
 
 /* ========== PetBot (Lottie) ========== */
-const PET_USE = 'dog';
-const PET_LOTTIE = PET_USE === 'cat' ? '../assets/lottie/a-cat.json' : '../assets/lottie/a-dog.json'; // relativo a /js/main.js
+let PET_USE = 'dog'; // valor por defecto
+
+function getPetLottiePath() {
+  return PET_USE === 'cat'
+    ? '../assets/lottie/a-cat.json'
+    : '../assets/lottie/a-dog.json';
+}
+
+async function setPetUseFromFirstMascota() {
+  const me = getUser?.() || JSON.parse(localStorage.getItem('auth_user') || 'null');
+
+  // por defecto, perro
+  PET_USE = 'dog';
+
+  // solo aplicamos lógica para usuarios tipo "user"
+  if (!me || me.role !== 'user') {
+    console.log('[PetBot] Usuario no es user, se usa dog');
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API}/api/mascotas/mias`, {
+      headers: {
+        ...authHeaders?.(),
+        'Accept': 'application/json',
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`);
+    }
+
+    const data = await res.json();
+    console.log('[PetBot] mascotas/mias:', data);
+
+    if (Array.isArray(data) && data.length) {
+      // 🔁 Buscamos el PRIMER gato de la lista
+      const gato = data.find(
+        (m) => (m.especie || '').toString().toLowerCase().includes('gato')
+      );
+
+      if (gato) {
+        PET_USE = 'cat';
+        console.log('[PetBot] Se detectó al menos un gato, PET_USE = cat');
+      } else {
+        PET_USE = 'dog';
+        console.log('[PetBot] No hay gatos, PET_USE = dog');
+      }
+    } else {
+      console.log('[PetBot] Usuario sin mascotas, PET_USE = dog');
+    }
+  } catch (err) {
+    console.error('[PetBot] Error al obtener mascotas/mias:', err);
+    PET_USE = 'dog';
+  }
+}
+
+
+
 let $petFab = null, $petPanel = null, $petBody = null, $petInput = null;
 let _lottieLoaded = false;
 
@@ -451,18 +615,26 @@ async function mountPetLottie() {
   const container = document.getElementById('petLottie');
   if (!container || !window.lottie) return;
 
+  // destruir animación anterior si existe
   if (petAnim && typeof petAnim.destroy === 'function') {
     petAnim.destroy();
     petAnim = null;
   }
   container.innerHTML = '';
 
+  // 🔹 marcamos si es gato o perro SOLO con clases
+  container.classList.toggle('is-cat', PET_USE === 'cat');
+  container.classList.toggle('is-dog', PET_USE !== 'cat');
+
   petAnim = window.lottie.loadAnimation({
     container,
     renderer: 'svg',
     loop: true,
     autoplay: true,
-    path: PET_LOTTIE
+    path: getPetLottiePath()
   });
 }
 
+
+ensureMenuToggle();
+ensureSidebarOverlay();

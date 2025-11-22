@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Clínica Pucará · Ingreso</title>
 
-    <!-- CSS del login (ruta absoluta para evitar problemas de ubicación) -->
     <link rel="stylesheet" href="../../css/login.css" />
   </head>
   <body class="auth-page">
     <main class="auth-wrap">
       <section class="auth-card">
         <div class="brand">
-          <!-- Si tienes un logo, descomenta la línea de abajo y ajusta la ruta -->
           <img src="/assets/logo.png" alt="Clínica Pucará" class="logo" />
           <p class="subtitle">Bienvenido 🐾</p>
         </div>
@@ -48,37 +46,156 @@
           <button class="btn btn-primary" type="submit">Entrar</button>
         </form>
 
-        <!-- REGISTER -->
+        <!-- REGISTER (3 pasos) -->
         <form id="f_register" class="tab" autocomplete="off">
-          <label for="r_nombre">Nombre</label>
-          <input
-            id="r_nombre"
-            type="text"
-            class="input"
-            placeholder="Tu nombre"
-            required
-          />
+          <!-- indicador de pasos -->
+          <div class="steps-circles">
+            <div class="step-circle" data-step="1">1</div>
+            <div class="step-circle" data-step="2">2</div>
+            <div class="step-circle" data-step="3">3</div>
+          </div>
 
-          <label for="r_email">Email</label>
-          <input
-            id="r_email"
-            type="email"
-            class="input"
-            placeholder="tucorreo@ejemplo.cl"
-            required
-          />
+          <!-- PASO 1: propietario -->
+          <div class="step-pane active" data-step="1">
+            <h3>Tus datos</h3>
+            <label for="r_owner_nombre">Nombre completo</label>
+            <input
+              id="r_owner_nombre"
+              type="text"
+              class="input"
+              placeholder="Tu nombre"
+              required
+            />
 
-          <label for="r_pass">Contraseña</label>
-          <input
-            id="r_pass"
-            type="password"
-            class="input"
-            placeholder="Mín. 6 caracteres"
-            minlength="6"
-            required
-          />
+            <label for="r_owner_rut">RUT</label>
+            <input
+              id="r_owner_rut"
+              type="text"
+              class="input"
+              placeholder="11.111.111-1"
+              required
+            />
 
-          <button class="btn btn-primary" type="submit">Crear cuenta</button>
+            <label for="r_owner_email">Email</label>
+            <input
+              id="r_owner_email"
+              type="email"
+              class="input"
+              placeholder="tucorreo@ejemplo.cl"
+              required
+            />
+
+            <label for="r_owner_movil">Número de contacto</label>
+            <input
+              id="r_owner_movil"
+              type="tel"
+              class="input"
+              placeholder="+56 9 1234 5678"
+              required
+            />
+
+            <label for="r_owner_direccion">Dirección</label>
+            <input
+              id="r_owner_direccion"
+              type="text"
+              class="input"
+              placeholder="Calle, número, comuna"
+              required
+            />
+          </div>
+
+          <!-- PASO 2: mascota -->
+          <div class="step-pane" data-step="2">
+            <h3>Datos de tu mascota</h3>
+
+            <label>Especie</label>
+            <select id="r_pet_especie" class="input" required>
+              <option value="">Selecciona especie</option>
+              <option value="PERRO">Perro</option>
+              <option value="GATO">Gato</option>
+            </select>
+
+            <label for="r_pet_nombre">Nombre</label>
+            <input
+              id="r_pet_nombre"
+              type="text"
+              class="input"
+              placeholder="Nombre de la mascota"
+              required
+            />
+
+            <label for="r_pet_raza">Raza</label>
+            <input
+              id="r_pet_raza"
+              type="text"
+              class="input"
+              placeholder="Raza"
+              required
+            />
+
+            <label for="r_pet_sexo">Sexo</label>
+            <select id="r_pet_sexo" class="input" required>
+              <option value="">Selecciona…</option>
+              <option value="macho">Macho</option>
+              <option value="hembra">Hembra</option>
+            </select>
+
+            <label for="r_pet_fnac">Fecha de nacimiento</label>
+            <input id="r_pet_fnac" type="date" class="input" required />
+
+            <label for="r_pet_foto">Foto (opcional)</label>
+            <input id="r_pet_foto" type="file" class="input" accept="image/*" />
+            <small class="help">
+              Formatos permitidos: JPG, PNG, WebP (máx 5MB).
+            </small>
+          </div>
+
+          <!-- PASO 3: contraseña -->
+          <div class="step-pane" data-step="3">
+            <h3>Crear contraseña</h3>
+
+            <p class="help">
+              Tu usuario será tu correo: lo usarás para ingresar a la
+              plataforma.
+            </p>
+
+            <label for="r_pass">Contraseña</label>
+            <input
+              id="r_pass"
+              type="password"
+              class="input"
+              placeholder="Mínimo 6 caracteres"
+              minlength="6"
+              required
+            />
+
+            <label for="r_pass2">Repetir contraseña</label>
+            <input
+              id="r_pass2"
+              type="password"
+              class="input"
+              placeholder="Repite la contraseña"
+              minlength="6"
+              required
+            />
+          </div>
+
+          <div class="reg-actions">
+            <button type="button" class="btn btn-outline" id="reg_prev">
+              Atrás
+            </button>
+            <button type="button" class="btn btn-primary" id="reg_next">
+              Siguiente
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              id="reg_submit"
+              style="display: none"
+            >
+              Crear cuenta
+            </button>
+          </div>
         </form>
 
         <!-- FORGOT -->
@@ -100,7 +217,6 @@
       </section>
     </main>
 
-    <!-- Tu módulo JS del login -->
     <script type="module" src="../../js/views/login/login.js"></script>
   </body>
 </html>

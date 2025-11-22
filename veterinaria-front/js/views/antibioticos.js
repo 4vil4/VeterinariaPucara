@@ -1,11 +1,16 @@
 // views/antibioticos.js
-export async function init({ root, API }) {
+let _authHeadersFn = null;
+
+export async function init({ root, API, authHeaders }) {
   const $search = root.querySelector('#abSearch');
   const $newBtn = root.querySelector('#abNew');
   const $wrap = root.querySelector('#abWrap');
   const $tabs = root.querySelectorAll('#abTabBar .btn');
   const $filterEnv = root.querySelector('#abFilterEnv');
   const $refreshUsos = root.querySelector('#abRefreshUsos');
+
+  // guardamos la función para usarla en los helpers globales
+  _authHeadersFn = authHeaders;
 
   let currentTab = 'catalogo';
   let t;
@@ -107,7 +112,6 @@ export async function init({ root, API }) {
     return `<table class="tbl">${head}${body}</table>`;
   }
 
-
   function bindCatalogActions() {
     $wrap.querySelectorAll('.btn-edit').forEach(btn => {
       btn.addEventListener('click', async () => {
@@ -206,10 +210,76 @@ export async function init({ root, API }) {
 }
 
 /* utils */
-function esc(s) { return (s ?? '').toString().replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])); }
-function fmtDateTime(s) { if (!s) return ''; const d = new Date(s); return isNaN(d) ? '' : d.toLocaleString(); }
-async function fetchJSON(url) { const r = await fetch(url); if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
-async function apiPost(url, body) { const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }); if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
-async function apiPut(url, body) { const r = await fetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }); if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
-async function apiPatch(url, body) { const r = await fetch(url, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }); if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
-async function apiDelete(url) { const r = await fetch(url, { method: 'DELETE' }); if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
+function getAuthHeaders() {
+  return typeof _authHeadersFn === 'function' ? _authHeadersFn() : {};
+}
+
+function esc(s) {
+  return (s ?? '').toString().replace(/[&<>"']/g, m => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[m]));
+}
+
+function fmtDateTime(s) {
+  if (!s) return '';
+  const d = new Date(s);
+  return isNaN(d) ? '' : d.toLocaleString();
+}
+
+async function fetchJSON(url) {
+  const r = await fetch(url, { headers: getAuthHeaders() });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+
+async function apiPost(url, body) {
+  const r = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...getAuthHeaders(),
+    },
+    body: JSON.stringify(body),
+  });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+
+async function apiPut(url, body) {
+  const r = await fetch(url, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      ...getAuthHeaders(),
+    },
+    body: JSON.stringify(body),
+  });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+
+async function apiPatch(url, body) {
+  const r = await fetch(url, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      ...getAuthHeaders(),
+    },
+    body: JSON.stringify(body),
+  });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+
+async function apiDelete(url) {
+  const r = await fetch(url, {
+    method: 'DELETE',
+    headers: getAuthHeaders(),
+  });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}

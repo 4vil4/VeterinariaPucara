@@ -1,9 +1,23 @@
-export async function init({ root, API }) {
+export async function init({ root, API, params = {} }) {
   const tblWrap = root.querySelector('#tblWrap');
   const detalle = root.querySelector('#detalle');
 
-  const data = await fetchJSON(`${API}/api/mascotas`);
+  const isClient = !!params.client;
+  const listUrl = isClient
+    ? `${API}/api/mascotas/mias`
+    : `${API}/api/mascotas`;
+
+  const data = await fetchJSON(listUrl);
   tblWrap.innerHTML = buildMascotasTable(data, API);
+
+  let nextHist = 1000;
+  if (Array.isArray(data) && data.length) {
+    const maxHist = data.reduce((max, r) => {
+      const n = parseInt(r.n_historial, 10);
+      return Number.isNaN(n) ? max : Math.max(max, n);
+    }, 999);
+    nextHist = maxHist < 1000 ? 1000 : maxHist + 1;
+  }
 
   tblWrap.querySelectorAll('tr[data-id]').forEach(tr => {
     tr.addEventListener('click', async (e) => {
@@ -19,10 +33,17 @@ export async function init({ root, API }) {
       e.stopPropagation();
       const id = btn.dataset.id;
       const m = await fetchJSON(`${API}/api/mascotas/${id}`);
-      showMascotaForm(root, API, 'Editar mascota', m, async (fd) => {
-        await apiPutForm(`${API}/api/mascotas/${id}`, fd);
-        await init({ root, API });
-      });
+      showMascotaForm(
+        root,
+        API,
+        'Editar mascota',
+        m,
+        async (fd) => {
+          await apiPutForm(`${API}/api/mascotas/${id}`, fd);
+          await init({ root, API, params }); 
+        },
+        { client: isClient }  
+      );
     });
   });
 
@@ -32,7 +53,7 @@ export async function init({ root, API }) {
       const id = btn.dataset.id;
       if (!confirm('¿Eliminar esta mascota?')) return;
       await apiDelete(`${API}/api/mascotas/${id}`);
-      await init({ root, API });
+      await init({ root, API, params });
     });
   });
 
@@ -70,12 +91,23 @@ export async function init({ root, API }) {
   });
 
   root.querySelector('#btnNuevaMascota').addEventListener('click', () => {
-    showMascotaForm(root, API, 'Nueva mascota', null, async (fd) => {
-      await apiPostForm(`${API}/api/mascotas`, fd);
-      await init({ root, API });
-    });
+    showMascotaForm(
+      root,
+      API,
+      'Nueva mascota',
+      null,
+      async (fd) => {
+        const postUrl = isClient
+          ? `${API}/api/mascotas/mias`
+          : `${API}/api/mascotas`;
+        await apiPostForm(postUrl, fd);
+        await init({ root, API, params });
+      },
+      { client: isClient, nextHist }
+    );
   });
 }
+
 
 /* ---------- UI ---------- */
 function buildMascotasTable(rows, API) {
@@ -85,28 +117,30 @@ function buildMascotasTable(rows, API) {
     <th>Raza</th><th>Sexo</th><th>Propietario</th><th style="width:220px">Acciones</th>
   </tr></thead>`;
   const body = `
-  <tbody>
-    ${rows.map(r => {
-    const thumb = `${API}/api/mascotas/${r.id}/foto?ts=${encodeURIComponent(r.updated_at || '')}`;
-    return `
-      <tr data-id="${r.id}">
-        <td><img src="${thumb}" alt="" style="width:40px;height:40px;object-fit:cover;border-radius:8px" onerror="this.style.display='none'"/></td>
-        <td>${esc(r.nombre)}</td>
-        <td>${esc(r.n_historial || '')}</td>
-        <td>${esc(r.especie || '')}</td>
-        <td>${esc(r.raza || '')}</td>
-        <td>${esc(r.sexo || '')}</td>
-        <td>${esc(r.propietario_nombre || '')}</td>
-        <td>
-          <div class="actions">
-            <button class="btn-hist" data-id="${r.id}" data-nombre="${esc(r.nombre)}">Historial</button>
-            <button class="btn-edit" data-id="${r.id}">Editar</button>
-            <button class="btn-del" data-id="${r.id}">Eliminar</button>
-          </div>
-        </td>
-      </tr>`;
-  }).join('')}
-  </tbody>`;
+    <tbody>
+      ${rows.map(r => {
+        const thumb = `${API}/api/mascotas/${r.id}/foto?ts=${encodeURIComponent(r.updated_at || '')}`;
+        return `
+          <tr data-id="${r.id}">
+            <td data-label="Foto">
+              <img src="${thumb}" alt="" style="width:40px;height:40px;object-fit:cover;border-radius:8px" onerror="this.style.display='none'"/>
+            </td>
+            <td data-label="Nombre">${esc(r.nombre)}</td>
+            <td data-label="N° Historial">${esc(r.n_historial || '')}</td>
+            <td data-label="Especie">${esc(r.especie || '')}</td>
+            <td data-label="Raza">${esc(r.raza || '')}</td>
+            <td data-label="Sexo">${esc(r.sexo || '')}</td>
+            <td data-label="Propietario">${esc(r.propietario_nombre || '')}</td>
+            <td data-label="Acciones">
+              <div class="actions">
+                <button class="btn-hist" data-id="${r.id}" data-nombre="${esc(r.nombre)}">Historial</button>
+                <button class="btn-edit" data-id="${r.id}">Editar</button>
+                <button class="btn-del" data-id="${r.id}">Eliminar</button>
+              </div>
+            </td>
+          </tr>`;
+      }).join('')}
+    </tbody>`;
   return `<table class="tbl">${head}${body}</table>`;
 }
 
@@ -150,7 +184,7 @@ function renderHistorial(nombreMascota, items) {
     const tipo = (it.tipo || it.category || it.clase || 'Registro').toString();
     const fecha = fmt(it.fecha || it.created_at);
     const resumen = escTxt(it.resumen || it.diagnostico || it.descripcion || it.indicaciones || it.motivo || it.medicamentos || '');
-    // ← añadimos dataset con tipo e id para poder pedir detalle
+    
     return `
       <li class="hist-item hist-click" data-tipo="${esc(tipo)}" data-id="${it.id}">
         <div class="hist-dot"></div>
@@ -173,43 +207,25 @@ function renderHistorial(nombreMascota, items) {
 }
 
 
-function showMascotaForm(root, API, title, m, onSubmit) {
+function showMascotaForm(root, API, title, m, onSubmit, opts = {}) {
+  const oldForm = root.querySelector('.mascota-form');
+  if (oldForm) oldForm.remove();
+
   const v = m || {};
+  const isClient = !!opts.client; 
+  const isNew = !v.id; 
+  const initialHist = v.n_historial || (opts.nextHist ?? '');
+
   const form = document.createElement('div');
-  form.className = 'card';
-  form.innerHTML = `
-    <h3 style="margin-top:0">${title}</h3>
-    <div class="form-grid">
-      <div><label>Nombre</label><input class="input" id="f_nombre" value="${esc(v.nombre || '')}" /></div>
-      <div><label>N° Historial</label><input class="input" id="f_hist" value="${esc(v.n_historial || '')}" /></div>
+  form.className = 'card mascota-form';
+
+  const ownerSection = isClient
+    ? `
       <div>
-        <label>Especie</label>
-        <select class="input" id="f_especie">
-          <option value="">Seleccione…</option>
-          <option value="perro" ${(v.especie || '').toLowerCase() === 'perro' ? 'selected' : ''}>Perro</option>
-          <option value="gato"  ${(v.especie || '').toLowerCase() === 'gato' ? 'selected' : ''}>Gato</option>
-        </select>
-      </div>
-      <div><label>Raza</label><input class="input" id="f_raza" value="${esc(v.raza || '')}" /></div>
-      <div>
-        <label>Sexo</label>
-        <select class="input" id="f_sexo">
-          <option value="">Seleccione…</option>
-          <option value="macho"  ${(v.sexo || '').toLowerCase() === 'macho' ? 'selected' : ''}>Macho</option>
-          <option value="hembra" ${(v.sexo || '').toLowerCase() === 'hembra' ? 'selected' : ''}>Hembra</option>
-        </select>
-      </div>
-
-      <div style="display:flex;align-items:center;gap:8px">
-        <input id="f_ester" type="checkbox" ${(v.esterilizado === 1 || v.esterilizado === '1') ? 'checked' : ''} />
-        <label for="f_ester">Esterilizado</label>
-      </div>
-
-      <div><label>N° microchip</label><input class="input" id="f_chip" value="${esc(v.nro_microchip || '')}" /></div>
-
-      <div><label>Fecha nacimiento</label><input class="input" id="f_fnac" type="date" value="${(v.fecha_nacimiento || '').slice(0, 10)}" /></div>
-      <div><label>Peso (kg)</label><input class="input" id="f_peso" type="number" step="0.01" value="${v.peso_kg ?? ''}" /></div>
-
+        <label>Propietario</label>
+        <p class="muted">Se usarán automáticamente tus datos como propietario.</p>
+      </div>`
+    : `
       <div>
         <label>Propietario</label>
         <div style="display:flex; gap:8px; align-items:center">
@@ -233,7 +249,45 @@ function showMascotaForm(root, API, title, m, onSubmit) {
             <button class="btn-del" id="o_cancelar" type="button">Cancelar</button>
           </div>
         </div>
+      </div>`;
+
+  form.innerHTML = `
+    <h3 style="margin-top:0">${title}</h3>
+    <div class="form-grid">
+      <div><label>Nombre</label><input class="input" id="f_nombre" value="${esc(v.nombre || '')}" /></div>
+      <div>
+        <label>N° Historial</label>
+        <input class="input" id="f_hist" value="${esc(initialHist || '')}" ${initialHist ? 'readonly' : ''} />
       </div>
+      <div>
+        <label>Especie</label>
+        <select class="input" id="f_especie">
+          <option value="">Seleccione…</option>
+          <option value="perro" ${(v.especie || '').toLowerCase() === 'perro' ? 'selected' : ''}>Perro</option>
+          <option value="gato"  ${(v.especie || '').toLowerCase() === 'gato' ? 'selected' : ''}>Gato</option>
+        </select>
+      </div>
+      <div><label>Raza</label><input class="input" id="f_raza" value="${esc(v.raza || '')}" /></div>
+      <div>
+        <label>Sexo</label>
+        <select class="input" id="f_sexo">
+          <option value="">Seleccione…</option>
+          <option value="macho"  ${(v.sexo || '').toLowerCase() === 'macho' ? 'selected' : ''}>Macho</option>
+          <option value="hembra" ${(v.sexo || '').toLowerCase() === 'hembra' ? 'selected' : ''}>Hembra</option>
+        </select>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:8px">
+        <input id="f_ester" type="checkbox" ${(v.esterilizado === 1 || v.esterilizado === '1') ? 'checked' : ''} />
+        <label for="f_ester">Esterilizado</label>
+      </div>
+
+      <div><label>N° microchip</label><input class="input" id="f_chip" type="text" value="${esc(v.nro_microchip || '')}" /></div>
+
+      <div><label>Fecha nacimiento</label><input class="input" id="f_fnac" type="date" value="${(v.fecha_nacimiento || '').slice(0, 10)}" /></div>
+      <div><label>Peso (kg)</label><input class="input" id="f_peso" type="number" step="0.01" value="${v.peso_kg ?? ''}" /></div>
+
+      ${ownerSection}
 
       <div style="grid-column:1 / -1">
         <label>Foto</label>
@@ -254,6 +308,23 @@ function showMascotaForm(root, API, title, m, onSubmit) {
   `;
   root.prepend(form);
 
+  // ---------- Validaciones en tiempo real ----------
+  const nombreInput = form.querySelector('#f_nombre');
+  if (nombreInput) {
+    nombreInput.addEventListener('input', () => {
+      let val = nombreInput.value;
+      val = val.replace(/[^a-zA-ZÁÉÍÓÚáéíóúÑñ\s]/g, '');
+      nombreInput.value = val;
+    });
+  }
+
+  const chipInput = form.querySelector('#f_chip');
+  if (chipInput) {
+    chipInput.addEventListener('input', () => {
+      chipInput.value = chipInput.value.replace(/\D/g, '');
+    });
+  }
+
   const fileInput = form.querySelector('#f_foto');
   const preview = form.querySelector('#f_preview');
   fileInput.addEventListener('change', () => {
@@ -264,59 +335,66 @@ function showMascotaForm(root, API, title, m, onSubmit) {
     reader.readAsDataURL(f);
   });
 
-  const propSearch = form.querySelector('#f_prop_search');
-  const propSelect = form.querySelector('#f_prop_select');
-  let propietariosCache = [];
+  // ---------- Propietario (solo admin/vet) ----------
   let selectedOwnerId = v.propietario_id ?? null;
 
-  (async () => {
-    await loadPropietarios('');
-    renderPropOptions(propietariosCache, selectedOwnerId);
-    if (selectedOwnerId) propSelect.value = String(selectedOwnerId);
-  })();
+  if (!isClient) {
+    const propSearch = form.querySelector('#f_prop_search');
+    const propSelect = form.querySelector('#f_prop_select');
+    let propietariosCache = [];
 
-  let tSearch;
-  propSearch.addEventListener('input', () => {
-    clearTimeout(tSearch);
-    tSearch = setTimeout(async () => {
-      await loadPropietarios(propSearch.value.trim());
-      renderPropOptions(propietariosCache, null);
-    }, 250);
-  });
-  propSelect.addEventListener('change', () => { selectedOwnerId = Number(propSelect.value) || null; });
+    (async () => {
+      await loadPropietarios('');
+      renderPropOptions(propietariosCache, selectedOwnerId);
+      if (selectedOwnerId) propSelect.value = String(selectedOwnerId);
+    })();
 
-  const box = form.querySelector('#newOwnerBox');
-  form.querySelector('#btnNewOwner').onclick = () => { box.style.display = (box.style.display === 'none') ? 'block' : 'none'; };
+    let tSearch;
+    propSearch.addEventListener('input', () => {
+      clearTimeout(tSearch);
+      tSearch = setTimeout(async () => {
+        await loadPropietarios(propSearch.value.trim());
+        renderPropOptions(propietariosCache, null);
+      }, 250);
+    });
+    propSelect.addEventListener('change', () => { selectedOwnerId = Number(propSelect.value) || null; });
 
-  form.querySelector('#o_guardar').onclick = async () => {
-    const payload = {
-      nombre: form.querySelector('#o_nombre').value.trim(),
-      rut: form.querySelector('#o_rut').value.trim(),
-      correo: form.querySelector('#o_correo').value.trim(),
-      movil: form.querySelector('#o_movil').value.trim(),
-      direccion: form.querySelector('#o_direccion').value.trim(),
+    const box = form.querySelector('#newOwnerBox');
+    form.querySelector('#btnNewOwner').onclick = () => {
+      box.style.display = (box.style.display === 'none' || !box.style.display) ? 'block' : 'none';
     };
-    if (!payload.nombre) { alert('Nombre de propietario es obligatorio'); return; }
-    const r = await apiPost(`${API}/api/propietarios`, payload);
-    await loadPropietarios('');
-    renderPropOptions(propietariosCache, r.id);
-    selectedOwnerId = r.id;
-    box.style.display = 'none';
-    form.querySelector('#prop_hint').textContent = 'Propietario creado y seleccionado.';
-  };
-  form.querySelector('#o_cancelar').onclick = () => { box.style.display = 'none'; };
 
-  async function loadPropietarios(search = '') {
-    const url = `${API}/api/propietarios${search ? `?search=${encodeURIComponent(search)}` : ''}`;
-    propietariosCache = await fetchJSON(url);
-  }
-  function renderPropOptions(list, selectId) {
-    propSelect.innerHTML = list.map(p =>
-      `<option value="${p.id}">${esc(p.nombre)}${p.rut ? ' — ' + esc(p.rut) : ''}${p.movil ? ' — ' + esc(p.movil) : ''}</option>`
-    ).join('');
-    if (selectId) propSelect.value = String(selectId);
+    form.querySelector('#o_guardar').onclick = async () => {
+      const payload = {
+        nombre: form.querySelector('#o_nombre').value.trim(),
+        rut: form.querySelector('#o_rut').value.trim(),
+        correo: form.querySelector('#o_correo').value.trim(),
+        movil: form.querySelector('#o_movil').value.trim(),
+        direccion: form.querySelector('#o_direccion').value.trim(),
+      };
+      if (!payload.nombre) { alert('Nombre de propietario es obligatorio'); return; }
+      const r = await apiPost(`${API}/api/propietarios`, payload);
+      await loadPropietarios('');
+      renderPropOptions(propietariosCache, r.id);
+      selectedOwnerId = r.id;
+      box.style.display = 'none';
+      form.querySelector('#prop_hint').textContent = 'Propietario creado y seleccionado.';
+    };
+    form.querySelector('#o_cancelar').onclick = () => { box.style.display = 'none'; };
+
+    async function loadPropietarios(search = '') {
+      const url = `${API}/api/propietarios${search ? `?search=${encodeURIComponent(search)}` : ''}`;
+      propietariosCache = await fetchJSON(url);
+    }
+    function renderPropOptions(list, selectId) {
+      propSelect.innerHTML = list.map(p =>
+        `<option value="${p.id}">${esc(p.nombre)}${p.rut ? ' — ' + esc(p.rut) : ''}${p.movil ? ' — ' + esc(p.movil) : ''}</option>`
+      ).join('');
+      if (selectId) propSelect.value = String(selectId);
+    }
   }
 
+  // ---------- Guardar / Cancelar ----------
   form.querySelector('#f_cancelar').onclick = () => form.remove();
   form.querySelector('#f_guardar').onclick = async () => {
     const payload = {
@@ -329,10 +407,39 @@ function showMascotaForm(root, API, title, m, onSubmit) {
       nro_microchip: val('#f_chip', form),
       fecha_nacimiento: val('#f_fnac', form) || null,
       peso_kg: parseFloat(val('#f_peso', form)) || null,
-      propietario_id: selectedOwnerId
     };
+
     if (!payload.nombre) { alert('Nombre es requerido'); return; }
-    if (!payload.propietario_id) { alert('Selecciona o crea un propietario.'); return; }
+    if (!payload.especie) { alert('Selecciona especie'); return; }
+
+    // Validación extra: nombre solo letras
+    if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/.test(payload.nombre)) {
+      alert('El nombre solo puede contener letras y espacios (sin números).');
+      return;
+    }
+
+    // Validación extra: N° historial >= 1000
+    if (payload.n_historial) {
+      const n = parseInt(payload.n_historial, 10);
+      if (Number.isNaN(n) || n < 1000) {
+        alert('El N° de historial debe ser un número mayor o igual a 1000.');
+        return;
+      }
+    }
+
+    // Validación extra: microchip solo números
+    if (payload.nro_microchip && !/^\d+$/.test(payload.nro_microchip)) {
+      alert('El N° de microchip solo puede contener números.');
+      return;
+    }
+
+    if (!isClient) {
+      payload.propietario_id = selectedOwnerId;
+      if (!payload.propietario_id) {
+        alert('Selecciona o crea un propietario.');
+        return;
+      }
+    }
 
     const fd = new FormData();
     Object.entries(payload).forEach(([k, v]) => {
@@ -345,6 +452,8 @@ function showMascotaForm(root, API, title, m, onSubmit) {
     form.remove();
   };
 }
+
+
 
 /* ----------Funciones auxiliares ----------- */
 function bindHistClicks(rootEl, API) {
@@ -368,14 +477,12 @@ function bindHistClicks(rootEl, API) {
 }
 
 async function fetchHistDetail(API, tipo, id) {
-  // Receta tiene endpoint directo
   if (tipo === 'receta' || tipo === 'recetas') {
     const r = await fetch(`${API}/api/recetas/${id}`);
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     return r.json();
   }
 
-  // Mapear etiquetas visibles a keys de /api/registros/:tipo
   const map = {
     consulta: 'consulta',
     control: 'control',
@@ -399,7 +506,6 @@ async function fetchHistDetail(API, tipo, id) {
   };
   const key = map[tipo] || tipo;
 
-  // No existe GET /:id individual para registros, así que buscamos por id
   const url = `${API}/api/registros/${key}?search=${encodeURIComponent(String(id))}`;
   const r = await fetch(url);
   if (!r.ok) throw new Error(`HTTP ${r.status}`);
@@ -429,7 +535,6 @@ function renderHistDetail(tipo, d) {
       </div>`;
   }
 
-  // Campos más comunes en registros
   return `
     <div class="modal-body">
       ${row('ID', d.id)}
@@ -450,7 +555,7 @@ function renderHistDetail(tipo, d) {
     </div>`;
 }
 
-/* ===== Modal ultra simple ===== */
+/* ===== Modal ===== */
 function showModal(title, html) {
   let modal = document.getElementById('simpleModal');
   if (!modal) {
@@ -493,8 +598,66 @@ function calcularEdad(iso) {
   const ms = m > 0 ? `${m} mes${m > 1 ? 'es' : ''}` : '';
   return [ys, ms].filter(Boolean).join(' ');
 }
-async function fetchJSON(url) { const r = await fetch(url); if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
-async function apiPost(url, body) { const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }); if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
-async function apiPostForm(url, fd) { const r = await fetch(url, { method: 'POST', body: fd }); if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
-async function apiPutForm(url, fd) { const r = await fetch(url, { method: 'PUT', body: fd }); if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
-async function apiDelete(url) { const r = await fetch(url, { method: 'DELETE' }); if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
+async function fetchJSON(url, options = {}) {
+  const token = localStorage.getItem('auth_token');
+  const headers = { ...(options.headers || {}) };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  const r = await fetch(url, { ...options, headers });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+async function apiPost(url, body) {
+  const token = localStorage.getItem('auth_token');
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  const r = await fetch(url, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(body),
+  });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+
+async function apiPostForm(url, fd) {
+  const token = localStorage.getItem('auth_token');
+  const headers = {};
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  const r = await fetch(url, {
+    method: 'POST',
+    headers,
+    body: fd,
+  });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+
+async function apiPutForm(url, fd) {
+  const token = localStorage.getItem('auth_token');
+  const headers = {};
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  const r = await fetch(url, {
+    method: 'PUT',
+    headers,
+    body: fd,
+  });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+
+async function apiDelete(url) {
+  const token = localStorage.getItem('auth_token');
+  const headers = {};
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  const r = await fetch(url, {
+    method: 'DELETE',
+    headers,
+  });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
