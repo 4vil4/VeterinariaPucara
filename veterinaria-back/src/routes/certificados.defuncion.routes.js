@@ -6,6 +6,12 @@ import 'dayjs/locale/es.js';
 import pool from '../db.js';
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 
+const LOGO_PATH = path.join(process.cwd(), 'assets', 'logoCert.PNG');
+
+function loadLogoBytes() {
+    return fs.readFileSync(LOGO_PATH);
+}
+
 dayjs.locale('es');
 const router = Router();
 
@@ -319,6 +325,21 @@ async function buildPDFDefuncion(c) {
 
     const font = await pdf.embedFont(StandardFonts.TimesRoman);
     const bold = await pdf.embedFont(StandardFonts.TimesRomanBold);
+
+    const logoBytes = loadLogoBytes();
+    const logoImage = await pdf.embedPng(logoBytes);
+
+    const { width: pageW, height: pageH } = page.getSize();
+    const logoWidth = 80;
+    const logoScale = logoWidth / logoImage.width;
+    const logoHeight = logoImage.height * logoScale;
+
+    page.drawImage(logoImage, {
+        x: pageW - logoWidth - 20,
+        y: pageH - logoHeight - 20,
+        width: logoWidth,
+        height: logoHeight,
+    });
 
     let y = A4_H - 80;
 

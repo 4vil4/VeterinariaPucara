@@ -3,6 +3,14 @@ import pool from '../db.js';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es.js';
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
+import fs from 'fs';
+import path from 'path';
+
+const LOGO_PATH = path.join(process.cwd(), 'assets', 'logoCert.PNG');
+
+function loadLogoBytes() {
+    return fs.readFileSync(LOGO_PATH);
+}
 
 dayjs.locale('es');
 const router = Router();
@@ -67,7 +75,7 @@ router.post('/', async (req, res) => {
         let edad = null;
         if (M?.fecha_nacimiento) {
             const fn = dayjs(M.fecha_nacimiento);
-            edad = Number(Math.max(0, dayjs().diff(fn, 'year', true)).toFixed(1)); 
+            edad = Number(Math.max(0, dayjs().diff(fn, 'year', true)).toFixed(1));
         } else if (M?.edad_anios != null) {
             edad = Number(M.edad_anios);
         }
@@ -90,7 +98,7 @@ router.post('/', async (req, res) => {
 
             prop_nombre: P?.nombre ?? '',
             prop_rut: P?.rut ?? '',
-            prop_direccion: P?.direccion ?? '',  
+            prop_direccion: P?.direccion ?? '',
             prop_fono: P?.movil ?? '',
 
             fecha_cert: body.fecha_cert ?? dayjs().format('YYYY-MM-DD'),
@@ -158,6 +166,28 @@ router.get('/:id/pdf', async (req, res) => {
         const p2 = pdf.addPage(A4);
         const font = await pdf.embedFont(StandardFonts.Helvetica);
         const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
+        const logoBytes = loadLogoBytes();
+        const logoImage = await pdf.embedPng(logoBytes);
+
+        const { width: pageW1, height: pageH1 } = p1.getSize();
+        const logoWidth = 80;
+        const logoScale = logoWidth / logoImage.width;
+        const logoHeight = logoImage.height * logoScale;
+
+        p1.drawImage(logoImage, {
+            x: pageW1 - logoWidth - 40,
+            y: pageH1 - logoHeight - 40,
+            width: logoWidth,
+            height: logoHeight,
+        });
+
+        const { width: pageW2, height: pageH2 } = p2.getSize();
+        p2.drawImage(logoImage, {
+            x: pageW2 - logoWidth - 20,
+            y: pageH2 - logoHeight - 20,
+            width: logoWidth,
+            height: logoHeight,
+        });
         const draw = (p, txt, x, y, f = font, size = 11, color = rgb(0, 0, 0)) =>
             p.drawText(String(txt ?? ''), { x, y, size, font: f, color });
 
@@ -183,7 +213,7 @@ router.get('/:id/pdf', async (req, res) => {
                 const part2 = label.slice(mid);
                 p1.drawText(part1.trim(), { x: L, y, size, font: bold, color: rgb(0, 0, 0), maxWidth: LABEL_W, lineHeight: lh });
                 p1.drawText(part2.trim(), { x: L, y: y - lh, size, font: bold, color: rgb(0, 0, 0), maxWidth: LABEL_W, lineHeight: lh });
-                
+
                 p1.drawText(':', { x: COLON_X, y, size, font: bold });
                 p1.drawText(String(val ?? '—'), { x: VAL_X, y, size, font });
                 y -= (lines * lh) + 6;
@@ -248,7 +278,7 @@ router.get('/:id/pdf', async (req, res) => {
         draw(p2, 'Vacunación', 60, 780, bold, 13);
 
         const vacHeaders = ['Nombre vacuna', 'Lab.', 'N° serie', 'Fecha', 'Vigencia'];
-        const vacWidths = [160, 90, 80, 80, 80]; 
+        const vacWidths = [160, 90, 80, 80, 80];
         const vacX0 = 60;
         const vacY0 = 760;
         const vacFontSz = 8.8;
@@ -385,7 +415,7 @@ router.get('/:id/pdf', async (req, res) => {
         }
 
 
-        const VET_TOP_Y = 320; 
+        const VET_TOP_Y = 320;
         const VET_GAP = 18;
 
         draw(p2, 'Datos del Médico Veterinario Firmante', 60, VET_TOP_Y, bold);

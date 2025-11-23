@@ -3,6 +3,14 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/es.js';
 import pool from '../db.js';
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
+import fs from 'fs';
+import path from 'path';
+
+const LOGO_PATH = path.join(process.cwd(), 'assets', 'logoCert.PNG');
+
+function loadLogoBytes() {
+    return fs.readFileSync(LOGO_PATH);
+}
 
 dayjs.locale('es');
 const router = Router();
@@ -46,9 +54,9 @@ router.post('/', async (req, res) => {
             const now = dayjs();
             const years = now.diff(birth, 'year');
             const months = now.diff(birth.add(years, 'year'), 'month');
-            edad = years + (months / 12); 
+            edad = years + (months / 12);
         } else if (M.edad_anios != null) {
-            edad = Number(M.edad_anios); 
+            edad = Number(M.edad_anios);
         }
 
         const snap = {
@@ -109,6 +117,21 @@ router.get('/:id/pdf', async (req, res) => {
     const p = pdf.addPage([595.28, 841.89]); // A4
     const font = await pdf.embedFont(StandardFonts.Helvetica);
     const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
+
+    const logoBytes = loadLogoBytes();
+    const logoImage = await pdf.embedPng(logoBytes);
+
+    const { width: pageW, height: pageH } = p.getSize();
+    const logoWidth = 80;
+    const logoScale = logoWidth / logoImage.width;
+    const logoHeight = logoImage.height * logoScale;
+
+    p.drawImage(logoImage, {
+        x: pageW - logoWidth - 20,
+        y: pageH - logoHeight - 20,
+        width: logoWidth,
+        height: logoHeight,
+    });
 
     const draw = (text, x, y, f = font, size = 11) =>
         p.drawText(String(text ?? ''), { x, y, size, font: f, color: rgb(0, 0, 0) });
