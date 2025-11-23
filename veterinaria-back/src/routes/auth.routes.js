@@ -1,4 +1,3 @@
-// src/routes/auth.routes.js
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -7,13 +6,11 @@ import pool from '../db.js';
 
 const router = Router();
 
-// --- subida en memoria para la foto de la mascota ---
 const upload = multer({
     storage: multer.memoryStorage(),
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+    limits: { fileSize: 5 * 1024 * 1024 },
 });
 
-// helper para crear token homogéneo
 function createToken(id, role) {
     return jwt.sign(
         { sub: id, role },
@@ -22,10 +19,6 @@ function createToken(id, role) {
     );
 }
 
-/* =====================================================
-   POST /api/auth/register   (registro interno admin)
-   Usa tabla `usuario` tal como lo tenías
-   ===================================================== */
 router.post('/register', async (req, res) => {
     try {
         const { nombre, email, password } = req.body || {};
@@ -53,10 +46,6 @@ router.post('/register', async (req, res) => {
     }
 });
 
-/* =====================================================
-   POST /api/auth/login
-   Usa tabla `user`
-   ===================================================== */
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body || {};
@@ -72,7 +61,6 @@ router.post('/login', async (req, res) => {
         if (!ok)
             return res.status(401).json({ ok: false, msg: 'Credenciales inválidas' });
 
-        // ¿tiene veterinario asociado?
         const [[vet]] = await pool.query(
             'SELECT id FROM veterinario WHERE user_id = ? LIMIT 1',
             [user.id]
@@ -97,18 +85,11 @@ router.post('/login', async (req, res) => {
     }
 });
 
-/* =====================================================
-   POST /api/auth/register-full
-   Registro público en 3 pasos:
-   - Crea user (tabla `user`, role = 'user')
-   - Crea propietario
-   - Crea mascota (con foto opcional en longblob)
-   ===================================================== */
 router.post(
     '/register-full',
     upload.single('pet_foto'),
     async (req, res) => {
-        let conn; // <- la declaramos fuera
+        let conn; 
 
         try {
             conn = await pool.getConnection();
@@ -154,7 +135,6 @@ router.post(
                     .json({ ok: false, msg: 'Las contraseñas no coinciden.' });
             }
 
-            // ¿ya existe correo en tabla user?
             const [exists] = await conn.query(
                 'SELECT id FROM `user` WHERE email = ?',
                 [owner_email]
@@ -167,7 +147,6 @@ router.post(
 
             await conn.beginTransaction();
 
-            // 1) user
             const hash = await bcrypt.hash(password, 10);
             const [uRes] = await conn.query(
                 `INSERT INTO user (nombre, email, password_hash, role, created_at, updated_at)
@@ -176,7 +155,6 @@ router.post(
             );
             const userId = uRes.insertId;
 
-            // 2) propietario
             const [pRes] = await conn.query(
                 `INSERT INTO propietario (nombre, rut, correo, movil, direccion, created_at, updated_at)
          VALUES (?,?,?,?,?,NOW(),NOW())`,
@@ -190,7 +168,6 @@ router.post(
             );
             const propietarioId = pRes.insertId;
 
-            // 3) mascota
             let foto = null;
             let foto_nombre = null;
             let foto_tamano = null;
@@ -267,11 +244,6 @@ router.post(
     }
 );
 
-
-/* =====================================================
-   GET /api/auth/me
-   Devuelve el payload del token
-   ===================================================== */
 router.get('/me', async (req, res) => {
     try {
         const h = req.headers.authorization || '';

@@ -12,14 +12,12 @@ const upload = multer({
         cb(ok ? null : new Error('Tipo de imagen no permitido (jpeg/png/webp)'), ok);
     }
 });
-// Devuelve el usuario de la tabla `user` a partir del token JWT
 async function getCurrentUser(req) {
     const h = req.headers.authorization || '';
     const token = h.startsWith('Bearer ') ? h.slice(7) : null;
     if (!token) throw new Error('Token requerido');
 
     const payload = jwt.verify(token, process.env.JWT_SECRET);
-    // En nuestros tokens usamos { sub: id, role }
     const userId = payload.sub || payload.id;
 
     if (!userId) throw new Error('Token sin id de usuario');
@@ -30,7 +28,7 @@ async function getCurrentUser(req) {
     );
 
     if (!user) throw new Error('Usuario no encontrado');
-    return user; // { id, nombre, email, role }
+    return user; 
 }
 
 
@@ -54,16 +52,14 @@ router.get('/', async (_req, res) => {
 /** LISTA MIS MASCOTAS (usuario dueño) */
 router.get('/mias', async (req, res) => {
     try {
-        const user = await getCurrentUser(req); // trae email desde tabla `user`
+        const user = await getCurrentUser(req);
 
-        // buscamos propietario cuyo correo coincida con el del usuario
         const [owners] = await pool.query(
             'SELECT id FROM propietario WHERE correo = ? LIMIT 1',
             [user.email]
         );
 
         if (!owners.length) {
-            // el usuario aún no tiene propietario asociado
             return res.json([]);
         }
 
@@ -155,9 +151,8 @@ router.post('/', upload.single('foto'), async (req, res) => {
 /** CREAR MASCOTA PARA USUARIO LOGUEADO */
 router.post('/mias', upload.single('foto'), async (req, res) => {
   try {
-    const user = await getCurrentUser(req); // { id, nombre, email, role }
+    const user = await getCurrentUser(req);
 
-    // 1) buscamos propietario por correo
     const [owners] = await pool.query(
       'SELECT id FROM propietario WHERE correo = ? LIMIT 1',
       [user.email]
@@ -168,7 +163,6 @@ router.post('/mias', upload.single('foto'), async (req, res) => {
     if (owners.length) {
       propietario_id = owners[0].id;
     } else {
-      // 2) si no existe, lo creamos automáticamente
       const nombreProp = user.nombre || user.email;
       const [ins] = await pool.execute(
         `INSERT INTO propietario (nombre, rut, correo, movil, direccion, created_at, updated_at)
@@ -265,7 +259,7 @@ router.delete('/:id', async (req, res) => {
     res.json({ ok: true, affected: r.affectedRows });
 });
 
-/** HISTORIAL combinando fuentes (se mantiene igual) */
+/** HISTORIAL */
 router.get('/:id/historial', async (req, res) => {
     const mascotaId = Number(req.params.id);
     const LIM = Math.min(parseInt(req.query.limit || '500', 10) || 500, 2000);

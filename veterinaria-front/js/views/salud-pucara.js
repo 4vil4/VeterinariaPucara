@@ -116,7 +116,6 @@ export async function init({ root, API }) {
       </div>
     `;
 
-        // valores
         card.querySelector('#relEditor').innerHTML = editing?.relato_html || DEFAULT_RELATO;
         if (editing) {
             card.querySelector('#m_sel').value = String(editing.mascota_id);
@@ -124,7 +123,6 @@ export async function init({ root, API }) {
             card.querySelector('#v_sel').value = String(editing.veterinario_id);
         }
 
-        // acciones
         card.querySelector('#f_cancelar').onclick = () => card.remove();
         card.querySelector('#f_guardar').onclick = async () => {
             const payload = {

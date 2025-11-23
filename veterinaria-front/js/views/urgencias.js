@@ -30,7 +30,6 @@ export async function init({ root, API }) {
     const res = await fetchJSON(url);
     let list = (Array.isArray(res) ? res : []).filter(c => Number(c.urgencia) === 1);
 
-    // si es cliente, solo sus urgencias
     if (isClient && me?.propietario_id) {
       const pid = Number(me.propietario_id);
       list = list.filter(c => Number(c.propietario_id) === pid);
@@ -81,12 +80,10 @@ export async function init({ root, API }) {
         </div>
       `;
 
-    // Ir a la vista de tabla de citas filtrando por el día
     side.querySelector('#goCitas')?.addEventListener('click', () => {
       location.hash = `#/citas?from=${dayKey}&to=${dayKey}`;
     });
 
-    // Handlers de editar / eliminar
     side.querySelectorAll('.btn-edit').forEach(b => b.onclick = () => editCita(b.dataset.id));
     side.querySelectorAll('.btn-del').forEach(b => b.onclick = () => delCita(b.dataset.id));
   }

@@ -1,13 +1,10 @@
-// routes/antibioticos.routes.js
 import { Router } from 'express';
 import pool from '../db.js';
-// import { authRequired, isAdmin } from '../middlewares/auth.middleware.js'; // si ya tienes middlewares
 
 const router = Router();
 
 /* ==================== Catálogo de antibióticos ==================== */
 
-// GET /api/antibioticos?search=...&solo_activos=1
 router.get('/', async (req, res) => {
     try {
         const { search = '', solo_activos } = req.query;
@@ -35,8 +32,6 @@ router.get('/', async (req, res) => {
     }
 });
 
-// POST /api/antibioticos  (crear en catálogo)
-// router.post('/', authRequired, isAdmin, async (req, res) => {
 router.post('/', async (req, res) => {
     try {
         const { nombre, forma = null, concentracion = null, via = null, fabricante = null, registro_isp = null, activo_bool = 1 } = req.body || {};
@@ -54,8 +49,6 @@ router.post('/', async (req, res) => {
     }
 });
 
-// PUT /api/antibioticos/:id  (editar del catálogo)
-// router.put('/:id', authRequired, isAdmin, async (req, res) => {
 router.put('/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -75,8 +68,6 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// DELETE /api/antibioticos/:id  (soft delete = desactivar)
-// router.delete('/:id', authRequired, isAdmin, async (req, res) => {
 router.delete('/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -90,7 +81,6 @@ router.delete('/:id', async (req, res) => {
 
 /* ==================== Usos / Envíos SAG ==================== */
 
-// GET /api/antibioticos/usos?enviados=0|1|todos
 router.get('/usos', async (req, res) => {
     try {
         const { enviados = 'todos' } = req.query;
@@ -133,7 +123,6 @@ router.get('/usos', async (req, res) => {
     }
 });
 
-// PATCH /api/antibioticos/usos/:id/enviar
 router.patch('/usos/:id/enviar', async (req, res) => {
     try {
         const { id } = req.params;
@@ -148,7 +137,6 @@ router.patch('/usos/:id/enviar', async (req, res) => {
     }
 });
 
-// (Opcional) Desmarcar
 router.patch('/usos/:id/desmarcar', async (req, res) => {
     try {
         const { id } = req.params;

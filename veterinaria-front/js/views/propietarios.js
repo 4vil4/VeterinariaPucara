@@ -228,7 +228,6 @@ async function apiDelete(url) {
   return r.json();
 }
 
-/* ---- formateadores específicos ---- */
 function formatRut(value) {
   let v = (value || '').replace(/[^0-9kK]/g, '').toUpperCase();
   if (!v) return '';

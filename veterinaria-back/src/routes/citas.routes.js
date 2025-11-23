@@ -3,13 +3,7 @@ import pool from '../db.js';
 
 const router = Router();
 
-/**
- * Verifica si ya existe una cita en un rango de 1 hora
- * respecto a `fecha_inicio`. Opcionalmente excluye la cita `excluirId`
- * (para cuando actualizamos una cita existente).
- */
 async function hayCruceDeCitas(fecha_inicio, excluirId = null) {
-  // Normalizamos por si viene con "T" desde el front
   const fechaNorm = (typeof fecha_inicio === 'string' && fecha_inicio)
     ? fecha_inicio.replace('T', ' ')
     : fecha_inicio;
@@ -104,12 +98,10 @@ router.post('/', async (req, res) => {
     if (!fecha_inicio || !tipo)
       return res.status(400).json({ ok: false, msg: 'fecha_inicio y tipo son requeridos' });
 
-    // Normalizamos fecha_inicio para MySQL
     const fechaInicioNorm = (typeof fecha_inicio === 'string' && fecha_inicio)
       ? fecha_inicio.replace('T', ' ')
       : fecha_inicio;
 
-    // --- VALIDACIÓN: evitar solapamiento en rango de 1 hora ---
     if (await hayCruceDeCitas(fechaInicioNorm)) {
       return res
         .status(409)
@@ -150,7 +142,6 @@ router.put('/:id', async (req, res) => {
     const keys = Object.keys(allowed).filter(k => allowed[k] !== undefined);
     if (!keys.length) return res.status(400).json({ ok: false, msg: 'Sin campos para actualizar' });
 
-    // --- VALIDACIÓN: evitar solapamiento en rango de 1 hora al cambiar fecha_inicio ---
     if (allowed.fecha_inicio) {
       const hayChoque = await hayCruceDeCitas(allowed.fecha_inicio, id);
       if (hayChoque) {

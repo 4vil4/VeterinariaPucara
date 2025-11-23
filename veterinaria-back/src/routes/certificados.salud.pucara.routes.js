@@ -113,7 +113,6 @@ router.get('/:id/pdf', async (req, res) => {
     const draw = (text, x, y, f = font, size = 11) =>
         p.drawText(String(text ?? ''), { x, y, size, font: f, color: rgb(0, 0, 0) });
 
-    // Encabezado
     draw('VETERINARIA “PUCARÁ”', 70, 800, bold, 9);
     draw('ESMERALDA #97', 70, 788, font, 9);
     draw('FONO: 22 859 2840', 70, 776, font, 9);
@@ -121,7 +120,6 @@ router.get('/:id/pdf', async (req, res) => {
     draw('LOGO', 480, 770, font, 12);
     draw('Certificado de Salud', 210, 730, bold, 16);
 
-    // Helper etiqueta-valor
     const L = 70, LABEL_W = 160, COL_X = L + LABEL_W, VAL_X = COL_X + 10;
     let y = 700;
     function put(label, val) {

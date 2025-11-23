@@ -175,7 +175,6 @@
     overflow: auto;
   }
 
-  /* grilla de días más simple en mobile */
   body.role-user #calDays,
   body.role-user .cal-days {
     grid-template-columns: repeat(2, minmax(0, 1fr));

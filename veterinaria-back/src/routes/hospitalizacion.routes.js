@@ -4,7 +4,6 @@ import { authRequired } from '../middlewares/auth.middleware.js';
 
 const router = Router();
 
-// Listado (con búsqueda por nombre de mascota o ID)
 router.get('/', async (req, res) => {
     try {
         const { search = '' } = req.query;
@@ -26,7 +25,6 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Obtener 1 (usado para calcular “día N” y título con mascota)
 router.get('/:id', async (req, res) => {
     try {
         const id = Number(req.params.id);
@@ -45,7 +43,6 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// Crear hospitalización
 router.post('/', authRequired, async (req, res) => {
     try {
         const b = req.body || {};
@@ -85,7 +82,6 @@ router.post('/', authRequired, async (req, res) => {
     }
 });
 
-// Dar alta: estado='alta' y fecha_alta = NOW()
 router.patch('/:id/alta', authRequired, async (req, res) => {
     try {
         const id = Number(req.params.id);
@@ -101,7 +97,6 @@ router.patch('/:id/alta', authRequired, async (req, res) => {
     }
 });
 
-// Reabrir: vuelve a en_curso y limpia fecha_alta
 router.patch('/:id/reabrir', authRequired, async (req, res) => {
     try {
         const id = Number(req.params.id);
@@ -120,7 +115,6 @@ router.patch('/:id/reabrir', authRequired, async (req, res) => {
 
 /* ============== Monitoreo diario (matriz por horas) ============== */
 
-// Obtener monitoreo por fecha
 router.get('/:id/monitoreo', async (req, res) => {
     try {
         const hospId = Number(req.params.id);
@@ -141,7 +135,6 @@ router.get('/:id/monitoreo', async (req, res) => {
     }
 });
 
-// Inicializar horarios default o personalizados
 router.post('/:id/monitoreo/init', async (req, res) => {
     try {
         const hospId = Number(req.params.id);
@@ -171,7 +164,6 @@ router.post('/:id/monitoreo/init', async (req, res) => {
     }
 });
 
-// Guardar/actualizar una fila 
 router.put('/:id/monitoreo', async (req, res) => {
     try {
         const hospId = Number(req.params.id);
@@ -212,7 +204,6 @@ router.put('/:id/monitoreo', async (req, res) => {
     }
 });
 
-// Eliminar una hora
 router.delete('/:id/monitoreo', async (req, res) => {
     try {
         const hospId = Number(req.params.id);

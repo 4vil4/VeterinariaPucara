@@ -156,7 +156,6 @@ router.post('/:tipo', authRequired, async (req, res) => {
     if (body.monto_total !== undefined) body.monto_total = Number(body.monto_total) || 0;
     if (tipo === 'consulta') body.anestesia_bool = body.anestesia_bool ? 1 : 0;
 
-    // Inserta solo los campos definidos para la tabla de ese tipo
     const keys = c.insert.filter(k => body[k] !== undefined);
     if (keys.length === 0) {
       await conn.rollback(); conn.release();
@@ -168,7 +167,6 @@ router.post('/:tipo', authRequired, async (req, res) => {
     const params = keys.map(k => body[k]);
     const [r] = await conn.execute(sql, params);
 
-    // Comisión (si corresponde)
     await insertCommission(conn, {
       tipo,
       registro_id: r.insertId,
@@ -178,7 +176,6 @@ router.post('/:tipo', authRequired, async (req, res) => {
       anestesia_bool: body.anestesia_bool
     });
 
-    // <<< NUEVO: actualizar peso de la mascota si vino en el payload >>>
     if (body.peso_kg !== undefined && body.peso_kg !== null && !Number.isNaN(Number(body.peso_kg))) {
       const nuevoPeso = Number(body.peso_kg);
       await conn.execute(
@@ -186,7 +183,6 @@ router.post('/:tipo', authRequired, async (req, res) => {
         [nuevoPeso, body.mascota_id]
       );
     }
-    // <<< FIN NUEVO >>>
 
     await conn.commit();
     res.status(201).json({ ok: true, id: r.insertId });

@@ -68,10 +68,8 @@ export async function init({ root, API }) {
 
     const mascotas = await jget(`${API}/api/mascotas`);
     const propietarios = await jget(`${API}/api/propietarios`);
-    // usa el mismo endpoint que Salud Pucará para listar veterinarios
     const veterinarios = await jget(`${API}/api/personal?vets=1`).catch(() => []);
 
-    // si es edición, trae la fila completa
     const editing = editId ? await jget(`${API}/api/certificados/epicrisis/${editId}`) : null;
 
     card.innerHTML = `
@@ -125,7 +123,6 @@ export async function init({ root, API }) {
     const pSel = card.querySelector('#p_sel');
     const vSel = card.querySelector('#v_sel');
 
-    // preselect (edición) o sincroniza propietario al cambiar mascota
     const setOwner = () => {
       const opt = mSel.selectedOptions[0];
       const pid = opt ? Number(opt.getAttribute('data-prop')) : null;

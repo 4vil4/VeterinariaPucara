@@ -49,7 +49,6 @@ function setPublicUI(isPublic) {
   if (btnHeaderLogin) btnHeaderLogin.style.display = isPublic ? '' : 'none';
   document.body.classList.toggle('public-mode', isPublic);
 
-  // toggle hamburguesa + overlay
   ensureMenuToggle();
   ensureSidebarOverlay();
   if ($menuToggle) $menuToggle.style.display = isPublic ? 'none' : '';
@@ -194,7 +193,6 @@ function buildMenu() {
     localStorage.removeItem('auth_token');
     localStorage.removeItem('auth_user');
 
-    // activar modo público 
     setPublicUI(true);
 
     location.hash = '#/public';
@@ -269,7 +267,6 @@ async function router() {
   const { route, params } = parseHash();
 
   if (!isLoggedIn()) {
-    // 🔹 modo público: nos aseguramos de quitar la clase role-user
     document.body.classList.remove('role-user');
 
     setPublicUI(true);
@@ -295,9 +292,6 @@ async function router() {
   document.body.classList.toggle('role-vet', me?.role === 'vet');
   document.body.classList.toggle('role-admin', !me || (me.role !== 'user' && me.role !== 'vet'));
 
-  // Si ya está logueado y viene a /public:
-  // - user  → Inicio (u-home)
-  // - vet/admin → Mascotas
   if (route === '/public') {
     if (me?.role === 'user') {
       location.hash = '#/u-home';
@@ -311,13 +305,10 @@ async function router() {
   buildMenu();
   updateWhatsFab();
 
-  // 🔹 marcamos el rol user en el body (solo aquí)
   document.body.classList.toggle('role-user', me?.role === 'user');
 
-  // Primero definimos si el pet es perro o gato
   await setPetUseFromFirstMascota();
 
-  // Luego montamos el UI del PetBot con el Lottie correcto
   ensurePetBotUI();
   updatePetBot();
   await mountPetLottie();
@@ -434,7 +425,7 @@ function updateWhatsFab() {
 ensureWhatsFab(); updateWhatsFab();
 
 /* ========== PetBot (Lottie) ========== */
-let PET_USE = 'dog'; // valor por defecto
+let PET_USE = 'dog'; 
 
 function getPetLottiePath() {
   return PET_USE === 'cat'
@@ -445,10 +436,8 @@ function getPetLottiePath() {
 async function setPetUseFromFirstMascota() {
   const me = getUser?.() || JSON.parse(localStorage.getItem('auth_user') || 'null');
 
-  // por defecto, perro
   PET_USE = 'dog';
 
-  // solo aplicamos lógica para usuarios tipo "user"
   if (!me || me.role !== 'user') {
     console.log('[PetBot] Usuario no es user, se usa dog');
     return;
@@ -470,7 +459,6 @@ async function setPetUseFromFirstMascota() {
     console.log('[PetBot] mascotas/mias:', data);
 
     if (Array.isArray(data) && data.length) {
-      // 🔁 Buscamos el PRIMER gato de la lista
       const gato = data.find(
         (m) => (m.especie || '').toString().toLowerCase().includes('gato')
       );
@@ -607,14 +595,12 @@ async function mountPetLottie() {
   const container = document.getElementById('petLottie');
   if (!container || !window.lottie) return;
 
-  // destruir animación anterior si existe
   if (petAnim && typeof petAnim.destroy === 'function') {
     petAnim.destroy();
     petAnim = null;
   }
   container.innerHTML = '';
 
-  // 🔹 marcamos si es gato o perro SOLO con clases
   container.classList.toggle('is-cat', PET_USE === 'cat');
   container.classList.toggle('is-dog', PET_USE !== 'cat');
 

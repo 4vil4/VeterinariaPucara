@@ -166,7 +166,6 @@
     cursor: pointer
 } 
 
-/* ===== Urgencias responsive solo usuario "user" ===== */
 @media (max-width: 768px) {
   body.role-user .cal-wrap {
     flex-direction: column;

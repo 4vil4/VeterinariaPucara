@@ -12,7 +12,6 @@ export async function init({ root, API }) {
 
   let data = [];
 
-  // id/nombre de propietario resuelto para el usuario tipo "user"
   let clientOwnerId = me && me.propietario_id ? Number(me.propietario_id) : null;
   let clientOwnerName = (me && (me.nombre || me.full_name || me.email)) || '';
 
@@ -20,7 +19,6 @@ export async function init({ root, API }) {
   fromInput.value = isoDate(new Date(today.getFullYear(), today.getMonth(), 1));
   toInput.value = isoDate(new Date(today.getFullYear(), today.getMonth() + 1, 1));
 
-  // si es user y no tenemos propietario_id aún, lo buscamos en la tabla de propietarios
   if (isClient && !clientOwnerId) {
     await resolveClientOwner();
   }
@@ -44,7 +42,6 @@ export async function init({ root, API }) {
     let res = await fetchJSON(url);
     data = Array.isArray(res) ? res : [];
 
-    // Si es usuario tipo "user", solo mostramos sus propias citas (por propietario)
     if (isClient && clientOwnerId) {
       const pid = Number(clientOwnerId);
       data = data.filter(c => Number(c.propietario_id) === pid);
@@ -110,7 +107,6 @@ export async function init({ root, API }) {
       prefillISO ? prefillISO.slice(0, 16) : new Date().toISOString().slice(0, 16);
     const dtEnd = editing && editing.fecha_fin ? editing.fecha_fin.slice(0, 16).replace(' ', 'T') : '';
 
-    // nombre del propietario fijo para user (usamos el resuelto si lo tenemos)
     const fixedOwnerName = (isClient && me)
       ? (clientOwnerName || me.nombre || me.full_name || me.email || '')
       : '';
@@ -187,7 +183,6 @@ export async function init({ root, API }) {
       }
     }
 
-    // Solo cargamos propietarios si NO es cliente
     if (!isClient) {
       let owners = await fetchJSON(`${API}/api/propietarios`);
       function renderOwners(q = '') {
@@ -204,7 +199,6 @@ export async function init({ root, API }) {
     wrap.querySelector('#f_guardar').onclick = async () => {
       clearError();
 
-      // propietario_id según el tipo de usuario
       let propietario_id = null;
       if (isClient) {
         propietario_id = clientOwnerId || (me?.propietario_id ? Number(me.propietario_id) : null);
@@ -238,14 +232,11 @@ export async function init({ root, API }) {
         wrap.remove();
         await load();
       } catch (err) {
-        // aquí va a llegar el mensaje del backend, por ejemplo:
-        // "Ya existe una cita en el rango de 1 hora para ese horario."
         showError(err.message || 'No se pudo guardar la cita.');
       }
     };
   }
 
-  // --- resolver propietario del usuario (solo para role=user) ---
   async function resolveClientOwner() {
     try {
       const owners = await fetchJSON(`${API}/api/propietarios`);
@@ -292,7 +283,6 @@ export async function init({ root, API }) {
     }
 
     if (!r.ok) {
-      // tomamos el mensaje que manda el backend (msg / error / message)
       const msg = data && (data.msg || data.error || data.message);
       throw new Error(msg || `Error HTTP ${r.status}`);
     }

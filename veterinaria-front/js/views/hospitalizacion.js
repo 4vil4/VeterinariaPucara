@@ -57,7 +57,7 @@ export async function init({ root, API }) {
         const id = Number(btn.dataset.id);
         await apiPatchAuth(`${API}/api/hospitalizacion/${id}/alta`);
         await loadAndRender(search);
-        if (openedId === id) toggleCard(id); // refresca la tarjeta abierta
+        if (openedId === id) toggleCard(id); 
       };
     });
 
@@ -287,7 +287,6 @@ function openHospMonitoreoCard(root, API, hospId, mountAfterEl) {
       hospIngresoISO = (h?.fecha_ingreso || '').slice(0, 10) || null;
       hospAltaISO = h?.fecha_alta ? h.fecha_alta.slice(0, 10) : null;
 
-      // título con nombre de mascota
       const titleEl = card.querySelector('.hosp-title');
       titleEl.textContent = `Seguimiento diario · ${h?.mascota_nombre || ('Hospitalización #' + hospId)}`;
 

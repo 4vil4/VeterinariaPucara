@@ -1,4 +1,3 @@
-// /public/js/views/certificados/salud-sag.js
 export async function init({ root, API }) {
     const listWrap = root.querySelector('#certTableWrap');
     const searchInput = root.querySelector('#certSearch');
@@ -72,14 +71,12 @@ export async function init({ root, API }) {
         wrap.style.marginTop = '12px';
         formMount.appendChild(wrap);
 
-        // Datos base
         const mascotas = await jget(`${API}/api/mascotas`);
         const propietarios = await jget(`${API}/api/propietarios`);
         const veterinarios = await jget(`${API}/api/personal?vets=1`).catch(() => []);
 
         const editing = editId ? await jget(`${API}/api/certificados/salud-sag/${editId}`) : null;
 
-        // Datos de tabla 
         const vacData = parseOrDefault(editing?.vacunacion_json, [
             { nombre: 'Distemper' }, { nombre: 'Adenovirus (Hepatitis)' },
             { nombre: 'Leptospira (L. canícola e icterohaemorrhagiae)' },
@@ -140,7 +137,6 @@ export async function init({ root, API }) {
       </div>
     `;
 
-        // selects
         const mSel = wrap.querySelector('#m_sel'), mSearch = wrap.querySelector('#m_search');
         const pSel = wrap.querySelector('#p_sel');
         const vSel = wrap.querySelector('#v_sel');
@@ -162,7 +158,6 @@ export async function init({ root, API }) {
         renderMascotas(''); renderPropietarios(); renderVets();
         let t3; mSearch.addEventListener('input', () => { clearTimeout(t3); t3 = setTimeout(() => renderMascotas(mSearch.value.trim()), 200); });
 
-        // cambios automáticos
         mSel.addEventListener('change', () => {
             const m = mascotas.find(x => String(x.id) === String(mSel.value));
             if (!m) return;
@@ -181,7 +176,6 @@ export async function init({ root, API }) {
             const v = veterinarios.find(x => String(x.id) === String(vSel.value));
             if (!m || !p || !v) { alert('Selecciona mascota, propietario y veterinario'); return; }
 
-            // obtener datos desde las tablas
             const vacRows = readVacTable(wrap.querySelector('#vac_table'));
             const desRows = readDesTable(wrap.querySelector('#des_table'));
 
@@ -299,7 +293,6 @@ export async function init({ root, API }) {
     function setVal(sel, v, root = document) { const el = root.querySelector(sel); if (el) el.value = v ?? ''; }
     function today() { return new Date().toISOString().slice(0, 10); }
 
-    // fetch helpers
     async function jget(u) { const r = await fetch(u); if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }
     async function jpost(u, b) { const r = await fetch(u, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) }); if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }
     async function jput(u, b) { const r = await fetch(u, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) }); if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }

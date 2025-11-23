@@ -73,7 +73,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.post('/', /*authRequired,*/ async (req, res) => {
+router.post('/', async (req, res) => {
     const conn = await pool.getConnection();
     try {
         await conn.beginTransaction();
@@ -82,9 +82,9 @@ router.post('/', /*authRequired,*/ async (req, res) => {
         const {
             mascota_id, fecha, diagnostico = null, indicaciones = null,
             medicamentos = null, firmado_por = null,
-            veterinario_id = null,                  // <- por si lo quieres guardar
+            veterinario_id = null,
             antibiotico_bool = 0,
-            antibioticos = []                       // [{antibiotico_id, dosis, duracion_dias, notas}]
+            antibioticos = [] 
         } = body;
 
         if (!mascota_id) {
@@ -92,14 +92,12 @@ router.post('/', /*authRequired,*/ async (req, res) => {
             return res.status(400).json({ ok: false, msg: 'mascota_id es requerido' });
         }
 
-        // 1) obtener propietario_id desde la mascota
         const [[pet]] = await conn.query(
             'SELECT propietario_id FROM mascota WHERE id = ?',
             [Number(mascota_id)]
         );
         const propietario_id = pet?.propietario_id || null;
 
-        // Si tu columna receta.propietario_id es NOT NULL, valida:
         if (!propietario_id) {
             await conn.rollback(); conn.release();
             return res.status(400).json({
@@ -110,7 +108,6 @@ router.post('/', /*authRequired,*/ async (req, res) => {
 
         const fechaFinal = fecha ? new Date(fecha) : new Date();
 
-        // 2) Insert receta (ahora incluye propietario_id y opcionalmente veterinario_id)
         const sqlRec = `
       INSERT INTO receta
         (mascota_id, propietario_id, fecha, diagnostico, indicaciones, medicamentos, firmado_por, veterinario_id, antibiotico_bool, created_at)
@@ -124,7 +121,6 @@ router.post('/', /*authRequired,*/ async (req, res) => {
         ]);
         const recetaId = rRec.insertId;
 
-        // 3) Inserta usos de antibiótico (si vinieron)
         if (Array.isArray(antibioticos) && antibioticos.length) {
             const sqlUso = `
         INSERT INTO receta_antibiotico

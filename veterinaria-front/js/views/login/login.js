@@ -1,4 +1,3 @@
-// /js/views/login/login.js
 const API = 'http://localhost:4000';
 const API_AUTH = `${API}/api/auth`;
 
@@ -49,7 +48,6 @@ async function jfetchJSON(url, opt = {}) {
     try {
         payload = await res.json();
     } catch {
-        /* vacío */
     }
     if (!res.ok) {
         const msg =
@@ -60,10 +58,6 @@ async function jfetchJSON(url, opt = {}) {
 }
 
 function goToApp() {
-    // A dónde quería ir (establecido por index.html antes de mandarte a login)
-    // Si no hay destino previo, lo mandamos a /public y el router decide:
-    // - user  → u-home
-    // - vet/admin → mascotas
     const next = sessionStorage.getItem('post_login') || '/index.html#/public';
     sessionStorage.removeItem('post_login');
     location.href = next;
@@ -109,17 +103,14 @@ const MAX_STEP = 3;
 function showStep(n) {
     currentStep = n;
 
-    // panes
     panes.forEach((p) =>
         p.classList.toggle('active', Number(p.dataset.step) === n)
     );
 
-    // tus indicadores de texto (los mantengo)
     inds.forEach((i) =>
         i.classList.toggle('active', Number(i.dataset.step) === n)
     );
 
-    // NUEVO: círculos
     const circles = document.querySelectorAll('.step-circle');
     circles.forEach((c) => {
         const step = Number(c.dataset.step);
@@ -146,7 +137,6 @@ btnNext.addEventListener('click', () => {
 });
 
 function validateStep(step) {
-    // usamos required del DOM + validaciones extra
     const fields = regForm.querySelectorAll(
         `.step-pane[data-step="${step}"] input, .step-pane[data-step="${step}"] select`
     );
@@ -189,7 +179,6 @@ regForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     clearMsg();
 
-    // validamos TODOS los pasos
     for (let s = 1; s <= MAX_STEP; s++) {
         if (!validateStep(s)) {
             showStep(s);
@@ -198,9 +187,9 @@ regForm.addEventListener('submit', async (e) => {
     }
 
     const owner_nombre = document.getElementById('r_owner_nombre').value.trim();
-    const owner_rut = document.getElementById('r_owner_rut').value.trim();      // 👈 NUEVO
+    const owner_rut = document.getElementById('r_owner_rut').value.trim();
     const owner_email = document.getElementById('r_owner_email').value.trim();
-    const owner_movil = document.getElementById('r_owner_movil').value.trim();  // 👈 NUEVO
+    const owner_movil = document.getElementById('r_owner_movil').value.trim();
     const owner_direccion = document
         .getElementById('r_owner_direccion')
         .value.trim();
@@ -283,23 +272,18 @@ document.getElementById('f_forgot').addEventListener('submit', async (e) => {
 const rutInput = document.getElementById('r_owner_rut');
 
 rutInput.addEventListener('input', () => {
-    // solo números y K/k
     let v = rutInput.value.replace(/[^0-9kK]/g, '').toUpperCase();
 
-    // 👉 máximo 9 caracteres en total (8 cuerpo + 1 DV)
     v = v.slice(0, 9);
 
-    // si aún no hay dv, no formateamos con guion
     if (v.length <= 1) {
         rutInput.value = v;
         return;
     }
 
-    // cuerpo = solo números (por si alguien metió K en medio)
     const cuerpo = v.slice(0, v.length - 1).replace(/[^0-9]/g, '');
-    const dv = v.slice(-1); // número o K
+    const dv = v.slice(-1);
 
-    // formatear XX.XXX.XXX
     const cuerpoFormato = cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
     rutInput.value = `${cuerpoFormato}-${dv}`;
@@ -319,11 +303,9 @@ mov.addEventListener('input', () => {
         mov.value = '+569 ';
     }
 
-    // permitir solo números después de "+569 "
     mov.value = '+569 ' + mov.value.slice(5).replace(/\D/g, '').slice(0, 8);
 });
 
-// Si ya está logueado y entró a login por error, enviarlo a la app
 if (localStorage.getItem('auth_token')) {
     goToApp();
 }

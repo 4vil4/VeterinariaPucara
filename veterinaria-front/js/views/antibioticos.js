@@ -1,4 +1,3 @@
-// views/antibioticos.js
 export async function init({ root, API }) {
   const $search = root.querySelector('#abSearch');
   const $newBtn = root.querySelector('#abNew');

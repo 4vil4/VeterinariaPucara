@@ -186,8 +186,6 @@ footer {
     margin-top: 14px;
 }
 
-/* ===== Pasos del formulario de registro (multi-step) ===== */
-
 .step-pane {
     display: none;
 }
@@ -210,8 +208,6 @@ footer {
     opacity: 1;
     font-weight: 600;
 }
-
-/* Círculos de pasos */
 
 .steps-circles {
     display: flex;
@@ -249,8 +245,6 @@ footer {
     transform: scale(1.12);
 }
 
-/* Botones de navegación registro */
-
 .reg-actions {
     margin-top: 14px;
     display: flex;
@@ -277,9 +271,6 @@ footer {
     background: #e2e8f0;
 }
 
-/* ===== Responsivo ===== */
-
-/* Tablets / pantallas medianas */
 @media (max-width: 768px) {
     .auth-wrap {
         padding: 24px 16px;
@@ -301,7 +292,6 @@ footer {
     }
 }
 
-/* Móviles */
 @media (max-width: 480px) {
     body.auth-page {
         background:

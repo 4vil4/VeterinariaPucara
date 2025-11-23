@@ -40,9 +40,9 @@ export async function init({ root, API, params = {} }) {
         m,
         async (fd) => {
           await apiPutForm(`${API}/api/mascotas/${id}`, fd);
-          await init({ root, API, params }); 
+          await init({ root, API, params });
         },
-        { client: isClient }  
+        { client: isClient }
       );
     });
   });
@@ -119,8 +119,8 @@ function buildMascotasTable(rows, API) {
   const body = `
     <tbody>
       ${rows.map(r => {
-        const thumb = `${API}/api/mascotas/${r.id}/foto?ts=${encodeURIComponent(r.updated_at || '')}`;
-        return `
+    const thumb = `${API}/api/mascotas/${r.id}/foto?ts=${encodeURIComponent(r.updated_at || '')}`;
+    return `
           <tr data-id="${r.id}">
             <td data-label="Foto">
               <img src="${thumb}" alt="" style="width:40px;height:40px;object-fit:cover;border-radius:8px" onerror="this.style.display='none'"/>
@@ -139,7 +139,7 @@ function buildMascotasTable(rows, API) {
               </div>
             </td>
           </tr>`;
-      }).join('')}
+  }).join('')}
     </tbody>`;
   return `<table class="tbl">${head}${body}</table>`;
 }
@@ -147,26 +147,67 @@ function buildMascotasTable(rows, API) {
 function renderPetCard(m) {
   const foto = m.foto_url || '';
   const edadTxt = calcularEdad(m.fecha_nacimiento);
-  const esterTxt = (m.esterilizado === 1 || m.esterilizado === '1') ? 'Sí' :
-    (m.esterilizado === 0 || m.esterilizado === '0') ? 'No' : '—';
+  const esterTxt =
+    (m.esterilizado === 1 || m.esterilizado === '1') ? 'Sí' :
+      (m.esterilizado === 0 || m.esterilizado === '0') ? 'No' : '—';
+
   return `
     <div class="card">
       <div class="pet-card">
-        <img class="pet-photo" src="${foto || ''}" alt="Foto" onerror="this.style.display='none'"/>
-        <div>
-          <div class="pet-title">${esc(m.nombre)} <span class="badge">${esc(m.especie || '')}</span></div>
-          <div class="kv"><b>N° Historia:</b> ${esc(m.n_historial || '—')}</div>
-          <div class="kv"><b>Raza:</b> ${esc(m.raza || '—')}</div>
-          <div class="kv"><b>Sexo:</b> ${esc(m.sexo || '—')}</div>
-          <div class="kv"><b>Esterilizado:</b> ${esterTxt}</div>
-          <div class="kv"><b>N° microchip:</b> ${esc(m.nro_microchip || '—')}</div>
-          <div class="kv"><b>Fecha de nacimiento:</b> ${esc(m.fecha_nacimiento || '—')}</div>
-          <div class="kv"><b>Edad:</b> ${edadTxt || '—'}</div>
-          <div class="kv"><b>Peso:</b> ${m.peso_kg != null ? m.peso_kg + ' kg' : '—'}</div>
+        <!-- Polaroid -->
+        <div class="pet-polaroid">
+          <div class="pet-polaroid-inner">
+            <img class="pet-photo" src="${foto || ''}" alt="Foto"
+                 onerror="this.style.display='none'"/>
+          </div>
+          <div class="pet-name">${esc(m.nombre)}</div>
+          <span class="badge badge-species">${esc(m.especie || '')}</span>
+        </div>
+
+        <!-- Hoja con datos -->
+        <div class="pet-note">
+          <div class="pet-note-header">Ficha clínica</div>
+          <div class="pet-note-body">
+            <div class="pet-note-row">
+              <span class="pet-label">N° Historia</span>
+              <span class="pet-value">${esc(m.n_historial || '—')}</span>
+            </div>
+            <div class="pet-note-row">
+              <span class="pet-label">Raza</span>
+              <span class="pet-value">${esc(m.raza || '—')}</span>
+            </div>
+            <div class="pet-note-row">
+              <span class="pet-label">Sexo</span>
+              <span class="pet-value">${esc(m.sexo || '—')}</span>
+            </div>
+            <div class="pet-note-row">
+              <span class="pet-label">Esterilizado</span>
+              <span class="pet-value">${esterTxt}</span>
+            </div>
+            <div class="pet-note-row">
+              <span class="pet-label">N° microchip</span>
+              <span class="pet-value">${esc(m.nro_microchip || '—')}</span>
+            </div>
+            <div class="pet-note-row">
+              <span class="pet-label">Fecha nacimiento</span>
+              <span class="pet-value">${fmtFecha(m.fecha_nacimiento)}</span>
+            </div>
+            <div class="pet-note-row">
+              <span class="pet-label">Edad</span>
+              <span class="pet-value">${edadTxt || '—'}</span>
+            </div>
+            <div class="pet-note-row">
+              <span class="pet-label">Peso</span>
+              <span class="pet-value">
+                ${m.peso_kg != null ? m.peso_kg + ' kg' : '—'}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>`;
 }
+
 
 function renderHistorial(nombreMascota, items) {
   const fmt = s => s ? new Date(s).toLocaleString() : '';
@@ -184,7 +225,7 @@ function renderHistorial(nombreMascota, items) {
     const tipo = (it.tipo || it.category || it.clase || 'Registro').toString();
     const fecha = fmt(it.fecha || it.created_at);
     const resumen = escTxt(it.resumen || it.diagnostico || it.descripcion || it.indicaciones || it.motivo || it.medicamentos || '');
-    
+
     return `
       <li class="hist-item hist-click" data-tipo="${esc(tipo)}" data-id="${it.id}">
         <div class="hist-dot"></div>
@@ -212,8 +253,8 @@ function showMascotaForm(root, API, title, m, onSubmit, opts = {}) {
   if (oldForm) oldForm.remove();
 
   const v = m || {};
-  const isClient = !!opts.client; 
-  const isNew = !v.id; 
+  const isClient = !!opts.client;
+  const isNew = !v.id;
   const initialHist = v.n_historial || (opts.nextHist ?? '');
 
   const form = document.createElement('div');
@@ -239,9 +280,9 @@ function showMascotaForm(root, API, title, m, onSubmit, opts = {}) {
         <div id="newOwnerBox" style="display:none; margin-top:10px">
           <div class="form-grid">
             <div><label>Nombre*</label><input class="input" id="o_nombre"/></div>
-            <div><label>RUT</label><input class="input" id="o_rut"/></div>
-            <div><label>Correo</label><input class="input" id="o_correo" type="email"/></div>
-            <div><label>Movil</label><input class="input" id="o_movil"/></div>
+            <div><label>RUT</label><input class="input" id="o_rut" autocomplete="off"/></div>
+            <div><label>Correo</label><input class="input" id="o_correo" type="email" autocomplete="off"/></div>
+            <div><label>Movil</label><input class="input" id="o_movil" autocomplete="off"/></div>
             <div style="grid-column:1 / -1"><label>Dirección</label><input class="input" id="o_direccion"/></div>
           </div>
           <div style="margin-top:8px; display:flex; gap:8px">
@@ -308,12 +349,12 @@ function showMascotaForm(root, API, title, m, onSubmit, opts = {}) {
   `;
   root.prepend(form);
 
-  // ---------- Validaciones en tiempo real ----------
+  /* ---------- Validaciones en tiempo real de la mascota ---------- */
   const nombreInput = form.querySelector('#f_nombre');
   if (nombreInput) {
     nombreInput.addEventListener('input', () => {
       let val = nombreInput.value;
-      val = val.replace(/[^a-zA-ZÁÉÍÓÚáéíóúÑñ\s]/g, '');
+      val = val.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ\s]/g, '');
       nombreInput.value = val;
     });
   }
@@ -335,12 +376,20 @@ function showMascotaForm(root, API, title, m, onSubmit, opts = {}) {
     reader.readAsDataURL(f);
   });
 
-  // ---------- Propietario (solo admin/vet) ----------
+  /* ---------- Propietario (solo admin/vet) ---------- */
   let selectedOwnerId = v.propietario_id ?? null;
 
   if (!isClient) {
     const propSearch = form.querySelector('#f_prop_search');
     const propSelect = form.querySelector('#f_prop_select');
+    const box = form.querySelector('#newOwnerBox');
+    const btnNewOwner = form.querySelector('#btnNewOwner');
+
+    const oNombre = form.querySelector('#o_nombre');
+    const oRut = form.querySelector('#o_rut');
+    const oCorreo = form.querySelector('#o_correo');
+    const oMovil = form.querySelector('#o_movil');
+
     let propietariosCache = [];
 
     (async () => {
@@ -349,6 +398,7 @@ function showMascotaForm(root, API, title, m, onSubmit, opts = {}) {
       if (selectedOwnerId) propSelect.value = String(selectedOwnerId);
     })();
 
+    // Buscar propietario
     let tSearch;
     propSearch.addEventListener('input', () => {
       clearTimeout(tSearch);
@@ -359,20 +409,80 @@ function showMascotaForm(root, API, title, m, onSubmit, opts = {}) {
     });
     propSelect.addEventListener('change', () => { selectedOwnerId = Number(propSelect.value) || null; });
 
-    const box = form.querySelector('#newOwnerBox');
-    form.querySelector('#btnNewOwner').onclick = () => {
+    // Abrir / cerrar box de nuevo propietario
+    btnNewOwner.onclick = () => {
       box.style.display = (box.style.display === 'none' || !box.style.display) ? 'block' : 'none';
     };
 
+    /* === VALIDACIONES NUEVO PROPIETARIO === */
+
+    if (oRut) {
+      oRut.addEventListener('input', () => {
+        let raw = oRut.value.toUpperCase().replace(/[^0-9K]/g, '');
+
+        if (raw.length > 9) raw = raw.slice(0, 9);
+
+        if (raw.length <= 1) {
+          oRut.value = raw;
+          return;
+        }
+
+        let cuerpo = raw.slice(0, -1).replace(/[^0-9]/g, '');
+        const dv = raw.slice(-1);
+
+        const cuerpoFormato = cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        oRut.value = `${cuerpoFormato}-${dv}`;
+      });
+    }
+
+    const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+    if (oCorreo) {
+      oCorreo.addEventListener('blur', () => {
+        const val = oCorreo.value.trim();
+        if (val && !emailRegex.test(val)) {
+          alert('El correo del propietario no es válido (debe contener "@" y ".").');
+          oCorreo.focus();
+        }
+      });
+    }
+
+    function normalizarMovil(v) {
+      let soloNum = v.replace(/\D/g, '');
+      if (soloNum.startsWith('569')) soloNum = soloNum.slice(3);
+      soloNum = soloNum.slice(0, 8);
+      return '+569' + soloNum;
+    }
+
+    if (oMovil) {
+      oMovil.addEventListener('focus', () => {
+        if (!oMovil.value) oMovil.value = '+569';
+      });
+      oMovil.addEventListener('input', () => {
+        oMovil.value = normalizarMovil(oMovil.value);
+      });
+    }
+
     form.querySelector('#o_guardar').onclick = async () => {
       const payload = {
-        nombre: form.querySelector('#o_nombre').value.trim(),
-        rut: form.querySelector('#o_rut').value.trim(),
-        correo: form.querySelector('#o_correo').value.trim(),
-        movil: form.querySelector('#o_movil').value.trim(),
+        nombre: oNombre.value.trim(),
+        rut: oRut.value.trim(),
+        correo: oCorreo.value.trim(),
+        movil: oMovil.value.trim(),
         direccion: form.querySelector('#o_direccion').value.trim(),
       };
+
       if (!payload.nombre) { alert('Nombre de propietario es obligatorio'); return; }
+
+      if (payload.correo && !emailRegex.test(payload.correo)) {
+        alert('El correo del propietario no es válido (debe contener "@" y ".").');
+        oCorreo.focus();
+        return;
+      }
+
+      if (payload.movil) {
+        payload.movil = normalizarMovil(payload.movil);
+      }
+
       const r = await apiPost(`${API}/api/propietarios`, payload);
       await loadPropietarios('');
       renderPropOptions(propietariosCache, r.id);
@@ -380,6 +490,7 @@ function showMascotaForm(root, API, title, m, onSubmit, opts = {}) {
       box.style.display = 'none';
       form.querySelector('#prop_hint').textContent = 'Propietario creado y seleccionado.';
     };
+
     form.querySelector('#o_cancelar').onclick = () => { box.style.display = 'none'; };
 
     async function loadPropietarios(search = '') {
@@ -394,7 +505,7 @@ function showMascotaForm(root, API, title, m, onSubmit, opts = {}) {
     }
   }
 
-  // ---------- Guardar / Cancelar ----------
+  /* ---------- Guardar / Cancelar mascota ---------- */
   form.querySelector('#f_cancelar').onclick = () => form.remove();
   form.querySelector('#f_guardar').onclick = async () => {
     const payload = {
@@ -412,13 +523,11 @@ function showMascotaForm(root, API, title, m, onSubmit, opts = {}) {
     if (!payload.nombre) { alert('Nombre es requerido'); return; }
     if (!payload.especie) { alert('Selecciona especie'); return; }
 
-    // Validación extra: nombre solo letras
     if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/.test(payload.nombre)) {
-      alert('El nombre solo puede contener letras y espacios (sin números).');
+      alert('El nombre solo puede contener letras y espacios.');
       return;
     }
 
-    // Validación extra: N° historial >= 1000
     if (payload.n_historial) {
       const n = parseInt(payload.n_historial, 10);
       if (Number.isNaN(n) || n < 1000) {
@@ -427,7 +536,6 @@ function showMascotaForm(root, API, title, m, onSubmit, opts = {}) {
       }
     }
 
-    // Validación extra: microchip solo números
     if (payload.nro_microchip && !/^\d+$/.test(payload.nro_microchip)) {
       alert('El N° de microchip solo puede contener números.');
       return;
@@ -452,8 +560,6 @@ function showMascotaForm(root, API, title, m, onSubmit, opts = {}) {
     form.remove();
   };
 }
-
-
 
 /* ----------Funciones auxiliares ----------- */
 function bindHistClicks(rootEl, API) {
@@ -661,3 +767,14 @@ async function apiDelete(url) {
   if (!r.ok) throw new Error(`HTTP ${r.status}`);
   return r.json();
 }
+
+function fmtFecha(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  if (isNaN(d)) return '—';
+  const dd = String(d.getDate()).padStart(2, '0');
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const yy = d.getFullYear();
+  return `${dd}-${mm}-${yy}`;
+}
+

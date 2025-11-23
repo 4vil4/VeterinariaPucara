@@ -42,7 +42,6 @@ router.post('/', async (req, res) => {
         const [[V]] = await pool.query('SELECT * FROM veterinario WHERE id=?', [b.veterinario_id]);
         if (!M || !P || !V) return res.status(400).json({ error: 'IDs inválidos' });
 
-        // edad en años (decimal) desde fecha_nacimiento o edad_anios
         let edad = null;
         if (M.fecha_nacimiento) {
             const birth = dayjs(M.fecha_nacimiento);
@@ -110,7 +109,6 @@ router.get('/:id/pdf', async (req, res) => {
     const draw = (text, x, y, f = font, size = 11) =>
         page.drawText(String(text ?? ''), { x, y, size, font: f, color: rgb(0, 0, 0) });
 
-    // Encabezado como tu plantilla
     draw('VETERINARIA “PUCARÁ”', 70, 800, bold, 9);
     draw('ESMERALDA #97', 70, 788, font, 9);
     draw('FONO: 22 859 2840', 70, 776, font, 9);
@@ -118,7 +116,6 @@ router.get('/:id/pdf', async (req, res) => {
     draw('LOGO', 480, 770, font, 12);
     draw('Epicrisis', 260, 730, bold, 16);
 
-    // Etiqueta:valor helper
     const L = 70, LABEL_W = 170, COL_X = L + LABEL_W, VAL_X = COL_X + 10;
     let y = 700;
     const put = (label, val) => {
@@ -159,7 +156,6 @@ router.get('/:id/pdf', async (req, res) => {
     put('Peso', c.mas_peso_kg != null ? `${Number(c.mas_peso_kg).toFixed(2)} kg` : '—');
     y -= 6;
 
-    // Bloques largos con wrap
     const width = 460, lineH = 14;
     const wrap = (text) => {
         const words = String(text || '—').split(/\s+/);
@@ -193,7 +189,6 @@ router.get('/:id/pdf', async (req, res) => {
     drawBlock('Tratamiento a seguir:', c.tratamiento_seguir);
     drawBlock('Recomendaciones:', c.recomendaciones);
 
-    // Pie y firma centrados
     const PAGE_W = page.getWidth();
     const cx = PAGE_W / 2;
     const center = (text, yPos, f = font, size = 10) => {
@@ -202,10 +197,8 @@ router.get('/:id/pdf', async (req, res) => {
         page.drawText(txt, { x: cx - w / 2, y: yPos, size, font: f, color: rgb(0, 0, 0) });
     };
 
-    // Nota
     center('SE EXTIENDE EL PRESENTE CERTIFICADO PARA SER PRESENTADO A LOS ORGANISMOS PERTINENTES A PETICION DEL PROPIETARIO.', 120, bold, 8);
 
-    // Firma
     center('______________________________', 96, font, 10);
     center(c.vet_nombre || 'Nombre Veterinario', 82, font, 10);
     center('MEDICO VETERINARIO', 68, font, 10);

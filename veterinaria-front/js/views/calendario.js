@@ -26,7 +26,6 @@ export async function init({ root, API }) {
     let res = await fetchJSON(`${API}/api/citas?from=${start}&to=${end}&search=${encodeURIComponent(filtro)}`);
     citas = Array.isArray(res) ? res : [];
 
-    // si es cliente, solo sus citas
     if (isClient && me?.propietario_id) {
       const pid = Number(me.propietario_id);
       citas = citas.filter(c => Number(c.propietario_id) === pid);
@@ -71,12 +70,10 @@ export async function init({ root, API }) {
         </div>
       `;
 
-    // Crear nueva cita preseleccionando el día
     side.querySelector('#sideNew')?.addEventListener('click', () => {
       location.hash = `#/citas?new=1&date=${key}`;
     });
 
-    // Handlers de editar / eliminar
     side.querySelectorAll('.btn-edit').forEach(b => {
       b.onclick = () => openForm(null, list.find(x => x.id == b.dataset.id));
     });
@@ -109,8 +106,6 @@ export async function init({ root, API }) {
   }
 
   async function openForm(dateISO = null, editing = null) {
-    // OJO: aquí podrías reutilizar la lógica de citas.js si quisieras
-    // pero dejo el archivo igual que lo tenías.
     const wrap = document.createElement('div');
     wrap.className = 'card';
     wrap.style.marginTop = '12px';

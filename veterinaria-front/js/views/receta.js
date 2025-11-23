@@ -103,7 +103,6 @@ export async function init({ root, API }) {
 
   const role = getRole();
 
-  // ---- DOM refs
   const $q = root.querySelector('#q');
   const $btnReload = root.querySelector('#btnReload');
   const $tbl = root.querySelector('#tblWrap');
@@ -111,7 +110,6 @@ export async function init({ root, API }) {
   const $form = root.querySelector('#fReceta');
   const $vetBlock = root.querySelector('#vetBlock');
 
-  // antibióticos DOM
   const abCheck = root.querySelector('#r_ab_check');
   const abBox = root.querySelector('#r_ab_box');
   const abSearch = root.querySelector('#r_ab_search');
@@ -128,9 +126,8 @@ export async function init({ root, API }) {
   let vets = [];
   let timer = null;
 
-  // antibióticos state
   let abCatalog = [];
-  let abUsos = []; // {antibiotico_id, nombre, dosis, duracion_dias, notas}
+  let abUsos = []; 
 
   // ---- Utils
   const esc = (s) => (s == null ? '' : String(s)).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
@@ -286,7 +283,7 @@ export async function init({ root, API }) {
     try {
       abCatalog = await fetchJSON(`${API}/api/antibioticos?solo_activos=1`);
       renderAbOptions('');
-    } catch { /* silencioso */ }
+    } catch { }
   })();
 
   abSearch.addEventListener('input', () => renderAbOptions(abSearch.value.trim()));

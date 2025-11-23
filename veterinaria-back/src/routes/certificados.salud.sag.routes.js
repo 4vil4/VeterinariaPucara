@@ -195,7 +195,6 @@ router.get('/:id/pdf', async (req, res) => {
             }
         }
 
-        // Mascota
         put('Nombre Mascota', c.mas_nombre);
         put('Raza', c.mas_raza);
         put('Peso', c.mas_peso_kg ? `${Number(c.mas_peso_kg).toFixed(2)} kg` : '—');
@@ -207,7 +206,6 @@ router.get('/:id/pdf', async (req, res) => {
         put('Fecha de aplicación del Microchip', c.chip_fecha ? dayjs(c.chip_fecha).format('DD/MM/YYYY') : '—');
         put('Sitio de Aplicación de Microchip', c.chip_sitio || '—');
 
-        // Propietario
         y -= 6;
         draw(p1, '2. Identificación del propietario', L, y, bold); y -= 22;
         put('Nombre del Dueño(a)', c.prop_nombre);
@@ -215,7 +213,6 @@ router.get('/:id/pdf', async (req, res) => {
         put('Dirección', c.prop_direccion || '—');
         put('Fono', c.prop_fono || '—');
 
-        // Texto
         y -= 6;
         draw(p1, '3. El Médico Veterinario que suscribe Certifica que el Animal de Compañía:', L, y, bold);
         y -= 28;
@@ -231,7 +228,6 @@ router.get('/:id/pdf', async (req, res) => {
 
         // ------- PÁGINA 2 -------
 
-        // helper para dividir texto en varias líneas
         function wrapCellText(text, maxWidth, fontRef, size) {
             const words = String(text ?? '').split(/\s+/);
             const lines = [];
@@ -287,7 +283,6 @@ router.get('/:id/pdf', async (req, res) => {
 
         let yTop = vacY0;
 
-        // dibujar encabezado
         const headH = vacBaseH;
         p2.drawRectangle({ x: vacX0, y: yTop - headH, width: vacXs.at(-1) - vacX0, height: headH, borderColor: rgb(0, 0, 0), borderWidth: 1 });
         for (let i = 0; i < vacHeaders.length; i++) {
@@ -297,7 +292,6 @@ router.get('/:id/pdf', async (req, res) => {
         p2.drawLine({ start: { x: vacXs.at(-1), y: yTop }, end: { x: vacXs.at(-1), y: yTop - headH }, thickness: 1, color: rgb(0, 0, 0) });
         yTop -= headH;
 
-        // filas
         for (const r of vacRows) {
             const cells = [
                 wrapCellText(r.nombre, vacWidths[0] - 6, font, vacFontSz),
@@ -326,7 +320,6 @@ router.get('/:id/pdf', async (req, res) => {
 
         draw(p2, 'Desparasitación', 60, 505, bold, 13);
 
-        // tabla desparasitación
         const desHeaders = ['Tipo', 'Producto', 'Lab.', 'Principio', 'Lote', 'Fecha', 'Hora'];
         const desWidths = [55, 95, 85, 95, 55, 75, 60];
         const desX0 = 60;
@@ -355,7 +348,6 @@ router.get('/:id/pdf', async (req, res) => {
 
         let y2 = desY0;
 
-        // encabezado
         p2.drawRectangle({ x: desX0, y: y2 - desBaseH, width: desXs.at(-1) - desX0, height: desBaseH, borderColor: rgb(0, 0, 0), borderWidth: 1 });
         for (let i = 0; i < desHeaders.length; i++) {
             draw(p2, desHeaders[i], desXs[i] + 3, y2 - 12, bold, desFontSz);
@@ -364,7 +356,6 @@ router.get('/:id/pdf', async (req, res) => {
         p2.drawLine({ start: { x: desXs.at(-1), y: y2 }, end: { x: desXs.at(-1), y: y2 - desBaseH }, thickness: 1, color: rgb(0, 0, 0) });
         y2 -= desBaseH;
 
-        // filas
         for (const r of desRows) {
             const cells = [
                 wrapCellText(r.tipo, desWidths[0] - 6, font, desFontSz),
@@ -394,7 +385,6 @@ router.get('/:id/pdf', async (req, res) => {
         }
 
 
-        // -------- Datos del Médico + Firma --------
         const VET_TOP_Y = 320; 
         const VET_GAP = 18;
 
