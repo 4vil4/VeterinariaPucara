@@ -197,22 +197,15 @@ function esc(s) {
 }
 
 async function fetchJSON(url) {
-  const token = localStorage.getItem('auth_token') || '';
-  const headers = token ? { Authorization: `Bearer ${token}` } : {};
-  const r = await fetch(url, { headers });
+  const r = await fetch(url);
   if (!r.ok) throw new Error(`HTTP ${r.status}`);
   return r.json();
 }
 
 async function apiPost(url, body) {
-  const token = localStorage.getItem('auth_token') || '';
-  const headers = {
-    'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
   const r = await fetch(url, {
     method: 'POST',
-    headers,
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
   });
   if (!r.ok) throw new Error(`HTTP ${r.status}`);
@@ -220,14 +213,9 @@ async function apiPost(url, body) {
 }
 
 async function apiPut(url, body) {
-  const token = localStorage.getItem('auth_token') || '';
-  const headers = {
-    'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
   const r = await fetch(url, {
     method: 'PUT',
-    headers,
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
   });
   if (!r.ok) throw new Error(`HTTP ${r.status}`);
@@ -235,9 +223,7 @@ async function apiPut(url, body) {
 }
 
 async function apiDelete(url) {
-  const token = localStorage.getItem('auth_token') || '';
-  const headers = token ? { Authorization: `Bearer ${token}` } : {};
-  const r = await fetch(url, { method: 'DELETE', headers });
+  const r = await fetch(url, { method: 'DELETE' });
   if (!r.ok) throw new Error(`HTTP ${r.status}`);
   return r.json();
 }

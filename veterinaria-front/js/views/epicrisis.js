@@ -1,4 +1,4 @@
-export async function init({ root, API, authHeaders }) {
+export async function init({ root, API }) {
   const wrap = root.querySelector('#epiTableWrap');
   const search = root.querySelector('#epiSearch');
   const btnNew = root.querySelector('#epiNuevo');
@@ -179,43 +179,11 @@ export async function init({ root, API, authHeaders }) {
     };
   }
 
-  function getAuthHeaders() {
-    return authHeaders ? authHeaders() : {};
-  }
-
   // helpers
   function esc(s) { return (s ?? '').toString().replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])); }
   function fmt(iso) { return iso ? new Date(iso).toLocaleDateString('es-CL') : ''; }
-  async function jget(u) {
-    const r = await fetch(u, { headers: getAuthHeaders() });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    return r.json();
-  }
-  async function jpost(u, b) {
-    const r = await fetch(u, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
-      body: JSON.stringify(b),
-    });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    return r.json();
-  }
-  async function jput(u, b) {
-    const r = await fetch(u, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
-      body: JSON.stringify(b),
-    });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    return r.json();
-  }
-  async function jdel(u) {
-    const r = await fetch(u, {
-      method: 'DELETE',
-      headers: getAuthHeaders(),
-    });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    return r.json();
-  }
-
+  async function jget(u) { const r = await fetch(u); if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }
+  async function jpost(u, b) { const r = await fetch(u, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) }); if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }
+  async function jput(u, b) { const r = await fetch(u, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) }); if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }
+  async function jdel(u) { const r = await fetch(u, { method: 'DELETE' }); if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }
 }

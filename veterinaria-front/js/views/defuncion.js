@@ -1,4 +1,4 @@
-export async function init({ root, API, authHeaders }) {
+export async function init({ root, API }) {
     const listWrap = root.querySelector('#certTableWrap');
     const searchInput = root.querySelector('#certSearch');
     const btnNew = root.querySelector('#btnNuevoCert');
@@ -280,11 +280,6 @@ export async function init({ root, API, authHeaders }) {
         const d = new Date(iso);
         return d.toLocaleDateString('es-CL');
     }
-
-    function getAuthHeaders() {
-        return authHeaders ? authHeaders() : {};
-    }
-
     function esc(s) {
         return (s ?? '').toString().replace(
             /[&<>"']/g,
@@ -306,38 +301,31 @@ export async function init({ root, API, authHeaders }) {
     }
 
     async function jget(u) {
-        const r = await fetch(u, { headers: getAuthHeaders() });
+        const r = await fetch(u);
         if (!r.ok) throw new Error('HTTP ' + r.status);
         return r.json();
     }
-
     async function jpost(u, b) {
         const r = await fetch(u, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(b),
         });
         if (!r.ok) throw new Error('HTTP ' + r.status);
         return r.json();
     }
-
     async function jput(u, b) {
         const r = await fetch(u, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(b),
         });
         if (!r.ok) throw new Error('HTTP ' + r.status);
         return r.json();
     }
-
     async function jdel(u) {
-        const r = await fetch(u, {
-            method: 'DELETE',
-            headers: getAuthHeaders(),
-        });
+        const r = await fetch(u, { method: 'DELETE' });
         if (!r.ok) throw new Error('HTTP ' + r.status);
         return r.json();
     }
-
 }

@@ -1,4 +1,4 @@
-export async function init({ root, API, authHeaders }) {
+export async function init({ root, API }) {
   const tableWrap = root.querySelector('#citasTableWrap');
   const qInput = root.querySelector('#citasSearch');
   const fromInput = root.querySelector('#citasFrom');
@@ -278,22 +278,10 @@ export async function init({ root, API, authHeaders }) {
 
   async function fetchJSON(url, opt = {}) {
     const o = { ...opt };
-    const baseHeaders = authHeaders ? authHeaders() : {};
-
     if (o.body && typeof o.body === 'object') {
-      o.headers = {
-        'Content-Type': 'application/json',
-        ...baseHeaders,
-        ...(o.headers || {}),
-      };
+      o.headers = { 'Content-Type': 'application/json', ...(o.headers || {}) };
       o.body = JSON.stringify(o.body);
-    } else {
-      o.headers = {
-        ...baseHeaders,
-        ...(o.headers || {}),
-      };
     }
-
     const r = await fetch(url, o);
 
     let data = null;
@@ -304,6 +292,7 @@ export async function init({ root, API, authHeaders }) {
     }
 
     if (!r.ok) {
+      // tomamos el mensaje que manda el backend (msg / error / message)
       const msg = data && (data.msg || data.error || data.message);
       throw new Error(msg || `Error HTTP ${r.status}`);
     }

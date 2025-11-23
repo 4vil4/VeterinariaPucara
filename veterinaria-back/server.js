@@ -24,9 +24,6 @@ import certificadosEpicrisisRoutes from './src/routes/certificados.epicrisis.rou
 import certificadosDefuncion from './src/routes/certificados.defuncion.routes.js';
 import certificadosAutorizacionCirugiaRoutes from './src/routes/certificados.autorizacion.cirugia.routes.js';
 
-import { requireAuth} from './src/middlewares/auth.middleware.js';
-
-
 const app = express();
 app.use(cors({ origin: true }));
 app.use(morgan('dev'));
@@ -34,25 +31,25 @@ app.use(express.json());
 
 // Rutas
 app.use('/api', indexRoutes);
-app.use('/api/propietarios', requireAuth, propietariosRoutes);
-app.use('/api/mascotas', requireAuth, mascotasRoutes);
-app.use('/api/citas', requireAuth, citasRoutes);
-app.use('/api/urgencias', requireAuth, urgenciasRoutes);
-app.use('/api/registros', requireAuth, registrosRoutes);
-app.use('/api/personal', requireAuth, personalRoutes);
+app.use('/api/propietarios', propietariosRoutes);
+app.use('/api/mascotas', mascotasRoutes);
+app.use('/api/citas', citasRoutes);
+app.use('/api/urgencias', urgenciasRoutes);
+app.use('/api/registros', registrosRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/personal', personalRoutes);
 app.use('/api/alimentos', alimentosRoutes);
 app.use('/api/medicamentos', medicamentosRoutes);
 app.use('/api/accesorios', accesoriosRoutes);
-app.use('/api/recetas', requireAuth, recetasRoutes);
-app.use('/api/antibioticos', requireAuth, antibioticosRoutes);
-app.use('/api/hospitalizacion', requireAuth, hospitalizacionRoutes);
-app.use('/api/certificados/salud-sag', requireAuth, certificadosSaludSAGRoutes);
-app.use('/api/certificados/salud-pucara', requireAuth, CertSaludPucara);
-app.use('/api/certificados/epicrisis', requireAuth, certificadosEpicrisisRoutes);
-app.use('/api/certificados/defuncion', requireAuth, certificadosDefuncion);
-app.use('/api/certificados/autorizacion-cirugia-anestesia', requireAuth, certificadosAutorizacionCirugiaRoutes);
+app.use('/api/recetas', recetasRoutes);
+app.use('/api/antibioticos', antibioticosRoutes);
+app.use('/api/hospitalizacion', hospitalizacionRoutes);
+app.use('/api/certificados/salud-sag', certificadosSaludSAGRoutes);
+app.use('/api/certificados/salud-pucara', CertSaludPucara);
+app.use('/api/certificados/epicrisis', certificadosEpicrisisRoutes);
+app.use('/api/certificados/defuncion', certificadosDefuncion);
+app.use('/api/certificados/autorizacion-cirugia-anestesia', certificadosAutorizacionCirugiaRoutes);
 
-app.use('/api/auth', authRoutes);
 app.get('/api/health', (_, res) => res.json({ ok: true }));
 
 const PORT = process.env.PORT || 4000;

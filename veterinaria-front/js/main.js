@@ -374,15 +374,7 @@ async function mountView(name, params = {}) {
       app.insertAdjacentHTML('beforeend', `<p style="color:#b91c1c">La vista "${name}" no exporta <code>init</code>.</p>`);
       return;
     }
-
-    await mod.init({
-      root: app,
-      API,
-      params,
-      authHeaders,
-      getUser,
-      isLoggedIn,
-    });
+    await mod.init({ root: app, API, params });
   } catch (e) {
     app.innerHTML = `<div class="card"><h2>${name}</h2><p style="color:#b91c1c">Error: ${e?.message || e}</p></div>`;
     console.error(e);

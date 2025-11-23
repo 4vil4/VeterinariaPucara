@@ -1,43 +1,43 @@
-export async function init({ root, API, authHeaders }) {
-  const wrap = root.querySelector('#histTableWrap');
-  const q = root.querySelector('#histSearch');
-  const btnAll = root.querySelector('#btnAll');
-  const btnDone = root.querySelector('#btnDone');
-  const btnCanceled = root.querySelector('#btnCanceled');
+export async function init({ root, API }) {
+    const wrap = root.querySelector('#histTableWrap');
+    const q = root.querySelector('#histSearch');
+    const btnAll = root.querySelector('#btnAll');
+    const btnDone = root.querySelector('#btnDone');
+    const btnCanceled = root.querySelector('#btnCanceled');
 
-  let all = [];
-  let estado = 'all';
-  let text = '';
+    let all = [];
+    let estado = 'all';
+    let text = '';
 
-  let t; q.addEventListener('input', () => {
-    clearTimeout(t); t = setTimeout(() => { text = q.value.trim().toLowerCase(); render(); }, 200);
-  });
-  btnAll.onclick = () => { estado = 'all'; mark(btnAll); render(); };
-  btnDone.onclick = () => { estado = 'atendida'; mark(btnDone); render(); };
-  btnCanceled.onclick = () => { estado = 'cancelada'; mark(btnCanceled); render(); };
+    let t; q.addEventListener('input', () => {
+        clearTimeout(t); t = setTimeout(() => { text = q.value.trim().toLowerCase(); render(); }, 200);
+    });
+    btnAll.onclick = () => { estado = 'all'; mark(btnAll); render(); };
+    btnDone.onclick = () => { estado = 'atendida'; mark(btnDone); render(); };
+    btnCanceled.onclick = () => { estado = 'cancelada'; mark(btnCanceled); render(); };
 
-  mark(btnAll);
-  await load();
+    mark(btnAll);
+    await load();
 
-  async function load() {
-    const r = await fetchJSON(`${API}/api/citas?order=desc`);
-    all = Array.isArray(r) ? r : [];
-    render();
-  }
+    async function load() {
+        const r = await fetchJSON(`${API}/api/citas?order=desc`);
+        all = Array.isArray(r) ? r : [];
+        render();
+    }
 
-  function render() {
-    const rows = all
-      .filter(c => estado === 'all' ? true : (c.estado === estado))
-      .filter(c => {
-        if (!text) return true;
-        const s = (v) => (v || '').toString().toLowerCase();
-        return s(c.propietario_nombre).includes(text) ||
-          s(c.tipo).includes(text) ||
-          s(c.estado).includes(text) ||
-          s(c.observaciones).includes(text);
-      });
+    function render() {
+        const rows = all
+            .filter(c => estado === 'all' ? true : (c.estado === estado))
+            .filter(c => {
+                if (!text) return true;
+                const s = (v) => (v || '').toString().toLowerCase();
+                return s(c.propietario_nombre).includes(text) ||
+                    s(c.tipo).includes(text) ||
+                    s(c.estado).includes(text) ||
+                    s(c.observaciones).includes(text);
+            });
 
-    wrap.innerHTML = `
+        wrap.innerHTML = `
       <table class="tbl">
         <thead>
           <tr>
@@ -60,43 +60,21 @@ export async function init({ root, API, authHeaders }) {
         </tbody>
       </table>
     `;
-  }
-
-  function pillEstado(s) {
-    if (s === 'atendida') return `<span class="pill pill-done">atendida</span>`;
-    if (s === 'cancelada') return `<span class="pill pill-cancel">cancelada</span>`;
-    return esc(s || '—');
-  }
-
-  function mark(btn) {
-    [btnAll, btnDone, btnCanceled].forEach(b => b.classList.remove('is-active'));
-    btn.classList.add('is-active');
-  }
-
-  // helpers
-  function fmtDT(iso) { const d = new Date(iso); return d.toLocaleDateString('es-CL', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }); }
-  async function fetchJSON(url, opt = {}) {
-    const o = { ...opt };
-    const baseHeaders = authHeaders ? authHeaders() : {};
-
-    if (o.body && typeof o.body === 'object') {
-      o.headers = {
-        'Content-Type': 'application/json',
-        ...baseHeaders,
-        ...(o.headers || {}),
-      };
-      o.body = JSON.stringify(o.body);
-    } else {
-      o.headers = {
-        ...baseHeaders,
-        ...(o.headers || {}),
-      };
     }
 
-    const r = await fetch(url, o);
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    return r.json();
-  }
+    function pillEstado(s) {
+        if (s === 'atendida') return `<span class="pill pill-done">atendida</span>`;
+        if (s === 'cancelada') return `<span class="pill pill-cancel">cancelada</span>`;
+        return esc(s || '—');
+    }
 
-  function esc(s) { return (s ?? '').toString().replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])); }
+    function mark(btn) {
+        [btnAll, btnDone, btnCanceled].forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+    }
+
+    // helpers
+    function fmtDT(iso) { const d = new Date(iso); return d.toLocaleDateString('es-CL', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }); }
+    async function fetchJSON(url, opt = {}) { const o = { ...opt }; if (o.body && typeof o.body === 'object') { o.headers = { 'Content-Type': 'application/json', ...(o.headers || {}) }; o.body = JSON.stringify(o.body); } const r = await fetch(url, o); if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
+    function esc(s) { return (s ?? '').toString().replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])); }
 }

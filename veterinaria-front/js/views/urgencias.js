@@ -1,4 +1,4 @@
-export async function init({ root, API, authHeaders }) {
+export async function init({ root, API }) {
   const title = root.querySelector('#calTitle');
   const daysEl = root.querySelector('#calDays');
   const side = root.querySelector('#calSide');
@@ -11,10 +11,6 @@ export async function init({ root, API, authHeaders }) {
   // ---- Usuario actual y modo cliente ----
   const me = getCurrentUser();
   const isClient = !!me && me.role === 'user';
-
-  function getAuthHeaders() {
-    return typeof authHeaders === 'function' ? authHeaders() : {};
-  }
 
   root.querySelector('#prevMonth').onclick = () => { current = addMonths(current, -1); load(); };
   root.querySelector('#nextMonth').onclick = () => { current = addMonths(current, 1); load(); };
@@ -116,7 +112,6 @@ export async function init({ root, API, authHeaders }) {
   }
 
   async function editCita(id) { location.hash = '#/citas'; }
-
   async function delCita(id) {
     if (!confirm('¿Eliminar esta cita?')) return;
     await fetchJSON(`${API}/api/citas/${id}`, { method: 'DELETE' });
@@ -131,19 +126,7 @@ export async function init({ root, API, authHeaders }) {
   function addMonths(d, n) { const nd = new Date(d); nd.setMonth(nd.getMonth() + n); return nd; }
   function isoDate(d) { return d.toISOString().slice(0, 10); }
   function fmtTime(iso) { return new Date(iso).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }); }
-
-  async function fetchJSON(url, opt = {}) {
-    const baseHeaders = { ...getAuthHeaders(), ...(opt.headers || {}) };
-    const o = { ...opt, headers: baseHeaders };
-    if (o.body && typeof o.body === 'object') {
-      o.headers['Content-Type'] = 'application/json';
-      o.body = JSON.stringify(o.body);
-    }
-    const r = await fetch(url, o);
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    return r.json();
-  }
-
+  async function fetchJSON(url, opt = {}) { const o = { ...opt }; if (o.body && typeof o.body === 'object') { o.headers = { 'Content-Type': 'application/json', ...(o.headers || {}) }; o.body = JSON.stringify(o.body); } const r = await fetch(url, o); if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
   function esc(s) { return (s ?? '').toString().replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])); }
   function getCurrentUser() {
     try { return JSON.parse(localStorage.getItem('auth_user') || 'null'); }

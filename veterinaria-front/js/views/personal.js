@@ -1,4 +1,4 @@
-export async function init({ root, API, authHeaders }) {
+export async function init({ root, API }) {
   const tblWrap = root.querySelector('#vetTableWrap');
   const resWrap = root.querySelector('#vetResumenWrap');
   const detWrap = root.querySelector('#vetDetalleWrap');
@@ -6,10 +6,6 @@ export async function init({ root, API, authHeaders }) {
   const btnNuevo = root.querySelector('#btnNuevoVet');
   const from = root.querySelector('#from');
   const to = root.querySelector('#to');
-
-  function getAuthHeaders() {
-    return typeof authHeaders === 'function' ? authHeaders() : {};
-  }
 
   let vets = [];
   let currentVet = null;
@@ -231,14 +227,8 @@ export async function init({ root, API, authHeaders }) {
   function fmt(n) {
     return Number(n || 0).toLocaleString('es-CL');
   }
-
   async function fetchJSON(u, o = {}) {
-    const headers = {
-      'Content-Type': 'application/json',
-      ...getAuthHeaders(),
-      ...(o.headers || {})
-    };
-    const r = await fetch(u, { ...o, headers });
+    const r = await fetch(u, { ...o, headers: { 'Content-Type': 'application/json', ...(o.headers || {}) } });
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     return r.json();
   }
