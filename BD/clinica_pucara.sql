@@ -1,10 +1,11 @@
--- Base de datos Clinica Pucara (estructura sin datos)
+-- Crear y usar la base de datos
 DROP DATABASE IF EXISTS `clinica_pucara`;
 CREATE DATABASE IF NOT EXISTS `clinica_pucara`
   DEFAULT CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
+  COLLATE utf8mb4_general_ci;
 USE `clinica_pucara`;
 
+-- --------------------------------------------------------
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
@@ -110,28 +111,6 @@ CREATE TABLE `antipulgas` (
   `monto_total` decimal(10,2) NOT NULL DEFAULT 0.00,
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `certificado`
---
-
-CREATE TABLE `certificado` (
-  `id` bigint(20) NOT NULL,
-  `tipo` enum('salud_sag') NOT NULL,
-  `fecha_emision` datetime NOT NULL DEFAULT current_timestamp(),
-  `mascota_id` bigint(20) NOT NULL,
-  `propietario_id` bigint(20) NOT NULL,
-  `veterinario_id` bigint(20) DEFAULT NULL,
-  `data_json` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`data_json`)),
-  `file_path` varchar(255) DEFAULT NULL,
-  `file_mime` varchar(64) DEFAULT NULL,
-  `file_size` int(10) UNSIGNED DEFAULT NULL,
-  `version` tinyint(3) UNSIGNED NOT NULL DEFAULT 1,
-  `created_by` bigint(20) DEFAULT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -347,17 +326,6 @@ CREATE TABLE `cita` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `citamascota`
---
-
-CREATE TABLE `citamascota` (
-  `cita_id` bigint(20) NOT NULL,
-  `mascota_id` bigint(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `consulta`
 --
 
@@ -438,22 +406,6 @@ CREATE TABLE `dermatologia` (
   `monto_total` decimal(10,2) NOT NULL DEFAULT 0.00,
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `documento`
---
-
-CREATE TABLE `documento` (
-  `id_documento` int(11) NOT NULL,
-  `nombre_documento` varchar(255) NOT NULL,
-  `formato` varchar(45) NOT NULL,
-  `id_solicitud` int(11) NOT NULL,
-  `id_tipo_documento` int(11) NOT NULL,
-  `archivo` longblob NOT NULL,
-  `mime_type` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- --------------------------------------------------------
 
@@ -841,14 +793,6 @@ ALTER TABLE `antipulgas`
   ADD KEY `fk_antipulgas_veterinario` (`veterinario_id`);
 
 --
--- Indices de la tabla `certificado`
---
-ALTER TABLE `certificado`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_cert_mascota` (`mascota_id`),
-  ADD KEY `idx_cert_propietario` (`propietario_id`);
-
---
 -- Indices de la tabla `certificados_autorizacion_cirugia`
 --
 ALTER TABLE `certificados_autorizacion_cirugia`
@@ -908,13 +852,6 @@ ALTER TABLE `cita`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `citamascota`
---
-ALTER TABLE `citamascota`
-  ADD PRIMARY KEY (`cita_id`,`mascota_id`),
-  ADD KEY `CitaMascota_mascota_id_fkey` (`mascota_id`);
-
---
 -- Indices de la tabla `consulta`
 --
 ALTER TABLE `consulta`
@@ -944,14 +881,6 @@ ALTER TABLE `dermatologia`
   ADD PRIMARY KEY (`id`),
   ADD KEY `mascota_id` (`mascota_id`),
   ADD KEY `fk_dermatologia_veterinario` (`veterinario_id`);
-
---
--- Indices de la tabla `documento`
---
-ALTER TABLE `documento`
-  ADD PRIMARY KEY (`id_documento`),
-  ADD KEY `fk_Documento_Solicitud1_idx` (`id_solicitud`),
-  ADD KEY `fk_Documento_Tipo_documento1_idx` (`id_tipo_documento`);
 
 --
 -- Indices de la tabla `hospitalizacion`
@@ -1108,12 +1037,6 @@ ALTER TABLE `antipulgas`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `certificado`
---
-ALTER TABLE `certificado`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de la tabla `certificados_autorizacion_cirugia`
 --
 ALTER TABLE `certificados_autorizacion_cirugia`
@@ -1178,12 +1101,6 @@ ALTER TABLE `defuncion`
 --
 ALTER TABLE `dermatologia`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `documento`
---
-ALTER TABLE `documento`
-  MODIFY `id_documento` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `hospitalizacion`
@@ -1300,13 +1217,6 @@ ALTER TABLE `antipulgas`
   ADD CONSTRAINT `fk_antipulgas_veterinario` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`);
 
 --
--- Filtros para la tabla `certificado`
---
-ALTER TABLE `certificado`
-  ADD CONSTRAINT `fk_cert_mascota` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_cert_propietario` FOREIGN KEY (`propietario_id`) REFERENCES `propietario` (`id`) ON UPDATE CASCADE;
-
---
 -- Filtros para la tabla `certificados_autorizacion_cirugia`
 --
 ALTER TABLE `certificados_autorizacion_cirugia`
@@ -1354,13 +1264,6 @@ ALTER TABLE `cirugia`
   ADD CONSTRAINT `fk_cirugia_veterinario` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`);
 
 --
--- Filtros para la tabla `citamascota`
---
-ALTER TABLE `citamascota`
-  ADD CONSTRAINT `CitaMascota_cita_id_fkey` FOREIGN KEY (`cita_id`) REFERENCES `cita` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `CitaMascota_mascota_id_fkey` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`) ON UPDATE CASCADE;
-
---
 -- Filtros para la tabla `consulta`
 --
 ALTER TABLE `consulta`
@@ -1386,13 +1289,6 @@ ALTER TABLE `defuncion`
 ALTER TABLE `dermatologia`
   ADD CONSTRAINT `dermatologia_ibfk_1` FOREIGN KEY (`mascota_id`) REFERENCES `mascota` (`id`),
   ADD CONSTRAINT `fk_dermatologia_veterinario` FOREIGN KEY (`veterinario_id`) REFERENCES `veterinario` (`id`);
-
---
--- Filtros para la tabla `documento`
---
-ALTER TABLE `documento`
-  ADD CONSTRAINT `fk_Documento_Solicitud1` FOREIGN KEY (`id_solicitud`) REFERENCES `solicitud` (`id_solicitud`),
-  ADD CONSTRAINT `fk_Documento_Tipo_documento1` FOREIGN KEY (`id_tipo_documento`) REFERENCES `tipo_documento` (`id_tipo_documento`);
 
 --
 -- Filtros para la tabla `hospitalizacion`
