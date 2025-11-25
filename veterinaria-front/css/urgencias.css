@@ -196,3 +196,14 @@
     grid-template-columns: repeat(1, minmax(0, 1fr));
   }
 }
+
+.btn-cal {
+    background: #03b6ce;
+    color: #fff;
+    border: 0;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer
+}

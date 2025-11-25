@@ -157,8 +157,8 @@ function showForm(root, API, onSubmit) {
       <div style="grid-column:1/-1"><label>Observaciones</label><textarea class="input" id="observaciones" rows="3"></textarea></div>
     </div>
     <div style="margin-top:14px;display:flex;gap:8px">
-      <button class="btn btn-primary" id="f_guardar">Guardar</button>
-      <button class="btn btn-outline" id="f_cancelar">Cancelar</button>
+      <button class="btn btn-primary btn-add" id="f_guardar">Guardar</button>
+      <button class="btn btn-outline btn-del" id="f_cancelar">Cancelar</button>
     </div>
   `;
   root.prepend(wrap);

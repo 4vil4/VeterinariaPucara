@@ -103,84 +103,105 @@ function buildMenu() {
   if (!$menu) return;
 
   const adminMenu = [
-    { href: '#/mascotas', label: '🐾 Mascotas' },
-    { href: '#/propietarios', label: '🧑 Propietarios' },
-    { href: '#/registro/consulta', label: '📑 Registros' },
-    { href: '#/receta', label: '📝 Receta' },
-    { href: '#/hospitalizacion', label: '🏥 Hospitalización' },
-    { href: '#/antibioticos', label: '🧫 Antibióticos' },
-    { href: '#/citas', label: '🧭 Citas' },
-    { href: '#/calendario', label: '🗓️ Calendario' },
-    { href: '#/urgencias', label: '🚨 Urgencias' },
-    { href: '#/certificados', label: '📄 Certificados' },
-    { href: '#/historico', label: '📁 Historico' },
-    { href: '#/personal', label: '🩺 Personal' },
-    { href: '#/alimentos', label: '🍖 Alimentos' },
-    { href: '#/medicamentos', label: '💊 Medicamentos' },
-    { href: '#/accesorios', label: '🛍️ Accesorios' },
+    { href: '#/mascotas', icon: 'pets', label: 'Mascotas' },
+    { href: '#/propietarios', icon: 'person', label: 'Propietarios' },
+    { href: '#/registro/consulta', icon: 'folder_open', label: 'Registros' },
+    { href: '#/receta', icon: 'description', label: 'Receta' },
+    { href: '#/hospitalizacion', icon: 'local_hospital', label: 'Hospitalización' },
+    { href: '#/antibioticos', icon: 'science', label: 'Antibióticos' },
+    { href: '#/citas', icon: 'event_upcoming', label: 'Citas' },
+    { href: '#/calendario', icon: 'calendar_month', label: 'Calendario' },
+    { href: '#/urgencias', icon: 'warning', label: 'Urgencias' },
+    { href: '#/certificados', icon: 'assignment', label: 'Certificados' },
+    { href: '#/historico', icon: 'history', label: 'Histórico' },
+    { href: '#/personal', icon: 'medical_services', label: 'Personal' },
+    { href: '#/alimentos', icon: 'restaurant', label: 'Alimentos' },
+    { href: '#/medicamentos', icon: 'vaccines', label: 'Medicamentos' },
+    { href: '#/accesorios', icon: 'shopping_bag', label: 'Accesorios' },
   ];
-  const vetMenu = [
-    { href: '#/mascotas', label: '🐾 Mascotas' },
-    { href: '#/propietarios', label: '🧑 Propietarios' },
-    { href: '#/registro/consulta', label: '📑 Registros' },
-    { href: '#/hospitalizacion', label: '🏥 Hospitalización' },
-    { href: '#/citas', label: '🧭 Citas' },
-    { href: '#/calendario', label: '🗓️ Calendario' },
-    { href: '#/urgencias', label: '🚨 Urgencias' },
-  ];
-  const userMenu = [
-    { href: '#/u-home', label: '🏠 Inicio' },
-    { href: '#/u-mascotas', label: '🐾 Mis mascotas' },
-    { href: '#/citas', label: '🧭 Citas' },
-    { href: '#/calendario', label: '🗓️ Calendario' },
-    { href: '#/urgencias', label: '🚨 Urgencias' },
-  ]
 
+  const vetMenu = [
+    { href: '#/mascotas', icon: 'pets', label: 'Mascotas' },
+    { href: '#/propietarios', icon: 'person', label: 'Propietarios' },
+    { href: '#/registro/consulta', icon: 'folder_open', label: 'Registros' },
+    { href: '#/receta', icon: 'description', label: 'Receta' },
+    { href: '#/hospitalizacion', icon: 'local_hospital', label: 'Hospitalización' },
+    { href: '#/antibioticos', icon: 'science', label: 'Antibióticos' },
+    { href: '#/citas', icon: 'event_upcoming', label: 'Citas' },
+    { href: '#/calendario', icon: 'calendar_month', label: 'Calendario' },
+    { href: '#/urgencias', icon: 'warning', label: 'Urgencias' },
+    { href: '#/certificados', icon: 'assignment', label: 'Certificados' },
+  ];
+
+  const userMenu = [
+    { href: '#/u-home', icon: 'home', label: 'Inicio' },
+    { href: '#/u-mascotas', icon: 'pets', label: 'Mis mascotas' },
+    { href: '#/citas', icon: 'event_upcoming', label: 'Citas' },
+    { href: '#/calendario', icon: 'calendar_month', label: 'Calendario' },
+    { href: '#/urgencias', icon: 'warning', label: 'Urgencias' },
+  ];
+
+  // ===== Submenú Registros =====
   const registrosSubmenu = `
     <button class="menu__item menu__item--btn text-menu" id="btnRegistros">
-      📑<span>Registros</span><i class="i i-caret" aria-hidden="true"></i>
+      <span class="material-symbols-outlined icon">folder_open</span>
+      <span>Registros</span>
+      <i class="i i-caret" aria-hidden="true"></i>
     </button>
     <div class="submenu" id="submenuRegistros">
-      <a href="#/registro/consulta" class="submenu__item text-submenu">📝 Consulta</a>
-      <a href="#/registro/control" class="submenu__item text-submenu">📝 Control</a>
-      <a href="#/registro/cirugia" class="submenu__item text-submenu">📝 Cirugía</a>
-      <a href="#/registro/vacuna" class="submenu__item text-submenu">📝 Vacuna</a>
-      <a href="#/registro/antiparasitario" class="submenu__item text-submenu">📝 Antiparasitario</a>
-      <a href="#/registro/antipulgas" class="submenu__item text-submenu">📝 Antipulgas</a>
-      <a href="#/registro/triaje" class="submenu__item text-submenu">📝 Triaje</a>
-      <a href="#/registro/profilaxis" class="submenu__item text-submenu">📝 Profilaxis</a>
-      <a href="#/registro/defuncion" class="submenu__item text-submenu">📝 Defunción</a>
-      <a href="#/registro/dermatologia" class="submenu__item text-submenu">📝 Dermatología</a>
-      <a href="#/registro/orden_examen" class="submenu__item text-submenu">📝 Orden de exámenes</a>
-      <a href="#/registro/oftalmologia" class="submenu__item text-submenu">📝 Oftalmología</a>
+      <a href="#/registro/consulta" class="submenu__item text-submenu">Consulta</a>
+      <a href="#/registro/control" class="submenu__item text-submenu">Control</a>
+      <a href="#/registro/cirugia" class="submenu__item text-submenu">Cirugía</a>
+      <a href="#/registro/vacuna" class="submenu__item text-submenu">Vacuna</a>
+      <a href="#/registro/antiparasitario" class="submenu__item text-submenu">Antiparasitario</a>
+      <a href="#/registro/antipulgas" class="submenu__item text-submenu">Antipulgas</a>
+      <a href="#/registro/triaje" class="submenu__item text-submenu">Triaje</a>
+      <a href="#/registro/profilaxis" class="submenu__item text-submenu">Profilaxis</a>
+      <a href="#/registro/defuncion" class="submenu__item text-submenu">Defunción</a>
+      <a href="#/registro/dermatologia" class="submenu__item text-submenu">Dermatología</a>
+      <a href="#/registro/orden_examen" class="submenu__item text-submenu">Orden de exámenes</a>
+      <a href="#/registro/oftalmologia" class="submenu__item text-submenu">Oftalmología</a>
     </div>`;
 
+  // ===== Submenú Certificados =====
   const certificadosSubmenu = `
     <button class="menu__item menu__item--btn text-menu" id="btnCertificados">
-      📄<span>Certificados</span><i class="i i-caret" aria-hidden="true"></i>
+      <span class="material-symbols-outlined icon">assignment</span>
+      <span>Certificados</span>
+      <i class="i i-caret" aria-hidden="true"></i>
     </button>
     <div class="submenu" id="submenuCertificados">
-      <a href="#/certificados/salud-sag" class="submenu__item text-submenu">🧾 Cert Salud SAG</a>
-      <a href="#/certificados/salud-pucara" class="submenu__item text-submenu">🧾 Cert Salud Pucará</a>
-      <a href="#/certificados/epicrisis" class="submenu__item text-submenu">🧾 Cert Epicrisis</a>
-      <a href="#/certificados/defuncion" class="submenu__item text-submenu">🧾 Cert Defunción</a>
-      <a href="#/certificados/autorizacion-cirugia-anestesia" class="submenu__item text-submenu">🧾 Aut Cirugía / Anestesia</a>
+      <a href="#/certificados/salud-sag" class="submenu__item text-submenu">Cert Salud SAG</a>
+      <a href="#/certificados/salud-pucara" class="submenu__item text-submenu">Cert Salud Pucará</a>
+      <a href="#/certificados/epicrisis" class="submenu__item text-submenu">Cert Epicrisis</a>
+      <a href="#/certificados/defuncion" class="submenu__item text-submenu">Cert Defunción</a>
+      <a href="#/certificados/autorizacion-cirugia-anestesia" class="submenu__item text-submenu">Aut Cirugía / Anestesia</a>
     </div>`;
 
   const baseMenu = isUser ? userMenu : (isVet ? vetMenu : adminMenu);
 
   const items = baseMenu
-    .map(i => (i.label.includes('Registros') ? registrosSubmenu
-      : i.label.includes('Certificados') ? certificadosSubmenu
-        : `<a href="${i.href}" class="menu__item text-menu"><span>${i.label}</span></a>`))
+    .map(i =>
+      i.label === 'Registros'
+        ? registrosSubmenu
+        : i.label === 'Certificados'
+          ? certificadosSubmenu
+          : `
+      <a href="${i.href}" class="menu__item text-menu">
+        <span class="material-symbols-outlined icon">${i.icon}</span>
+        <span>${i.label}</span>
+      </a>`
+    )
     .join('');
 
   const logoutBtn = `
     <div class="menu__spacer"></div>
     <button class="menu__item menu__item--btn text-menu btn btn-outline" id="btnLogout">
-      <span>🔴 Cerrar sesión</span>
+      <span class="material-symbols-outlined icon">logout</span>
+      <span>Cerrar sesión</span>
     </button>
   `;
+
   $menu.innerHTML = items + logoutBtn;
 
   document.getElementById('btnRegistros')?.addEventListener('click', () => {
@@ -194,12 +215,11 @@ function buildMenu() {
     localStorage.removeItem('auth_user');
 
     setPublicUI(true);
-
     location.hash = '#/public';
     router();
   });
-
 }
+
 
 /* ===== Router ===== */
 const app = document.getElementById('app');
@@ -235,8 +255,11 @@ const routes = {
   },
 };
 
-function parseHash() {
-  const hash = location.hash || '#/';
+function parseHash(rawHash) {
+  const hash = (typeof rawHash === 'string' && rawHash.length)
+    ? rawHash
+    : (location.hash || '#/');
+
   const parts = hash.replace(/^#\//, '').split('/');
 
   if (parts[0] === 'registro' && parts[1]) {
@@ -254,6 +277,7 @@ function parseHash() {
   return { route: `/${parts[0] || ''}` };
 }
 
+
 function guardRoute(route) {
   const me = getUser();
   if (me?.role === 'vet' && (route === '/historico' || route === '/personal')) {
@@ -263,8 +287,15 @@ function guardRoute(route) {
   return true;
 }
 
-async function router() {
-  const { route, params } = parseHash();
+async function router(ev) {
+  const cleanUrl = () => {
+    if (location.hash) {
+      history.replaceState(null, "", location.pathname + location.search);
+    }
+  };
+
+  const rawHash = ev && ev.newURL ? new URL(ev.newURL).hash : (location.hash || '#/');
+  const { route, params } = parseHash(rawHash);
 
   if (!isLoggedIn()) {
     document.body.classList.remove('role-user');
@@ -283,6 +314,7 @@ async function router() {
     }
 
     await routes[route](params || {});
+    cleanUrl();
     return;
   }
 
@@ -317,6 +349,8 @@ async function router() {
 
   if (routes[route]) routes[route](params || {});
   else app.innerHTML = `<div class="card"><h2>Panel</h2><p>Selecciona una opción del menú.</p></div>`;
+
+  cleanUrl();
 }
 
 window.addEventListener('hashchange', router);
@@ -425,7 +459,7 @@ function updateWhatsFab() {
 ensureWhatsFab(); updateWhatsFab();
 
 /* ========== PetBot (Lottie) ========== */
-let PET_USE = 'dog'; 
+let PET_USE = 'dog';
 
 function getPetLottiePath() {
   return PET_USE === 'cat'

@@ -177,6 +177,11 @@ body {
     text-align: left
 }
 
+.menu__item .material-symbols-outlined.icon {
+    color: #facc15; 
+    font-size: 22px;
+}
+
 .menu__spacer {
     flex: 1
 }
@@ -197,8 +202,21 @@ body {
     color: #dbeafe;
     text-decoration: none;
     padding: 8px 10px;
-    border-radius: 8px
+    border-radius: 8px;
+    position: relative;
+    padding-left: 22px; 
 }
+
+.submenu__item::before {
+    content: '●'; 
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #facc15;  
+    font-size: 0.65rem;
+}
+
 
 .submenu__item:hover {
     background: #ffffff10

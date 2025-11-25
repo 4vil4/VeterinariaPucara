@@ -167,8 +167,8 @@ export async function init({ root, API }) {
         <div><label>Registro ISP</label><input class="input" id="f_isp" value="${esc(v?.registro_isp || '')}" /></div>
       </div>
       <div style="margin-top:14px;display:flex;gap:8px">
-        <button class="btn btn-primary" id="f_guardar">Guardar</button>
-        <button class="btn btn-outline" id="f_cancelar">Cancelar</button>
+        <button class="btn btn-primary btn-add" id="f_guardar">Guardar</button>
+        <button class="btn btn-outline btn-del" id="f_cancelar">Cancelar</button>
       </div>
     `;
     root.prepend(wrap);

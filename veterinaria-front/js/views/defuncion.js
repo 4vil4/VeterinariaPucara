@@ -56,15 +56,15 @@ export async function init({ root, API }) {
               <td>${esc(r.vet_nombre)}</td>
               <td>
                 <div class="actions">
-                  <button class="btn btn-outline btn-sm" data-act="edit" data-id="${r.id}">Editar</button>
-                  <a class="btn btn-outline btn-sm" target="_blank" href="${API}/api/certificados/defuncion/${r.id}/pdf">PDF</a>
-                  <a class="btn btn-wa btn-sm" target="_blank"
+                  <button class="btn btn-outline btn-sm btn-edit" data-act="edit" data-id="${r.id}">Editar</button>
+                  <a class="btn btn-outline btn-sm btn-pdf" target="_blank" href="${API}/api/certificados/defuncion/${r.id}/pdf">PDF</a>
+                  <a class="btn btn-wa btn-sm btn-WSP" target="_blank"
                     href="https://wa.me/?text=${encodeURIComponent(
                             `Le comparto el Certificado de Defunción de su mascota (ID ${r.id}). PDF: ${API}/api/certificados/defuncion/${r.id}/pdf`
                         )}">
                     WhatsApp
                   </a>
-                  <button class="btn btn-outline btn-sm" data-act="del" data-id="${r.id}">Eliminar</button>
+                  <button class="btn btn-outline btn-sm btn-del" data-act="del" data-id="${r.id}">Eliminar</button>
                 </div>
               </td>
             </tr>`
@@ -153,8 +153,8 @@ export async function init({ root, API }) {
       </div>
 
       <div style="margin-top:12px;display:flex;gap:8px">
-        <button class="btn btn-primary" id="f_guardar">Guardar</button>
-        <button class="btn btn-outline" id="f_cancelar">Cancelar</button>
+        <button class="btn btn-primary btn-add" id="f_guardar">Guardar</button>
+        <button class="btn btn-outline btn-del" id="f_cancelar">Cancelar</button>
       </div>
     `;
 
@@ -198,7 +198,34 @@ export async function init({ root, API }) {
                         }</option>`
                 )
                 .join('');
-            if (editing) vSel.value = String(editing.veterinario_id);
+
+            let me = null;
+            try {
+                me = JSON.parse(localStorage.getItem('auth_user') || 'null');
+            } catch {
+                me = null;
+            }
+
+            if (editing) {
+                vSel.value = String(editing.veterinario_id);
+            } else if (me && me.role === 'vet') {
+                const vetMatch =
+                    veterinarios.find(
+                        (v) =>
+                            me.veterinario_id &&
+                            String(v.id) === String(me.veterinario_id)
+                    ) ||
+                    veterinarios.find(
+                        (v) =>
+                            me.nombre &&
+                            v.nombre &&
+                            v.nombre.toLowerCase() === me.nombre.toLowerCase()
+                    );
+
+                if (vetMatch) {
+                    vSel.value = String(vetMatch.id);
+                }
+            }
         }
 
         renderMascotas('');

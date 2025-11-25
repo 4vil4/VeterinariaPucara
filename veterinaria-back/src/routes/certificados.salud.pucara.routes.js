@@ -140,7 +140,6 @@ router.get('/:id/pdf', async (req, res) => {
     draw('ESMERALDA #97', 70, 788, font, 9);
     draw('FONO: 22 859 2840', 70, 776, font, 9);
     draw('SAN BERNARDO   SANTIAGO / CHILE', 70, 764, font, 9);
-    draw('LOGO', 480, 770, font, 12);
     draw('Certificado de Salud', 210, 730, bold, 16);
 
     const L = 70, LABEL_W = 160, COL_X = L + LABEL_W, VAL_X = COL_X + 10;
