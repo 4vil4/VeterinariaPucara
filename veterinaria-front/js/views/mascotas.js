@@ -1,6 +1,7 @@
 export async function init({ root, API, params = {} }) {
   const tblWrap = root.querySelector('#tblWrap');
   const detalle = root.querySelector('#detalle');
+  const searchInput = root.querySelector('#mascSearch');
 
   const isClient = !!params.client;
   const listUrl = isClient
@@ -8,8 +9,8 @@ export async function init({ root, API, params = {} }) {
     : `${API}/api/mascotas`;
 
   const data = await fetchJSON(listUrl);
-  tblWrap.innerHTML = buildMascotasTable(data, API);
 
+  // cálculo de siguiente N° de historial
   let nextHist = 1000;
   if (Array.isArray(data) && data.length) {
     const maxHist = data.reduce((max, r) => {
@@ -19,77 +20,108 @@ export async function init({ root, API, params = {} }) {
     nextHist = maxHist < 1000 ? 1000 : maxHist + 1;
   }
 
-  tblWrap.querySelectorAll('tr[data-id]').forEach(tr => {
-    tr.addEventListener('click', async (e) => {
-      if (e.target.closest('button')) return;
-      const id = tr.getAttribute('data-id');
-      const m = await fetchJSON(`${API}/api/mascotas/${id}`);
-      detalle.innerHTML = renderPetCard(m);
+  function renderTable(rows) {
+    tblWrap.innerHTML = buildMascotasTable(rows, API);
+
+    // Abrir ficha de la mascota
+    tblWrap.querySelectorAll('tr[data-id]').forEach(tr => {
+      tr.addEventListener('click', async (e) => {
+        if (e.target.closest('button')) return;
+        const id = tr.getAttribute('data-id');
+        const m = await fetchJSON(`${API}/api/mascotas/${id}`);
+        detalle.innerHTML = renderPetCard(m);
+      });
     });
-  });
 
-  tblWrap.querySelectorAll('.btn-edit').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      e.stopPropagation();
-      const id = btn.dataset.id;
-      const m = await fetchJSON(`${API}/api/mascotas/${id}`);
-      showMascotaForm(
-        root,
-        API,
-        'Editar mascota',
-        m,
-        async (fd) => {
-          await apiPutForm(`${API}/api/mascotas/${id}`, fd);
-          await init({ root, API, params });
-        },
-        { client: isClient }
-      );
+    // Editar
+    tblWrap.querySelectorAll('.btn-edit').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const id = btn.dataset.id;
+        const m = await fetchJSON(`${API}/api/mascotas/${id}`);
+        showMascotaForm(
+          root,
+          API,
+          'Editar mascota',
+          m,
+          async (fd) => {
+            await apiPutForm(`${API}/api/mascotas/${id}`, fd);
+            await init({ root, API, params });
+          },
+          { client: isClient }
+        );
+      });
     });
-  });
 
-  tblWrap.querySelectorAll('.btn-del').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      e.stopPropagation();
-      const id = btn.dataset.id;
-      if (!confirm('¿Eliminar esta mascota?')) return;
-      await apiDelete(`${API}/api/mascotas/${id}`);
-      await init({ root, API, params });
+    // Eliminar
+    tblWrap.querySelectorAll('.btn-del').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const id = btn.dataset.id;
+        if (!confirm('¿Eliminar esta mascota?')) return;
+        await apiDelete(`${API}/api/mascotas/${id}`);
+        await init({ root, API, params });
+      });
     });
-  });
 
-  tblWrap.querySelectorAll('.btn-hist').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      e.stopPropagation();
-      const id = Number(btn.dataset.id);
-      const nombre = btn.dataset.nombre || 'Mascota';
+    // Historial
+    tblWrap.querySelectorAll('.btn-hist').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const id = Number(btn.dataset.id);
+        const nombre = btn.dataset.nombre || 'Mascota';
 
-      let items = [];
-      try {
-        const res = await fetch(`${API}/api/mascotas/${id}/historial`);
-        if (res.ok) items = await res.json();
-      } catch (_) { }
-
-      if (!items || !items.length) {
+        let items = [];
         try {
-          const resR = await fetch(`${API}/api/recetas?mascota_id=${id}`);
-          if (resR.ok) {
-            const recetas = await resR.json();
-            items = (recetas || []).map(r => ({
-              tipo: 'Receta',
-              fecha: r.fecha || r.created_at,
-              resumen: r.diagnostico || r.medicamentos || r.indicaciones || '',
-            }));
-          }
+          const res = await fetch(`${API}/api/mascotas/${id}/historial`);
+          if (res.ok) items = await res.json();
         } catch (_) { }
-      }
 
-      items.sort((a, b) => new Date(b.fecha || b.created_at || 0) - new Date(a.fecha || a.created_at || 0));
-      detalle.innerHTML = renderHistorial(nombre, items);
-      bindHistClicks(detalle, API);
-      detalle.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (!items || !items.length) {
+          try {
+            const resR = await fetch(`${API}/api/recetas?mascota_id=${id}`);
+            if (resR.ok) {
+              const recetas = await resR.json();
+              items = (recetas || []).map(r => ({
+                tipo: 'Receta',
+                fecha: r.fecha || r.created_at,
+                resumen: r.diagnostico || r.medicamentos || r.indicaciones || '',
+              }));
+            }
+          } catch (_) { }
+        }
+
+        items.sort((a, b) => new Date(b.fecha || b.created_at || 0) - new Date(a.fecha || a.created_at || 0));
+        detalle.innerHTML = renderHistorial(nombre, items);
+        bindHistClicks(detalle, API);
+        detalle.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
     });
-  });
+  }
 
+  // Render inicial con todos los registros
+  renderTable(data);
+
+  // ----- Buscador por nombre de mascota o propietario -----
+  if (searchInput) {
+    let t;
+    searchInput.addEventListener('input', () => {
+      clearTimeout(t);
+      t = setTimeout(() => {
+        const q = searchInput.value.trim().toLowerCase();
+        const filtered = !q
+          ? data
+          : data.filter(r => {
+              const nMasc = (r.nombre || '').toLowerCase();
+              const nProp = (r.propietario_nombre || '').toLowerCase();
+              return nMasc.includes(q) || nProp.includes(q);
+            });
+        renderTable(filtered);
+      }, 200);
+    });
+  }
+
+  // ----- Nueva mascota -----
   root.querySelector('#btnNuevaMascota').addEventListener('click', () => {
     showMascotaForm(
       root,
@@ -107,7 +139,6 @@ export async function init({ root, API, params = {} }) {
     );
   });
 }
-
 
 /* ---------- UI ---------- */
 function buildMascotasTable(rows, API) {
