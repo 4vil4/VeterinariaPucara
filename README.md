@@ -88,14 +88,26 @@ veterinaria-front/
 ├─ views/
 |     ├─ login/
 |     |   └─ login.html
+|     ├─ accesorios.html
+|     ├─ alimentos.html
+|     ├─ antibioticos.html
+|     ├─ autorizacion-cirugia-anestesia.html
 |     ├─ calendario.html
+|     ├─ catalogo.html
 |     ├─ citas.html
+|     ├─ defuncion.html
+|     ├─ epicrisis.html
 |     ├─ historico.html
+|     ├─ hospitalizacion.html
 |     ├─ mascotas.html
+|     ├─ medicamentos.html
 |     ├─ personal.html
 |     ├─ propietarios.html
 |     ├─ public.html
+|     ├─ receta.html
 |     ├─ registro.html
+|     ├─ salud-pucara.html
+|     ├─ salud-sag.html
 |     └─ urgencias.html
 ├─ index.html
 └─ package.json
