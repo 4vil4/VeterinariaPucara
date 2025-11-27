@@ -1,0 +1,612 @@
+Table accesorios {
+  id bigint [pk]
+  nombre varchar(150)
+  descripcion text
+  precio decimal(10,2)
+  stock int
+  foto_mime varchar(100)
+  foto_blob blob
+  activo boolean
+  created_at datetime
+  updated_at datetime
+}
+
+Table alimentos {
+  id bigint [pk]
+  nombre varchar(150)
+  descripcion text
+  precio decimal(10,2)
+  stock int
+  foto_mime varchar(100)
+  foto_blob blob
+  activo boolean
+  created_at datetime
+  updated_at datetime
+}
+
+Table antibiotico {
+  id int [pk]
+  nombre varchar(120)
+  forma varchar(60)
+  concentracion varchar(60)
+  via varchar(40)
+  fabricante varchar(80)
+  registro_isp varchar(40)
+  activo_bool boolean
+  created_at datetime
+  updated_at datetime
+}
+
+Table antiparasitario {
+  id bigint [pk]
+  mascota_id bigint
+  fecha datetime
+  producto varchar(120)
+  via varchar(50)
+  dosis decimal(8,2)
+  unidad varchar(20)
+  peso_referencia decimal(6,2)
+  proxima_fecha date
+  observaciones text
+  atendido_por varchar(100)
+  veterinario_id bigint
+  monto_total decimal(10,2)
+  created_at datetime
+}
+
+Table antipulgas {
+  id bigint [pk]
+  mascota_id bigint
+  fecha datetime
+  producto varchar(120)
+  via varchar(50)
+  dosis decimal(8,2)
+  unidad varchar(20)
+  proxima_fecha date
+  observaciones text
+  atendido_por varchar(100)
+  veterinario_id bigint
+  monto_total decimal(10,2)
+  created_at datetime
+}
+
+Table certificados_autorizacion_cirugia {
+  id bigint [pk]
+  mascota_id bigint
+  propietario_id bigint
+  veterinario_id bigint
+  prop_nombre varchar(255)
+  prop_rut varchar(50)
+  prop_movil varchar(50)
+  prop_direccion varchar(255)
+  prop_correo varchar(150)
+  mas_nombre varchar(255)
+  mas_especie varchar(100)
+  mas_raza varchar(150)
+  mas_fecha_nacimiento datetime
+  mas_peso_kg decimal(8,2)
+  mas_sexo varchar(20)
+  color varchar(100)
+  fecha_autorizacion date
+  procedimientos varchar(500)
+  examenes_pre varchar(2)
+  aranceles varchar(100)
+  fecha_cert date
+  vet_nombre varchar(255)
+  vet_rut varchar(50)
+  created_at datetime
+  updated_at datetime
+}
+
+Table certificados_defuncion {
+  id bigint [pk]
+  mascota_id bigint
+  propietario_id bigint
+  veterinario_id bigint
+  prop_nombre varchar(255)
+  prop_rut varchar(50)
+  prop_movil varchar(50)
+  prop_direccion varchar(255)
+  mas_nombre varchar(255)
+  mas_especie varchar(100)
+  mas_fecha_nacimiento datetime
+  mas_raza varchar(150)
+  mas_peso_kg decimal(8,2)
+  mas_sexo varchar(20)
+  color varchar(100)
+  fecha_defuncion date
+  lugar_defuncion varchar(255)
+  motivo_defuncion text
+  fecha_cert date
+  vet_nombre varchar(255)
+  vet_rut varchar(50)
+  created_at datetime
+  updated_at datetime
+}
+
+Table certificado_epicrisis {
+  id bigint [pk]
+  mascota_id bigint
+  propietario_id bigint
+  veterinario_id bigint
+  mas_nombre varchar(120)
+  mas_especie varchar(30)
+  mas_raza varchar(80)
+  mas_sexo varchar(20)
+  mas_edad_anios decimal(6,3)
+  mas_peso_kg decimal(6,2)
+  prop_nombre varchar(120)
+  prop_rut varchar(30)
+  prop_movil varchar(30)
+  prop_direccion varchar(200)
+  vet_nombre varchar(120)
+  vet_rut varchar(30)
+  fecha_ingreso date
+  fecha_egreso date
+  sintomas text
+  diagnostico_ingreso text
+  diagnostico_egreso text
+  causa_egreso varchar(20)
+  examenes text
+  tratamiento_realizado text
+  tratamiento_seguir text
+  recomendaciones text
+  created_at datetime
+}
+
+Table certificado_salud_pucara {
+  id bigint [pk]
+  mascota_id bigint
+  propietario_id bigint
+  veterinario_id bigint
+  mas_nombre varchar(120)
+  mas_especie varchar(40)
+  mas_raza varchar(120)
+  mas_sexo varchar(20)
+  mas_edad_anios decimal(5,2)
+  mas_peso_kg decimal(6,2)
+  prop_nombre varchar(120)
+  prop_movil varchar(40)
+  prop_direccion varchar(180)
+  fecha_cert date
+  relato_html text
+  vet_nombre varchar(120)
+  vet_rut varchar(30)
+  created_at datetime
+  updated_at datetime
+}
+
+Table certificado_salud_sag {
+  id bigint [pk]
+  mascota_id bigint
+  propietario_id bigint
+  veterinario_id bigint
+  mas_nombre varchar(120)
+  mas_raza varchar(120)
+  mas_peso_kg decimal(6,2)
+  mas_especie varchar(40)
+  mas_edad_anios decimal(5,2)
+  mas_color varchar(60)
+  mas_sexo varchar(20)
+  mas_microchip varchar(80)
+  chip_fecha date
+  chip_sitio varchar(60)
+  prop_nombre varchar(120)
+  prop_rut varchar(30)
+  prop_direccion varchar(180)
+  prop_fono varchar(40)
+  fecha_cert date
+  fecha_inspeccion date
+  vet_nombre varchar(120)
+  vet_rut varchar(30)
+  vet_fono varchar(40)
+  vet_direccion varchar(180)
+  vacunacion_json text
+  desparasitacion_json text
+  created_at datetime
+  updated_at datetime
+}
+
+Table cirugia {
+  id bigint [pk]
+  mascota_id bigint
+  fecha datetime
+  procedimiento varchar(255)
+  cirujano varchar(100)
+  anestesia varchar(100)
+  asa varchar(10)
+  materiales text
+  complicaciones text
+  notas text
+  consent_firmado boolean
+  atendido_por varchar(100)
+  veterinario_id bigint
+  monto_total decimal(10,2)
+  created_at datetime
+}
+
+Table cita {
+  id bigint [pk]
+  fecha_inicio datetime
+  fecha_fin datetime
+  tipo varchar(60)
+  urgencia boolean
+  estado varchar(20)
+  observaciones varchar(191)
+  propietario_id bigint
+  created_by varchar(120)
+  created_at datetime
+  updated_at datetime
+}
+
+Table consulta {
+  id bigint [pk]
+  mascota_id bigint
+  fecha datetime
+  motivo varchar(255)
+  diagnostico text
+  indicaciones text
+  atendido_por varchar(100)
+  veterinario_id bigint
+  monto_total decimal(10,2)
+  anestesia_bool boolean
+  created_at datetime
+}
+
+Table control {
+  id bigint [pk]
+  mascota_id bigint
+  fecha datetime
+  peso_kg decimal(5,2)
+  temperatura_c decimal(4,1)
+  fc int
+  fr int
+  motivo varchar(200)
+  examen_fisico varchar(191)
+  diagnostico varchar(191)
+  indicaciones varchar(191)
+  atendido_por varchar(120)
+  veterinario_id bigint
+  monto_total decimal(10,2)
+  created_at datetime
+}
+
+Table defuncion {
+  id bigint [pk]
+  mascota_id bigint
+  fecha datetime
+  tipo varchar(20)
+  causa varchar(255)
+  responsable varchar(100)
+  certificado boolean
+  observaciones text
+  created_at datetime
+}
+
+Table dermatologia {
+  id bigint [pk]
+  mascota_id bigint
+  fecha datetime
+  motivo varchar(255)
+  lesiones text
+  pruebas text
+  diagnostico text
+  tratamiento text
+  fecha_control date
+  atendido_por varchar(100)
+  veterinario_id bigint
+  monto_total decimal(10,2)
+  created_at datetime
+}
+
+Table hospitalizacion {
+  id bigint [pk]
+  mascota_id bigint
+  fecha_ingreso datetime
+  motivo varchar(255)
+  cuidados text
+  medicacion_json text
+  estado varchar(20)
+  fecha_alta datetime
+  observaciones text
+  atendido_por varchar(100)
+  veterinario_id bigint
+  monto_total decimal(10,2)
+  created_at datetime
+}
+
+Table hospitalizacion_monitoreo {
+  id bigint [pk]
+  hospitalizacion_id bigint
+  fecha date
+  hora time
+  temperatura_c decimal(4,1)
+  lpm int
+  fr int
+  peso_kg decimal(6,2)
+  deshidratacion varchar(50)
+  tlc_seg decimal(3,1)
+  pa varchar(20)
+  pas int
+  pad int
+  pam int
+  notas text
+  created_at datetime
+}
+
+Table hospitalizacion_observacion {
+  id bigint [pk]
+  hospitalizacion_id bigint
+  fecha date
+  texto text
+}
+
+Table mascota {
+  id bigint [pk]
+  propietario_id bigint
+  nombre varchar(191)
+  n_historial varchar(50)
+  especie varchar(10)
+  raza varchar(120)
+  sexo varchar(20)
+  esterilizado boolean
+  nro_microchip varchar(50)
+  fecha_nacimiento datetime
+  edad_anios decimal(4,1)
+  peso_kg decimal(5,2)
+  foto blob
+  foto_nombre varchar(255)
+  foto_tipo varchar(100)
+  foto_tamano int
+  created_at datetime
+  updated_at datetime
+}
+
+Table medicamentos {
+  id bigint [pk]
+  nombre varchar(150)
+  descripcion text
+  precio decimal(10,2)
+  stock int
+  foto_mime varchar(100)
+  foto_blob blob
+  requiere_rx boolean
+  activo boolean
+  created_at datetime
+  updated_at datetime
+}
+
+Table oftalmologia {
+  id bigint [pk]
+  mascota_id bigint
+  fecha datetime
+  motivo varchar(255)
+  test_schirmer_mm int
+  fluoresceina boolean
+  pio_mmHg decimal(4,1)
+  hallazgos text
+  diagnostico text
+  tratamiento text
+  atendido_por varchar(100)
+  veterinario_id bigint
+  monto_total decimal(10,2)
+  created_at datetime
+}
+
+Table orden_examen {
+  id bigint [pk]
+  mascota_id bigint
+  fecha datetime
+  tipo_examen varchar(120)
+  laboratorio varchar(120)
+  muestras text
+  estado varchar(20)
+  resultados_url varchar(255)
+  observaciones text
+  veterinario_id bigint
+  monto_total decimal(10,2)
+  created_at datetime
+}
+
+Table profilaxis {
+  id bigint [pk]
+  mascota_id bigint
+  fecha datetime
+  tipo varchar(100)
+  hallazgos text
+  procedimiento text
+  anestesia varchar(100)
+  recomendaciones text
+  atendido_por varchar(100)
+  veterinario_id bigint
+  monto_total decimal(10,2)
+  created_at datetime
+}
+
+Table propietario {
+  id bigint [pk]
+  nombre varchar(191)
+  correo varchar(160)
+  movil varchar(40)
+  rut varchar(20)
+  direccion varchar(200)
+  created_at datetime
+  updated_at datetime
+}
+
+Table receta {
+  id bigint [pk]
+  mascota_id bigint
+  propietario_id bigint
+  fecha datetime
+  diagnostico text
+  indicaciones text
+  medicamentos text
+  veterinario_id bigint
+  firmado_por varchar(120)
+  created_at datetime
+  updated_at datetime
+  antibiotico_bool boolean
+}
+
+Table receta_antibiotico {
+  id bigint [pk]
+  receta_id bigint
+  antibiotico_id int
+  dosis varchar(80)
+  duracion_dias int
+  notas text
+  enviado_sag_bool boolean
+  enviado_at datetime
+  created_at datetime
+  updated_at datetime
+}
+
+Table registro_comision {
+  id bigint [pk]
+  tipo varchar(40)
+  registro_id bigint
+  veterinario_id bigint
+  porcentaje decimal(5,2)
+  base_monto decimal(10,2)
+  comision_monto decimal(10,2)
+  fecha date
+  created_at datetime
+}
+
+Table triaje {
+  id bigint [pk]
+  mascota_id bigint
+  fecha datetime
+  nivel varchar(10)
+  signos_vitales text
+  notas text
+  atendido_por varchar(100)
+  veterinario_id bigint
+  monto_total decimal(10,2)
+  created_at datetime
+}
+
+Table user {
+  id bigint [pk]
+  nombre varchar(255)
+  email varchar(255)
+  password_hash varchar(255)
+  role varchar(10)
+  reset_token varchar(255)
+  reset_expires datetime
+  created_at datetime
+  updated_at datetime
+
+  indexes {
+    (email) [unique]
+  }
+}
+
+Table vacuna {
+  id bigint [pk]
+  mascota_id bigint
+  fecha datetime
+  vacuna varchar(191)
+  lote varchar(80)
+  fabricante varchar(120)
+  fecha_venc datetime
+  proxima_fecha datetime
+  observaciones varchar(191)
+  atendido_por varchar(120)
+  veterinario_id bigint
+  monto_total decimal(10,2)
+  created_at datetime
+}
+
+Table veterinario {
+  id bigint [pk]
+  nombre varchar(191)
+  rut varchar(20)
+  correo varchar(160)
+  movil varchar(40)
+  user_id bigint
+  activo boolean
+  created_at datetime
+
+  indexes {
+    (user_id) [name: 'uk_veterinario_user', unique]
+  }
+}
+
+Ref: antiparasitario.mascota_id > mascota.id
+Ref: antiparasitario.veterinario_id > veterinario.id
+
+Ref: antipulgas.mascota_id > mascota.id
+Ref: antipulgas.veterinario_id > veterinario.id
+
+Ref: certificados_autorizacion_cirugia.mascota_id > mascota.id
+Ref: certificados_autorizacion_cirugia.propietario_id > propietario.id
+Ref: certificados_autorizacion_cirugia.veterinario_id > veterinario.id
+
+Ref: certificados_defuncion.mascota_id > mascota.id
+Ref: certificados_defuncion.propietario_id > propietario.id
+Ref: certificados_defuncion.veterinario_id > veterinario.id
+
+Ref: certificado_epicrisis.mascota_id > mascota.id
+Ref: certificado_epicrisis.propietario_id > propietario.id
+Ref: certificado_epicrisis.veterinario_id > veterinario.id
+
+Ref: certificado_salud_pucara.mascota_id > mascota.id
+Ref: certificado_salud_pucara.propietario_id > propietario.id
+Ref: certificado_salud_pucara.veterinario_id > veterinario.id
+
+Ref: certificado_salud_sag.mascota_id > mascota.id
+Ref: certificado_salud_sag.propietario_id > propietario.id
+Ref: certificado_salud_sag.veterinario_id > veterinario.id
+
+Ref: cirugia.mascota_id > mascota.id
+Ref: cirugia.veterinario_id > veterinario.id
+
+Ref: consulta.mascota_id > mascota.id
+Ref: consulta.veterinario_id > veterinario.id
+
+Ref: control.mascota_id > mascota.id
+Ref: control.veterinario_id > veterinario.id
+
+Ref: defuncion.mascota_id > mascota.id
+
+Ref: dermatologia.mascota_id > mascota.id
+Ref: dermatologia.veterinario_id > veterinario.id
+
+Ref: hospitalizacion.mascota_id > mascota.id
+Ref: hospitalizacion.veterinario_id > veterinario.id
+
+Ref: hospitalizacion_monitoreo.hospitalizacion_id > hospitalizacion.id
+
+Ref: hospitalizacion_observacion.hospitalizacion_id > hospitalizacion.id
+
+Ref: mascota.propietario_id > propietario.id
+
+Ref: oftalmologia.mascota_id > mascota.id
+Ref: oftalmologia.veterinario_id > veterinario.id
+
+Ref: orden_examen.mascota_id > mascota.id
+Ref: orden_examen.veterinario_id > veterinario.id
+
+Ref: profilaxis.mascota_id > mascota.id
+Ref: profilaxis.veterinario_id > veterinario.id
+
+Ref: receta.mascota_id > mascota.id
+Ref: receta.propietario_id > propietario.id
+Ref: receta.veterinario_id > veterinario.id
+
+Ref: receta_antibiotico.antibiotico_id > antibiotico.id
+Ref: receta_antibiotico.receta_id > receta.id
+
+Ref: registro_comision.veterinario_id > veterinario.id
+
+Ref: triaje.mascota_id > mascota.id
+Ref: triaje.veterinario_id > veterinario.id
+
+Ref: vacuna.mascota_id > mascota.id
+Ref: vacuna.veterinario_id > veterinario.id
+
+Ref: veterinario.user_id > user.id
+
+Ref: cita.propietario_id > propietario.id

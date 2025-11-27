@@ -1,0 +1,109 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" version="29.2.1">
+  <diagram id="flujo-acceso-user" name="Flujo Acceso Usuario Role USER">
+    <mxGraphModel dx="703" dy="848" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="n1" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="Inicio" vertex="1">
+          <mxGeometry height="60" width="120" x="260" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Usuario abre sitio&#xa;(Home Clínica Pucará)" vertex="1">
+          <mxGeometry height="70" width="240" x="210" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="n3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Click en &quot;Iniciar sesión&quot;&#xa;o &quot;Registrarse&quot;" vertex="1">
+          <mxGeometry height="70" width="240" x="210" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="n4" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="¿Usuario ya tiene cuenta?" vertex="1">
+          <mxGeometry height="80" width="200" x="230" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="n5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Formulario registro&#xa;Crea:&#xa;- user (role = user)&#xa;- propietario vinculado" vertex="1">
+          <mxGeometry height="110" width="200" x="20" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="n6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Backend registra usuario&#xa;Tabla user: email único,&#xa;password_hash&#xa;Tabla propietario: datos contacto&#xa;Enlaza propietario.user_id" vertex="1">
+          <mxGeometry height="120" width="260" x="20" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="n7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Generar JWT + datos usuario&#xa;y responder al frontend&#xa;(login automático)" vertex="1">
+          <mxGeometry height="90" width="230" x="40" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="n8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Formulario Login&#xa;Email + contraseña" vertex="1">
+          <mxGeometry height="80" width="200" x="420" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="n9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Backend valida credenciales&#xa;Tabla user&#xa;- email&#xa;- password_hash&#xa;- role = user" vertex="1">
+          <mxGeometry height="110" width="240" x="420" y="410" as="geometry" />
+        </mxCell>
+        <mxCell id="n10" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="¿Credenciales válidas&#xa;y usuario activo?" vertex="1">
+          <mxGeometry height="80" width="200" x="430" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="n11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6e6;" value="Mostrar error&#xa;Email/contraseña inválidos" vertex="1">
+          <mxGeometry height="90" width="220" x="840" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="n12" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Generar JWT&#xa;Payload: user_id, role=user,&#xa;expiración" vertex="1">
+          <mxGeometry height="90" width="230" x="420" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="n13" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Frontend guarda sesión&#xa;- auth_token (localStorage)&#xa;- auth_user (id, nombre, role)&#xa;- propietario_id asociado" vertex="1">
+          <mxGeometry height="110" width="270" x="420" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="n14" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Redirigir a Panel Usuario&#xa;- Mis Mascotas (mascota)&#xa;- Mis Citas (cita)&#xa;- Certificados&#xa;- Perfil" vertex="1">
+          <mxGeometry height="110" width="260" x="420" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="n15" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Navegación autenticada&#xa;Cada request incluye JWT&#xa;Authorization: Bearer &lt;token&gt;&#xa;Backend verifica token y role=user&#xa;Filtra por propietario_id" vertex="1">
+          <mxGeometry height="120" width="320" x="420" y="1010" as="geometry" />
+        </mxCell>
+        <mxCell id="n16" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="Fin&#xa;(usuario navegando&#xa;como role = user)" vertex="1">
+          <mxGeometry height="80" width="140" x="500" y="1150" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="n1" style="endArrow=block;html=1;" target="n2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="n2" style="endArrow=block;html=1;" target="n3" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="n3" style="endArrow=block;html=1;" target="n4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="n4" style="endArrow=block;html=1;edgeStyle=orthogonalEdgeStyle;" target="n5" value="No">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="n5" style="endArrow=block;html=1;" target="n6" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="n6" style="endArrow=block;html=1;" target="n7" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="n7" style="endArrow=block;html=1;" target="n13" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="n4" style="endArrow=block;html=1;" target="n8" value="Sí">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="n8" style="endArrow=block;html=1;" target="n9" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="n9" style="endArrow=block;html=1;" target="n10" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="n10" style="endArrow=block;html=1;" target="n11" value="No">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="n11" style="endArrow=block;html=1;edgeStyle=orthogonalEdgeStyle;" target="n8" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="n10" style="endArrow=block;html=1;" target="n12" value="Sí">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14" edge="1" parent="1" source="n12" style="endArrow=block;html=1;" target="n13" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e15" edge="1" parent="1" source="n13" style="endArrow=block;html=1;" target="n14" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e16" edge="1" parent="1" source="n14" style="endArrow=block;html=1;" target="n15" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e17" edge="1" parent="1" source="n15" style="endArrow=block;html=1;" target="n16" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
