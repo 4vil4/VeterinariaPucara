@@ -12,12 +12,23 @@ veterinaria-back/
 │ ├─ middlewares/
 | |     └─auth.middlewares.js
 │ ├─ routes/
+| |     ├─ accesorios.routes.js
+| |     ├─ alimentos.routes.js
+| |     ├─ antibioticos.routes.js
 | |     ├─ auth.routes.js
+| |     ├─ certificados.autorizacion.cirugia.routes.js
+| |     ├─ certificados.defuncion.routes.js
+| |     ├─ certificados.epicrisis.routes.js
+| |     ├─ certificados.salud.pucara.routes.js
+| |     ├─ certificados.salud.sag.routes.js
 | |     ├─ citas.routes.js
+| |     ├─ hospitalizacion.routes.js
 | |     ├─ index.routes.js
 | |     ├─ mascotas.routes.js
+| |     ├─ medicamentos.routes.js
 | |     ├─ personal.routes.js
 | |     ├─ propietarios.routes.js
+| |     ├─ recetas.routes.js
 | |     ├─ registros.routes.js
 | |     └─ urgencias.routes.js
 │ └─ db.js
@@ -31,13 +42,20 @@ veterinaria-front/
 ├─ assets/
 |   └─ logo.png
 ├─ css/
+|   ├─ antibiotico.css
 |   ├─ calendario.css
+|   ├─ certificados.css
 |   ├─ citas.css
 |   ├─ historico.css
 |   ├─ login.css
 |   ├─ mascotas.css
+|   ├─ personal.css
+|   ├─ productos.css
 |   ├─ propietarios.css
+|   ├─ public-catalogo.css
 |   ├─ public.css
+|   ├─ receta.css
+|   ├─ registro-hosp.css
 |   ├─ registro.css
 |   ├─ style.css
 |   └─ urgencias.css
@@ -45,14 +63,26 @@ veterinaria-front/
 │ ├─ views/
 | |     ├─ login/
 | |     |   └─ login.js
+| |     ├─ accesorios.js
+| |     ├─ alimentos.js
+| |     ├─ antibioticos.js
+| |     ├─ autorizacion-cirugia-anestesia.js
 | |     ├─ calendario.js
+| |     ├─ catalogo.js
 | |     ├─ citas.js
+| |     ├─ defuncion.js
+| |     ├─ epicrisis.js
 | |     ├─ historico.js
+| |     ├─ hospitalizacion.js
 | |     ├─ mascotas.js
+| |     ├─ medicamentos.js
 | |     ├─ personal.js
 | |     ├─ propietarios.js
 | |     ├─ public.js
+| |     ├─ receta.js
 | |     ├─ registro.js
+| |     ├─ salud-pucara.js
+| |     ├─ salud-sag.js
 | |     └─ urgencias.js
 │ └─ main.js
 ├─ views/
