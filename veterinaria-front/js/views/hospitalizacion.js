@@ -57,7 +57,7 @@ export async function init({ root, API }) {
         const id = Number(btn.dataset.id);
         await apiPatchAuth(`${API}/api/hospitalizacion/${id}/alta`);
         await loadAndRender(search);
-        if (openedId === id) toggleCard(id); 
+        if (openedId === id) toggleCard(id);
       };
     });
 
@@ -153,7 +153,15 @@ function showForm(root, API, onSubmit) {
       <div><label>Fecha ingreso</label><input class="input" id="fecha_ingreso" type="datetime-local"></div>
       <div><label>Peso (kg)</label><input class="input" id="peso_kg" type="number" step="0.01"></div>
       <div><label>Motivo</label><input class="input" id="motivo"></div>
-      <div><label>Estado</label><input class="input" id="estado" placeholder="en_curso/alta/derivada/fallecida"></div>
+      <div>
+        <label>Estado</label>
+        <select class="input" id="estado">
+          <option value="en_curso">En curso</option>
+          <option value="alta">Alta</option>
+          <option value="derivada">Derivada</option>
+          <option value="fallecida">Fallecida</option>
+        </select>
+      </div>
       <div style="grid-column:1/-1"><label>Observaciones</label><textarea class="input" id="observaciones" rows="3"></textarea></div>
     </div>
     <div style="margin-top:14px;display:flex;gap:8px">
