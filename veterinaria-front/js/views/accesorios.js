@@ -90,15 +90,15 @@ async function mountProducts(root, API, cfg) {
       <div class="form-grid">
         <div><label>Nombre*</label><input class="input" id="f_nombre" value="${esc(editing?.nombre || '')}"></div>
         <div>
-  <label>Precio*</label>
-  <input
-    class="input"
-    id="f_precio"
-    type="text"
-    inputmode="numeric"
-    placeholder="$0"
-  >
-</div>
+          <label>Precio*</label>
+          <input
+            class="input"
+            id="f_precio"
+            type="text"
+            inputmode="numeric"
+            placeholder="$0"
+          >
+        </div>
         <div><label>Stock</label><input class="input" id="f_stock" type="number" step="1" value="${editing?.stock ?? ''}"></div>
         <div><label>Activo</label>
           <select class="input" id="f_activo">
@@ -126,23 +126,19 @@ async function mountProducts(root, API, cfg) {
 
     const inpPrecio = box.querySelector('#f_precio');
 
-    // Si estamos editando, cargar valor formateado
     if (editing && inpPrecio) {
       inpPrecio.value = fmtPrice(editing.precio);
     }
 
-    // Sólo permitir números mientras escribe
     inpPrecio?.addEventListener('input', () => {
       inpPrecio.value = inpPrecio.value.replace(/[^0-9]/g, '');
     });
 
-    // Al enfocar, mostrar solo números (sin $ ni puntos)
     inpPrecio?.addEventListener('focus', () => {
       const n = parsePrice(inpPrecio.value);
       inpPrecio.value = n ? String(n) : '';
     });
 
-    // Al salir del input, formatear como moneda
     inpPrecio?.addEventListener('blur', () => {
       const n = parsePrice(inpPrecio.value);
       inpPrecio.value = n ? fmtPrice(n) : '';
@@ -203,7 +199,7 @@ async function mountProducts(root, API, cfg) {
   }
     function fmtPrice(v) {
     const n = parseInt(v ?? 0, 10) || 0;
-    return '$' + n.toLocaleString('es-CL'); // $ 1.234.567
+    return '$' + n.toLocaleString('es-CL');
   }
 
   function parsePrice(str) {
