@@ -52,7 +52,7 @@ async function mountProducts(root, API, cfg) {
               <td><img src="${thumbUrl(r.id)}" onerror="this.style.display='none'" class="prod-thumb"></td>
               <td>${esc(r.nombre)}</td>
               <td>${esc((r.descripcion || '').slice(0, 100))}</td>
-              <td>$${Number(r.precio || 0).toFixed(2)}</td>
+              <td>${fmtPrice(r.precio)}</td>
               <td>${Number(r.stock || 0)}</td>
               <td>${Number(r.activo) ? 'Sí' : 'No'}</td>
               <td>
@@ -89,7 +89,16 @@ async function mountProducts(root, API, cfg) {
       <h3 style="margin-top:0">${editing ? 'Editar' : 'Nuevo'} ${cfg.title.slice(0, -1)}</h3>
       <div class="form-grid">
         <div><label>Nombre*</label><input class="input" id="f_nombre" value="${esc(editing?.nombre || '')}"></div>
-        <div><label>Precio</label><input class="input" id="f_precio" type="number" step="0.01" value="${editing?.precio ?? ''}"></div>
+        <div>
+  <label>Precio*</label>
+  <input
+    class="input"
+    id="f_precio"
+    type="text"
+    inputmode="numeric"
+    placeholder="$0"
+  >
+</div>
         <div><label>Stock</label><input class="input" id="f_stock" type="number" step="1" value="${editing?.stock ?? ''}"></div>
         <div><label>Activo</label>
           <select class="input" id="f_activo">
@@ -115,6 +124,30 @@ async function mountProducts(root, API, cfg) {
     `;
     root.prepend(box);
 
+    const inpPrecio = box.querySelector('#f_precio');
+
+    // Si estamos editando, cargar valor formateado
+    if (editing && inpPrecio) {
+      inpPrecio.value = fmtPrice(editing.precio);
+    }
+
+    // Sólo permitir números mientras escribe
+    inpPrecio?.addEventListener('input', () => {
+      inpPrecio.value = inpPrecio.value.replace(/[^0-9]/g, '');
+    });
+
+    // Al enfocar, mostrar solo números (sin $ ni puntos)
+    inpPrecio?.addEventListener('focus', () => {
+      const n = parsePrice(inpPrecio.value);
+      inpPrecio.value = n ? String(n) : '';
+    });
+
+    // Al salir del input, formatear como moneda
+    inpPrecio?.addEventListener('blur', () => {
+      const n = parsePrice(inpPrecio.value);
+      inpPrecio.value = n ? fmtPrice(n) : '';
+    });
+
     const inpFile = box.querySelector('#f_foto');
     const prev = box.querySelector('#f_preview');
     inpFile?.addEventListener('change', () => {
@@ -130,7 +163,8 @@ async function mountProducts(root, API, cfg) {
       const nombre = val('#f_nombre', box);
       if (!nombre) { alert('Nombre es obligatorio'); return; }
       fd.append('nombre', nombre);
-      fd.append('precio', val('#f_precio', box) || 0);
+      const precio = parsePrice(val('#f_precio', box));
+      fd.append('precio', precio || 0);
       fd.append('stock', val('#f_stock', box) || 0);
       fd.append('activo', val('#f_activo', box) || 1);
       fd.append('descripcion', val('#f_desc', box) || '');
@@ -155,7 +189,7 @@ async function mountProducts(root, API, cfg) {
   async function fetchJSON(url, opt = {}) {
     const token = localStorage.getItem('auth_token') || '';
     const o = { ...opt, headers: { ...(opt.headers || {}), Authorization: token ? `Bearer ${token}` : '' } };
-    
+
     if (o.body && !(o.body instanceof FormData)) {
       o.headers['Content-Type'] = 'application/json';
       o.body = JSON.stringify(o.body);
@@ -168,4 +202,15 @@ async function mountProducts(root, API, cfg) {
     const ct = r.headers.get('content-type') || '';
     return ct.includes('application/json') ? r.json() : r.text();
   }
+  function fmtPrice(v) {
+    const n = parseInt(v ?? 0, 10) || 0;
+    return '$' + n.toLocaleString('es-CL'); // $ 1.234.567
+  }
+
+  function parsePrice(str) {
+    if (!str) return 0;
+    const raw = String(str).replace(/[^0-9]/g, '');
+    return raw ? parseInt(raw, 10) : 0;
+  }
+
 }
