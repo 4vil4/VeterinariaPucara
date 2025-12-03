@@ -1,4 +1,4 @@
-const API = 'http://localhost:4000';
+const API = window.location.origin + "/api";
 let petAnim = null;
 
 /* ===== Auth helpers ===== */
