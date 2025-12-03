@@ -302,13 +302,22 @@ function buildTable(rows, cfg) {
     <thead><tr>
       ${cfg.columns.map(c => `<th ${c.w ? `style="width:${c.w}px"` : ''}>${c.label}</th>`).join('')}
     </tr></thead>`;
+
     const body = `
     <tbody>
       ${rows.map(r => `
         <tr>
-          ${cfg.columns.map(c => `<td>${esc(r[c.key] ?? '')}</td>`).join('')}
+          ${cfg.columns.map(c => {
+            let val = r[c.key] ?? '';
+            // Formatear fechas como DD/MM/YYYY HH:mm
+            if (c.key === 'fecha' && val) {
+                val = formatDateTime(val);
+            }
+            return `<td>${esc(val)}</td>`;
+          }).join('')}
         </tr>`).join('')}
     </tbody>`;
+
     return `<table class="tbl">${head}${body}</table>`;
 }
 
@@ -430,6 +439,7 @@ function showForm(root, API, cfg, isVet, myVetId, me, onSubmit) {
 }
 
 function esc(s) { return (s ?? '').toString().replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])); }
+
 function getUser() { try { return JSON.parse(localStorage.getItem('auth_user') || 'null'); } catch { return null; } }
 function authHeaders() { const t = localStorage.getItem('auth_token'); return t ? { Authorization: `Bearer ${t}` } : {}; }
 async function fetchJSON(url) { const r = await fetch(url, { headers: { ...authHeaders() } }); if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }
@@ -442,4 +452,19 @@ async function apiPost(url, body) {
     let j = null; try { j = await r.json(); } catch { }
     if (!r.ok) throw new Error(j?.msg || `HTTP ${r.status}`);
     return j;
+}
+
+/** Formato: DD/MM/YYYY HH:mm */
+function formatDateTime(value) {
+    const d = new Date(value);
+    if (isNaN(d)) return value; 
+
+    const pad = n => String(n).padStart(2, '0');
+    const dd = pad(d.getDate());
+    const mm = pad(d.getMonth() + 1);
+    const yyyy = d.getFullYear();
+    const hh = pad(d.getHours());
+    const mi = pad(d.getMinutes());
+
+    return `${dd}/${mm}/${yyyy} ${hh}:${mi}`;
 }

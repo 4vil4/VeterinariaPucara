@@ -1,7 +1,6 @@
 export async function init({ root, API, params }) {
     root.querySelector('#btnBackPublic')?.addEventListener('click', () => {
-        if (history.length > 1) history.back();
-        else location.hash = '#/public';
+        location.hash = '#/public';
     });
     const tipo = String(params?.tipo || '').toLowerCase();
     const map = {
