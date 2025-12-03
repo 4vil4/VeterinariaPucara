@@ -23,6 +23,7 @@ import CertSaludPucara from './src/routes/certificados.salud.pucara.routes.js';
 import certificadosEpicrisisRoutes from './src/routes/certificados.epicrisis.routes.js';
 import certificadosDefuncion from './src/routes/certificados.defuncion.routes.js';
 import certificadosAutorizacionCirugiaRoutes from './src/routes/certificados.autorizacion.cirugia.routes.js';
+import { routerReportes } from './src/routes/reportes.routes.js';
 
 const app = express();
 app.use(cors({ origin: true }));
@@ -49,6 +50,7 @@ app.use('/api/certificados/salud-pucara', CertSaludPucara);
 app.use('/api/certificados/epicrisis', certificadosEpicrisisRoutes);
 app.use('/api/certificados/defuncion', certificadosDefuncion);
 app.use('/api/certificados/autorizacion-cirugia-anestesia', certificadosAutorizacionCirugiaRoutes);
+app.use('/api/reportes', routerReportes);
 
 app.get('/api/health', (_, res) => res.json({ ok: true }));
 

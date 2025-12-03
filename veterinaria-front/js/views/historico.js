@@ -4,6 +4,7 @@ export async function init({ root, API }) {
     const btnAll = root.querySelector('#btnAll');
     const btnDone = root.querySelector('#btnDone');
     const btnCanceled = root.querySelector('#btnCanceled');
+    const btnReporteMes = root.querySelector('#btnHistReporteMes');
 
     let all = [];
     let estado = 'all';
@@ -72,6 +73,17 @@ export async function init({ root, API }) {
         [btnAll, btnDone, btnCanceled].forEach(b => b.classList.remove('is-active'));
         btn.classList.add('is-active');
     }
+
+    // Botón informe mensual
+    btnReporteMes.addEventListener('click', () => {
+        const hoy = new Date();
+        const year = hoy.getFullYear();
+        const month = hoy.getMonth() + 1; // 1-12
+
+        // Abre el PDF en otra pestaña
+        const url = `${API}/api/reportes/mes/pdf?year=${year}&month=${month}`;
+        window.open(url, '_blank');
+    });
 
     // helpers
     function fmtDT(iso) { const d = new Date(iso); return d.toLocaleDateString('es-CL', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }); }
