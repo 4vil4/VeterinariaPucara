@@ -103,8 +103,11 @@ export async function init({ root, API }) {
   async function openForm(prefillISO = null, editing = null) {
     const wrap = document.createElement('div');
     wrap.className = 'card form-card';
-    const dtStart = editing ? editing.fecha_inicio.slice(0, 16).replace(' ', 'T') :
-      prefillISO ? prefillISO.slice(0, 16) : new Date().toISOString().slice(0, 16);
+    const dtStart = editing
+      ? editing.fecha_inicio.slice(0, 16).replace(' ', 'T')
+      : prefillISO
+        ? prefillISO.slice(0, 16)
+        : toDatetimeLocal(new Date());
     const dtEnd = editing && editing.fecha_fin ? editing.fecha_fin.slice(0, 16).replace(' ', 'T') : '';
 
     const fixedOwnerName = (isClient && me)
@@ -301,4 +304,23 @@ export async function init({ root, API }) {
     try { return JSON.parse(localStorage.getItem('auth_user') || 'null'); }
     catch { return null; }
   }
+
+  function toDatetimeLocal(d) {
+    const pad = n => String(n).padStart(2, '0');
+    const yyyy = d.getFullYear();
+    const mm = pad(d.getMonth() + 1);
+    const dd = pad(d.getDate());
+    const hh = pad(d.getHours());
+    const mi = pad(d.getMinutes());
+    return `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
+  }
+
+  function isoDate(d) {
+    const pad = n => String(n).padStart(2, '0');
+    const yyyy = d.getFullYear();
+    const mm = pad(d.getMonth() + 1);
+    const dd = pad(d.getDate());
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
 }

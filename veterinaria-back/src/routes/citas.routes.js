@@ -84,24 +84,40 @@ router.get('/', async (req, res) => {
 /** POST /api/citas */
 router.post('/', async (req, res) => {
   try {
+    const body = req.body || {};
     const {
       propietario_id = null,
       fecha_inicio,
-      fecha_fin = null,
+      fecha_fin: fechaFinRaw = null,
       tipo,
       estado = 'programada',
       urgencia = 0,
       observaciones = null,
       created_by = null
-    } = req.body || {};
+    } = body;
 
-    if (!fecha_inicio || !tipo)
-      return res.status(400).json({ ok: false, msg: 'fecha_inicio y tipo son requeridos' });
+    if (!fecha_inicio || !tipo) {
+      return res.status(400).json({
+        ok: false,
+        msg: 'fecha_inicio y tipo son requeridos'
+      });
+    }
 
-    const fechaInicioNorm = (typeof fecha_inicio === 'string' && fecha_inicio)
-      ? fecha_inicio.replace('T', ' ')
-      : fecha_inicio;
+    // Normalizar fecha_inicio y fecha_fin
+    const normDT = s =>
+      (typeof s === 'string' && s)
+        ? s.replace('T', ' ')
+        : s;
 
+    const fechaInicioNorm = normDT(fecha_inicio);
+
+    // Si viene vacío ('') o null -> guardar como NULL en MySQL
+    const fechaFinNorm =
+      (fechaFinRaw === '' || fechaFinRaw == null)
+        ? null
+        : normDT(fechaFinRaw);
+
+    // Validar cruce de citas solo con fecha_inicio
     if (await hayCruceDeCitas(fechaInicioNorm)) {
       return res
         .status(409)
@@ -109,9 +125,19 @@ router.post('/', async (req, res) => {
     }
 
     const [r] = await pool.execute(
-      `INSERT INTO cita (propietario_id, fecha_inicio, fecha_fin, tipo, estado, urgencia, observaciones, created_by)
+      `INSERT INTO cita
+         (propietario_id, fecha_inicio, fecha_fin, tipo, estado, urgencia, observaciones, created_by)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [propietario_id, fechaInicioNorm, fecha_fin, tipo, estado, urgencia ? 1 : 0, observaciones, created_by]
+      [
+        propietario_id,
+        fechaInicioNorm,
+        fechaFinNorm, 
+        tipo,
+        estado,
+        urgencia ? 1 : 0,
+        observaciones,
+        created_by
+      ]
     );
 
     res.status(201).json({ ok: true, id: r.insertId });

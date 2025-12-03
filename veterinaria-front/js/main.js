@@ -424,7 +424,7 @@ async function loadModuleOnce(url) {
 }
 
 /* ========== WhatsApp ========== */
-const WHATS_PHONE = '56912345678';
+const WHATS_PHONE = '56948693591';
 const WHATS_MSG = 'Hola 👋, quisiera más información.';
 let $whatsFab = null;
 
